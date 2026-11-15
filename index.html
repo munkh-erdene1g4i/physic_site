@@ -1,0 +1,3736 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Физикийн Цахим Сургалтын Систем</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- KaTeX (Математик, физикийн томьёо дүрслэгч + Auto-render) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25rem 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 text-slate-800 antialiased selection:bg-sky-100 selection:text-sky-900">
+
+  <!-- Арын чимэглэлийн зөөлөн уусалт (pointer-events-none тул товч дарахад саад болохгүй) -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-sky-100/50 blur-3xl"></div>
+    <div class="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-indigo-100/40 blur-3xl"></div>
+    <div class="absolute -bottom-24 left-1/3 w-96 h-96 rounded-full bg-teal-100/40 blur-3xl"></div>
+  </div>
+
+  <!-- Мэдэгдлийн хайрцаг (Toast Notification) -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Баталгаажуулах цонх (Custom Confirm Modal - alert/confirm-ийн оронд) -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 id="confirm-modal-title" class="text-base font-bold text-slate-900">Баталгаажуулах</h3>
+          <p id="confirm-modal-message" class="mt-1.5 text-sm text-slate-600 leading-relaxed"></p>
+        </div>
+      </div>
+      <div class="mt-6 flex items-center justify-end gap-2.5">
+        <button id="confirm-cancel-btn" type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition cursor-pointer">
+          Болих
+        </button>
+        <button id="confirm-ok-btn" type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition cursor-pointer">
+          Тийм, үргэлжлүүлэх
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Зураг томруулж харах цонх (Image Lightbox) -->
+  <div id="image-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/75 backdrop-blur-xs p-4" onclick="closeImageModal()">
+    <div class="relative max-w-4xl w-full flex flex-col items-center" onclick="event.stopPropagation()">
+      <button type="button" onclick="closeImageModal()" class="self-end mb-2 px-3.5 py-1.5 rounded-xl bg-white/90 text-slate-800 text-sm font-semibold hover:bg-white shadow cursor-pointer">
+        Хаах ✕
+      </button>
+      <img id="image-modal-src" src="" alt="Томруулсан зураг" class="max-h-[82vh] w-auto rounded-2xl shadow-2xl bg-white p-1" />
+    </div>
+  </div>
+
+  <!-- Үндсэн аппликейшн -->
+  <div id="app" class="relative z-10 min-h-screen flex flex-col">
+
+    <!-- ===================================================================== -->
+    <!-- 1. НЭВТРЭХ ДЭЛГЭЦ (LOGIN VIEW - ИЛ НУУЦ ҮГ БАЙХГҮЙ)                   -->
+    <!-- ===================================================================== -->
+    <main id="login-view" class="flex-1 flex items-center justify-center p-4 sm:p-6">
+      <div class="w-full max-w-md relative z-10">
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200/80 shadow-xl shadow-sky-900/5 overflow-hidden">
+          <!-- Дээд уусалттай толгой хэсэг -->
+          <div class="bg-gradient-to-r from-sky-50 via-indigo-50/70 to-teal-50 px-6 pt-8 pb-6 text-center border-b border-slate-100">
+            <!-- Сургуулийн лого (logo.png байхгүй үед автоматаар атомын SVG лого харагдана) -->
+            <div class="mx-auto w-20 h-20 rounded-2xl bg-white shadow-md shadow-sky-900/5 border border-sky-100 flex items-center justify-center overflow-hidden mb-4">
+              <img
+                src="logo.png"
+                alt="Сургуулийн лого"
+                class="w-16 h-16 object-contain"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              />
+              <div style="display:none;" class="w-16 h-16 items-center justify-center text-sky-600">
+                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="32" cy="32" r="5" fill="currentColor" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(90 32 32)" />
+                </svg>
+              </div>
+            </div>
+
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Физикийн Цахим Сургалтын Систем
+            </h1>
+            <p id="login-subtitle" class="mt-1.5 text-xs sm:text-sm font-medium text-sky-700">
+              Сурагчийн нэвтрэх хэсэг
+            </p>
+          </div>
+
+          <!-- Нэвтрэх маягт -->
+          <form id="login-form" class="p-6 sm:p-8 space-y-5" autocomplete="off">
+            <!-- Эрх сонгох 2 том карт (Сурагч / Багш) -->
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
+                Хэрэглэгчийн төрөл сонгох
+              </label>
+              <div class="grid grid-cols-2 gap-3 relative z-10">
+                <button
+                  type="button"
+                  id="role-btn-student"
+                  onclick="selectRole('student')"
+                  class="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-sky-500 bg-sky-50/80 text-sky-900 shadow-xs transition cursor-pointer select-none"
+                >
+                  <div id="role-icon-student" class="w-11 h-11 rounded-xl bg-white text-sky-600 shadow-xs flex items-center justify-center pointer-events-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+                    </svg>
+                  </div>
+                  <span class="text-sm font-bold pointer-events-none">Сурагч</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="role-btn-teacher"
+                  onclick="selectRole('teacher')"
+                  class="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-indigo-300 text-slate-600 transition cursor-pointer select-none"
+                >
+                  <div id="role-icon-teacher" class="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center pointer-events-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                  </div>
+                  <span class="text-sm font-bold pointer-events-none">Багш</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Нэвтрэх нэр -->
+            <div>
+              <label for="login-username" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                Нэвтрэх нэр
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                  </svg>
+                </span>
+                <input
+                  id="login-username"
+                  type="text"
+                  required
+                  placeholder="Нэвтрэх нэрээ оруулна уу"
+                  class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 text-sm text-slate-900 outline-none transition"
+                />
+              </div>
+            </div>
+
+            <!-- Нууц үг -->
+            <div>
+              <label for="login-password" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                Нууц үг
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                  </svg>
+                </span>
+                <input
+                  id="login-password"
+                  type="password"
+                  required
+                  placeholder="Нууц үгээ оруулна уу"
+                  class="w-full pl-11 pr-11 py-3 rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 text-sm text-slate-900 outline-none transition"
+                />
+                <button
+                  type="button"
+                  onclick="togglePasswordVisibility('login-password')"
+                  aria-label="Нууц үг харах"
+                  class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Алдаа болон хэт олон оролдлогын түгжээний мэдэгдэл -->
+            <div id="login-error-box" class="hidden rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-xs sm:text-sm text-rose-700 font-medium"></div>
+
+            <!-- Нэвтрэх товч -->
+            <button
+              id="login-submit-btn"
+              type="submit"
+              class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-md shadow-sky-600/20 focus:ring-4 focus:ring-sky-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              Системд нэвтрэх
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- 2. БАГШИЙН УДИРДЛАГЫН САМБАР (TEACHER DASHBOARD)                      -->
+    <!-- ===================================================================== -->
+    <div id="teacher-view" class="hidden flex-1 flex flex-col">
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-50 to-indigo-50 border border-sky-100 flex items-center justify-center shrink-0 overflow-hidden">
+              <img src="logo.png" alt="Лого" class="w-8 h-8 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div style="display:none;" class="w-8 h-8 items-center justify-center text-sky-600">
+                <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3">
+                  <circle cx="32" cy="32" r="5" fill="currentColor" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)" />
+                </svg>
+              </div>
+            </div>
+            <div class="truncate">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900 text-sm sm:text-base truncate">Физикийн Цахим Сургалт</span>
+                <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  Багш
+                </span>
+              </div>
+              <p id="db-status-badge" class="text-[11px] text-slate-500 truncate"></p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onclick="openFirebaseModal()"
+              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition cursor-pointer"
+              title="Firebase Firestore холболтын заавар"
+            >
+              <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+              </svg>
+              <span class="hidden lg:inline">Firebase тохиргоо</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="openTeacherSecurityModal()"
+              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition cursor-pointer"
+              title="Багшийн нууц үг солих"
+            >
+              <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+              </svg>
+              <span class="hidden md:inline">Нууц үг солих</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="logoutUser()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+              </svg>
+              <span>Гарах</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 6 Үндсэн цэс -->
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-100 overflow-x-auto">
+          <div class="flex items-center gap-1.5 py-2 min-w-max">
+            <button type="button" data-ttab="tasks" onclick="switchTeacherTab('tasks')" class="t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              1. Даалгавар оруулах
+            </button>
+            <button type="button" data-ttab="progress" onclick="switchTeacherTab('progress')" class="t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              2. Сурагчдын явц ба дүн
+            </button>
+            <button type="button" data-ttab="users" onclick="switchTeacherTab('users')" class="t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              3. Хэрэглэгч үүсгэх / устгах
+            </button>
+            <button type="button" data-ttab="lessons" onclick="switchTeacherTab('lessons')" class="t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              4. Хичээл оруулах
+            </button>
+            <button type="button" data-ttab="attendance" onclick="switchTeacherTab('attendance')" class="t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              5. Сурагчийн ирц
+            </button>
+            <button type="button" data-ttab="exams" onclick="switchTeacherTab('exams')" class="t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              6. Шалгалт
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Багшийн үндсэн агуулга -->
+      <main id="teacher-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6"></main>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 3. СУРАГЧИЙН ПОРТАЛ (STUDENT DASHBOARD)                               -->
+    <!-- ===================================================================== -->
+    <div id="student-view" class="hidden flex-1 flex flex-col">
+      <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-50 to-teal-50 border border-sky-100 flex items-center justify-center shrink-0 overflow-hidden">
+              <img src="logo.png" alt="Лого" class="w-8 h-8 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div style="display:none;" class="w-8 h-8 items-center justify-center text-sky-600">
+                <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3">
+                  <circle cx="32" cy="32" r="5" fill="currentColor" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)" />
+                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)" />
+                </svg>
+              </div>
+            </div>
+            <div class="truncate">
+              <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span id="student-header-name" class="font-bold text-slate-900 text-sm sm:text-base truncate">Сурагч</span>
+                <span id="student-header-class" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+                  10-р анги
+                </span>
+                <span id="student-header-grade-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  Дүн: —
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-500">Физикийн Цахим Сургалтын Систем</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onclick="logoutUser()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition shrink-0 cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+            </svg>
+            <span>Гарах</span>
+          </button>
+        </div>
+
+        <!-- Сурагчийн үндсэн цэс -->
+        <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-100 overflow-x-auto">
+          <div class="flex items-center gap-2 py-2 min-w-max">
+            <button type="button" data-stab="tasks" onclick="switchStudentTab('tasks')" class="s-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              Даалгавар бодох
+            </button>
+            <button type="button" data-stab="lessons" onclick="switchStudentTab('lessons')" class="s-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              Хичээл үзэх
+            </button>
+            <button type="button" data-stab="attendance" onclick="switchStudentTab('attendance')" class="s-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              Миний дүн ба ирц
+            </button>
+            <button type="button" id="student-exam-nav-btn" data-stab="exam" onclick="switchStudentTab('exam')" class="s-tab-btn hidden px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer">
+              Шалгалт өгөх
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Шалгалт нээлттэй үед харагдах онцгой мэдэгдэл -->
+      <div id="student-exam-banner" class="hidden max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5">
+        <div class="rounded-2xl bg-gradient-to-r from-indigo-600 via-sky-600 to-teal-600 p-4 sm:p-5 text-white shadow-lg shadow-sky-600/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487 18.5 2.85a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+            </div>
+            <div>
+              <span class="inline-block text-[11px] font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full mb-1">
+                Шалгалт нээгдлээ
+              </span>
+              <h2 id="student-exam-banner-title" class="text-base sm:text-lg font-bold">Шалгалт</h2>
+            </div>
+          </div>
+          <button
+            type="button"
+            onclick="switchStudentTab('exam')"
+            class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white text-indigo-700 hover:bg-sky-50 font-bold text-sm shadow-sm transition cursor-pointer"
+          >
+            Шалгалт өгөх →
+          </button>
+        </div>
+      </div>
+
+      <!-- Сурагчийн үндсэн агуулга -->
+      <main id="student-content" class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6"></main>
+    </div>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- БАГШИЙН НУУЦ ҮГ СОЛИХ ЦОНХ                                           -->
+  <!-- ===================================================================== -->
+  <div id="teacher-security-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/45 backdrop-blur-xs p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Багшийн нууц үг солих</h3>
+        </div>
+        <button type="button" onclick="closeTeacherSecurityModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="teacher-change-pw-form" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Одоогийн нууц үг</label>
+          <input id="t-old-pw" type="password" required placeholder="Одоогийн нууц үгээ оруулна уу" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Шинэ нууц үг (хамгийн багадаа 4 тэмдэгт)</label>
+          <input id="t-new-pw" type="password" required minlength="4" placeholder="Шинэ нууц үг" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Шинэ нууц үг давтах</label>
+          <input id="t-confirm-pw" type="password" required minlength="4" placeholder="Шинэ нууц үгээ давтана уу" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="closeTeacherSecurityModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 cursor-pointer">
+            Хаах
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 shadow-sm cursor-pointer">
+            Нууц үг шинэчлэх
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FIREBASE ТОХИРГОО БА FIRESTORE RULES ЗААВАР ЦОНХ                      -->
+  <!-- ===================================================================== -->
+  <div id="firebase-info-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/45 backdrop-blur-xs p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 my-8">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <h3 class="text-lg font-bold text-slate-900">Google Firebase холбох заавар (VS Code)</h3>
+        <button type="button" onclick="closeFirebaseModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer">
+          ✕
+        </button>
+      </div>
+      <div class="mt-4 space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>1. <strong>Firebase Console</strong> (<span class="text-sky-700 font-medium">console.firebase.google.com</span>) дээр шинэ төсөл үүсгээд <strong>Firestore Database</strong>-ийг идэвхжүүлнэ.</p>
+        <p>2. <strong>Project Settings → Your apps → Web app</strong> хэсгээс <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">firebaseConfig</code> түлхүүрүүдийг хуулж, VS Code дээр <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">index.html</code> файлын <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">MANUAL_FIREBASE_CONFIG</code> хэсэгт оруулна.</p>
+        <p>3. <strong>Firestore Database → Rules</strong> хэсэгт дараах аюулгүй байдлын дүрмийг хуулж тавина:</p>
+        <pre id="firestore-rules-snippet" class="bg-slate-900 text-sky-200 p-3.5 rounded-xl text-[11px] overflow-x-auto leading-relaxed">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /students/{studentId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.passwordHash is string
+                            && request.resource.data.passwordHash.size() == 64;
+      allow delete: if true;
+    }
+    match /{collection}/{docId} {
+      allow read, write: if collection in [
+        'tasks', 'lessons', 'attendance', 'exams',
+        'exam_questions', 'exam_submissions', 'progress'
+      ];
+    }
+  }
+}</pre>
+        <div class="flex items-center justify-between pt-2">
+          <button type="button" onclick="copyFirestoreRules()" class="px-4 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 text-xs font-bold cursor-pointer">
+            Firestore Rules хуулах
+          </button>
+          <button type="button" onclick="closeFirebaseModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer">
+            Хаах
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СУРАГЧИЙН МЭДЭЭЛЭЛ / НУУЦ ҮГ ЗАСАХ ЦОНХ (БАГШИД ЗОРИУЛСАН) -->
+  <div id="student-edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/45 backdrop-blur-xs p-4">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 id="student-edit-modal-title" class="text-base font-bold text-slate-900">Сурагчийн мэдээлэл засах</h3>
+        <button type="button" onclick="closeStudentEditModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 cursor-pointer">✕</button>
+      </div>
+      <form id="student-edit-form" class="mt-4 space-y-4">
+        <input type="hidden" id="edit-student-id" />
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Овог, нэр</label>
+          <input id="edit-student-fullname" type="text" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Анги (10–12)</label>
+            <select id="edit-student-grade" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:border-sky-500 outline-none">
+              <option value="10-р анги">10-р анги</option>
+              <option value="11-р анги">11-р анги</option>
+              <option value="12-р анги">12-р анги</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Бүлэг (заавал биш)</label>
+            <select id="edit-student-section" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:border-sky-500 outline-none">
+              <option value="">Бүлэггүй</option>
+              <option value="А">А бүлэг</option>
+              <option value="Б">Б бүлэг</option>
+              <option value="В">В бүлэг</option>
+              <option value="Г">Г бүлэг</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Шинэ нууц үг (өөрчлөхгүй бол хоосон үлдээнэ үү)</label>
+          <input id="edit-student-new-pw" type="password" minlength="4" placeholder="Шинэ нууц үг (SHA-256 шифрлэгдэнэ)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+        </div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeStudentEditModal()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 cursor-pointer">Болих</button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 cursor-pointer">Хадгалах</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- СТАНДАРТ СИНХРОН JAVASCRIPT (БҮХ ТОВЧ, ЭВЕНТ ШУУД АЖИЛЛАНА)             -->
+  <!-- ===================================================================== -->
+  <script>
+    /**
+     * =========================================================================
+     * FIREBASE ТОХИРГОО (VS CODE ДЭЭР ӨӨРИЙН FIREBASE ТҮЛХҮҮРИЙГ ЭНД ХОЛБОНО)
+     * Firebase Console -> Project Settings -> Your apps -> SDK setup and configuration
+     * хэсгээс авсан утгуудаар доорх талбаруудыг солиход өгөгдлийн сан шууд холбогдоно.
+     * =========================================================================
+     */
+    const MANUAL_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBWj422MjeqrwZoblVTRlmQNjonl5sEino",
+  authDomain: "physic-db0ee.firebaseapp.com",
+  projectId: "physic-db0ee",
+  storageBucket: "physic-db0ee.firebasestorage.app",
+  messagingSenderId: "1089020206896",
+  appId: "1:1089020206896:web:ca6b764a3449eec21f72f5"
+};
+
+    // =========================================================================
+    // 1. СТАНДАРТ FIPS 180-4 PURE JS SHA-256 КРИПТОГРАФИ
+    // =========================================================================
+    const PASSWORD_SALT = "physics_edu_2026:";
+
+    function sha256(message) {
+      const utf8 = unescape(encodeURIComponent(String(message)));
+      const K = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+      ];
+      let H = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+      ];
+
+      const msgLen = utf8.length;
+      const bitLen = msgLen * 8;
+      const bytes = [];
+      for (let i = 0; i < msgLen; i++) {
+        bytes.push(utf8.charCodeAt(i));
+      }
+      bytes.push(0x80);
+      while ((bytes.length % 64) !== 56) {
+        bytes.push(0x00);
+      }
+      const highBits = Math.floor(bitLen / 0x100000000);
+      const lowBits = bitLen >>> 0;
+      bytes.push((highBits >>> 24) & 0xff, (highBits >>> 16) & 0xff, (highBits >>> 8) & 0xff, highBits & 0xff);
+      bytes.push((lowBits >>> 24) & 0xff, (lowBits >>> 16) & 0xff, (lowBits >>> 8) & 0xff, lowBits & 0xff);
+
+      const rotr = (n, x) => (x >>> n) | (x << (32 - n));
+
+      for (let offset = 0; offset < bytes.length; offset += 64) {
+        const W = new Array(64);
+        for (let t = 0; t < 16; t++) {
+          const i = offset + t * 4;
+          W[t] = ((bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] << 8) | bytes[i + 3]) >>> 0;
+        }
+        for (let t = 16; t < 64; t++) {
+          const s0 = rotr(7, W[t - 15]) ^ rotr(18, W[t - 15]) ^ (W[t - 15] >>> 3);
+          const s1 = rotr(17, W[t - 2]) ^ rotr(19, W[t - 2]) ^ (W[t - 2] >>> 10);
+          W[t] = (W[t - 16] + s0 + W[t - 7] + s1) >>> 0;
+        }
+
+        let [a, b, c, d, e, f, g, h] = H;
+        for (let t = 0; t < 64; t++) {
+          const S1 = rotr(6, e) ^ rotr(11, e) ^ rotr(25, e);
+          const ch = (e & f) ^ (~e & g);
+          const temp1 = (h + S1 + ch + K[t] + W[t]) >>> 0;
+          const S0 = rotr(2, a) ^ rotr(13, a) ^ rotr(22, a);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const temp2 = (S0 + maj) >>> 0;
+
+          h = g;
+          g = f;
+          f = e;
+          e = (d + temp1) >>> 0;
+          d = c;
+          c = b;
+          b = a;
+          a = (temp1 + temp2) >>> 0;
+        }
+
+        H = [
+          (H[0] + a) >>> 0, (H[1] + b) >>> 0, (H[2] + c) >>> 0, (H[3] + d) >>> 0,
+          (H[4] + e) >>> 0, (H[5] + f) >>> 0, (H[6] + g) >>> 0, (H[7] + h) >>> 0
+        ];
+      }
+
+      return H.map(val => val.toString(16).padStart(8, "0")).join("");
+    }
+
+    function hashPassword(plainPassword) {
+      return sha256(PASSWORD_SALT + String(plainPassword));
+    }
+
+    // Анхдагч багшийн нууц үгийн давсалсан SHA-256 хаш (ил нууц үг код дотор бичигдээгүй)
+    const DEFAULT_ADMIN_HASH = "d6a930b73621ab110266ee2c45cce8f304cede2f3a5fdae87c20c7a9970b4c8b";
+
+    const SESSION_KEY = "physics_edu_active_session_v3";
+    const RATE_LIMIT_KEY = "physics_edu_login_attempts_v3";
+    const LOCAL_DB_KEY = "physics_edu_secure_store_v3";
+    const MAX_LOGIN_ATTEMPTS = 5;
+    const LOCKOUT_DURATION_MS = 30 * 1000; // 30 секунд
+
+    const GRADES = ["10-р анги", "11-р анги", "12-р анги"];
+    const SECTIONS = ["", "А", "Б", "В", "Г"];
+
+    const TOPICS = [
+      { id: "mechanic", name: "Механик", icon: "⚙️" },
+      { id: "molecular", name: "Молекул ба дулаан", icon: "🌡️" },
+      { id: "electricity", name: "Цахилгаан", icon: "⚡" },
+      { id: "waves", name: "Хэлбэлзэл долгион", icon: "〰️" },
+      { id: "optics", name: "Оптик", icon: "🔭" }
+    ];
+    const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8];
+    const COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 цаг
+
+    // =========================================================================
+    // 2. XSS ХАМГААЛАЛТ БА KATEX ТОМЬЁО ДҮРСЛЭГЧ
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function renderSafeMath(rawText) {
+      const text = String(rawText ?? "");
+      if (!text) return "";
+      const parts = text.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g);
+      return parts.map(part => {
+        if (part.startsWith("$$") && part.endsWith("$$") && part.length > 4) {
+          const expr = part.slice(2, -2).trim();
+          if (window.katex) {
+            try {
+              return window.katex.renderToString(expr, { displayMode: true, throwOnError: false, trust: false });
+            } catch (_) {
+              return escapeHtml(part);
+            }
+          }
+          return `<code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">${escapeHtml(part)}</code>`;
+        }
+        if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
+          const expr = part.slice(1, -1).trim();
+          if (window.katex) {
+            try {
+              return window.katex.renderToString(expr, { displayMode: false, throwOnError: false, trust: false });
+            } catch (_) {
+              return escapeHtml(part);
+            }
+          }
+          return `<code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">${escapeHtml(part)}</code>`;
+        }
+        return escapeHtml(part).replace(/\n/g, "<br>");
+      }).join("");
+    }
+
+    function runKatexAutoRender() {
+      if (window.renderMathInElement) {
+        try {
+          window.renderMathInElement(document.body, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false }
+            ],
+            throwOnError: false
+          });
+        } catch (_) {}
+      }
+    }
+
+    // =========================================================================
+    // 3. АНГИ БҮЛЭГ БА ДҮНГИЙН ТУСЛАХ ФУНКЦҮҮД
+    // =========================================================================
+    function formatStudentClassLabel(grade, section) {
+      const g = GRADES.includes(grade) ? grade : "10-р анги";
+      const sec = String(section || "").trim();
+      return sec ? `${g} (${sec})` : g;
+    }
+
+    function getStudentGradeInfo(student) {
+      if (!student) return { grade: "10-р анги", section: "", label: "10-р анги" };
+      if (student.grade && GRADES.includes(student.grade)) {
+        const sec = String(student.section || "").trim();
+        return { grade: student.grade, section: sec, label: formatStudentClassLabel(student.grade, sec) };
+      }
+      const raw = String(student.classGroup || "");
+      let grade = "10-р анги";
+      if (raw.includes("12")) grade = "12-р анги";
+      else if (raw.includes("11")) grade = "11-р анги";
+      const secMatch = raw.match(/[АБВГ]/i);
+      const section = secMatch ? secMatch[0].toUpperCase() : "";
+      return { grade, section, label: formatStudentClassLabel(grade, section) };
+    }
+
+    function getLetterGradeInfo(pct) {
+      if (pct >= 90) return { letter: "A", desc: "Онц", badgeCls: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+      if (pct >= 80) return { letter: "B", desc: "Сайн", badgeCls: "bg-sky-50 text-sky-700 border-sky-200" };
+      if (pct >= 70) return { letter: "C", desc: "Дунд", badgeCls: "bg-indigo-50 text-indigo-700 border-indigo-200" };
+      if (pct >= 60) return { letter: "D", desc: "Хангалттай", badgeCls: "bg-amber-50 text-amber-700 border-amber-200" };
+      return { letter: "F", desc: "Хангалтгүй", badgeCls: "bg-rose-50 text-rose-700 border-rose-200" };
+    }
+
+    function getStudentGradeSummary(studentId) {
+      const subs = state.examSubmissions.filter(s => s.studentId === studentId);
+      let completedLevels = 0;
+      TOPICS.forEach(t => {
+        LEVELS.forEach(lvl => {
+          if (isLevelCompletedByStudent(studentId, t.id, lvl)) completedLevels++;
+        });
+      });
+
+      if (subs.length === 0) {
+        return {
+          examCount: 0,
+          averagePct: null,
+          letterInfo: null,
+          completedLevels,
+          submissions: []
+        };
+      }
+
+      const pcts = subs.map(s => (s.total > 0 ? Math.round((s.score / s.total) * 100) : 0));
+      const averagePct = Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length);
+      return {
+        examCount: subs.length,
+        averagePct,
+        letterInfo: getLetterGradeInfo(averagePct),
+        completedLevels,
+        submissions: subs
+      };
+    }
+
+    // =========================================================================
+    // 4. НЭГДСЭН ТӨЛӨВ (STATE) БА ӨГӨГДЛИЙН САН (FIRESTORE + LOCALSTORAGE)
+    // =========================================================================
+    let db = null;
+    let fsOps = null;
+
+    const state = {
+      session: null,
+      loginRole: "student",
+      adminPasswordHash: DEFAULT_ADMIN_HASH,
+      students: [],
+      tasks: [],
+      lessons: [],
+      attendance: [], // { id, date, grade, classGroup, studentId, status }
+      progress: {},   // { [studentId]: { solvedTasks: { [taskId]: true }, cooldowns: { ["topic_level"]: timestamp } } }
+      exams: [
+        {
+          id: "default_exam",
+          title: "Физикийн нэгдсэн шалгалт",
+          targetGrade: "ALL", // "ALL" | "10-р анги" | "11-р анги" | "12-р анги"
+          durationMinutes: 40,
+          isOpen: false,
+          createdAt: Date.now()
+        }
+      ],
+      examQuestions: [],   // { id, examId, question, imageUrl, options, correctIndex }
+      examSubmissions: [], // { id, examId, examTitle, studentId, studentName, grade, classGroup, score, total, submittedAt }
+      // Багшийн UI төлөв
+      teacherTab: "tasks",
+      selectedTopic: "mechanic",
+      selectedLevel: 1,
+      pendingTaskImage: "",
+      pendingLessonImage: "",
+      pendingExamImage: "",
+      progressGradeFilter: "ALL", // "ALL" | "10-р анги" | "11-р анги" | "12-р анги"
+      progressViewMode: "grouped", // "grouped" | "table"
+      collapsedGrades: {},
+      progressSearch: "",
+      userGradeFilter: "ALL",
+      userSearch: "",
+      lessonTopicFilter: "ALL",
+      attendanceDate: new Date().toISOString().slice(0, 10),
+      attendanceGradeFilter: "10-р анги",
+      selectedExamId: "default_exam",
+      examResultGradeFilter: "ALL",
+      // Сурагчийн UI төлөв
+      studentTab: "tasks",
+      studentTopic: "mechanic",
+      studentActiveLevel: null,
+      studentLessonFilter: "ALL",
+      activeStudentExamId: null,
+      examTimerStartedAt: null
+    };
+
+    function loadLocalStore() {
+      try {
+        const raw = localStorage.getItem(LOCAL_DB_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed.adminPasswordHash && parsed.adminPasswordHash.length === 64) {
+          state.adminPasswordHash = parsed.adminPasswordHash;
+        }
+        if (Array.isArray(parsed.students)) state.students = parsed.students;
+        if (Array.isArray(parsed.tasks)) state.tasks = parsed.tasks;
+        if (Array.isArray(parsed.lessons)) state.lessons = parsed.lessons;
+        if (Array.isArray(parsed.attendance)) state.attendance = parsed.attendance;
+        if (parsed.progress && typeof parsed.progress === "object") state.progress = parsed.progress;
+        if (Array.isArray(parsed.exams) && parsed.exams.length > 0) {
+          state.exams = parsed.exams;
+          if (!state.exams.some(x => x.id === state.selectedExamId)) {
+            state.selectedExamId = state.exams[0].id;
+          }
+        }
+        if (Array.isArray(parsed.examQuestions)) state.examQuestions = parsed.examQuestions;
+        if (Array.isArray(parsed.examSubmissions)) state.examSubmissions = parsed.examSubmissions;
+      } catch (e) {
+        console.error("LocalStorage унших алдаа:", e);
+      }
+    }
+
+    function saveLocalStore() {
+      try {
+        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify({
+          adminPasswordHash: state.adminPasswordHash,
+          students: state.students,
+          tasks: state.tasks,
+          lessons: state.lessons,
+          attendance: state.attendance,
+          progress: state.progress,
+          exams: state.exams,
+          examQuestions: state.examQuestions,
+          examSubmissions: state.examSubmissions
+        }));
+      } catch (e) {
+        showToast("Санах ой дүүрсэн байна. Зургийн хэмжээг багасгана уу.", "error");
+      }
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+    }
+
+    async function initFirebase() {
+      loadLocalStore();
+      const statusBadge = document.getElementById("db-status-badge");
+
+      const isConfigured =
+        MANUAL_FIREBASE_CONFIG.apiKey &&
+        MANUAL_FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY" &&
+        MANUAL_FIREBASE_CONFIG.projectId &&
+        MANUAL_FIREBASE_CONFIG.projectId !== "YOUR_PROJECT_ID";
+
+      if (!isConfigured) {
+        if (statusBadge) {
+          statusBadge.textContent = "Дотоод өгөгдлийн сан (VS Code Firebase түлхүүр холбоход бэлэн)";
+        }
+        return;
+      }
+
+      try {
+        const appMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+        const fsMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+        const app = appMod.initializeApp(MANUAL_FIREBASE_CONFIG);
+        db = fsMod.getFirestore(app);
+        fsOps = fsMod;
+
+        if (statusBadge) {
+          statusBadge.textContent = "Google Firebase Firestore бодит цагийн холболт идэвхтэй";
+        }
+
+        const adminRef = fsMod.doc(db, "settings", "admin_auth");
+        const adminSnap = await fsMod.getDoc(adminRef);
+        if (!adminSnap.exists()) {
+          await fsMod.setDoc(adminRef, {
+            passwordHash: DEFAULT_ADMIN_HASH,
+            updatedAt: Date.now()
+          });
+        }
+
+        fsMod.onSnapshot(adminRef, (snap) => {
+          if (snap.exists() && snap.data().passwordHash) {
+            state.adminPasswordHash = snap.data().passwordHash;
+          }
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "students"), (snap) => {
+          state.students = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "tasks"), (snap) => {
+          state.tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "lessons"), (snap) => {
+          state.lessons = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "attendance"), (snap) => {
+          state.attendance = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "progress"), (snap) => {
+          const nextProg = {};
+          snap.docs.forEach(d => {
+            nextProg[d.id] = d.data();
+          });
+          state.progress = nextProg;
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "exams"), (snap) => {
+          if (!snap.empty) {
+            state.exams = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (!state.exams.some(x => x.id === state.selectedExamId)) {
+              state.selectedExamId = state.exams[0].id;
+            }
+          }
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "exam_questions"), (snap) => {
+          state.examQuestions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "exam_submissions"), (snap) => {
+          state.examSubmissions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          refreshActiveView();
+        });
+      } catch (err) {
+        console.error("Firebase холболтын алдаа:", err);
+        if (statusBadge) {
+          statusBadge.textContent = "Дотоод өгөгдлийн сан (Firebase холболт амжилтгүй боллоо)";
+        }
+      }
+    }
+
+    async function dbSetDocument(colName, docId, data) {
+      if (db && fsOps) {
+        await fsOps.setDoc(fsOps.doc(db, colName, docId), data, { merge: true });
+      } else {
+        saveLocalStore();
+      }
+    }
+
+    async function dbAddDocument(colName, listRef, data) {
+      if (db && fsOps) {
+        const ref = await fsOps.addDoc(fsOps.collection(db, colName), data);
+        return ref.id;
+      } else {
+        const id = generateId();
+        listRef.push({ id, ...data });
+        saveLocalStore();
+        return id;
+      }
+    }
+
+    async function dbDeleteDocument(colName, listRef, docId) {
+      if (db && fsOps) {
+        await fsOps.deleteDoc(fsOps.doc(db, colName, docId));
+      } else {
+        const idx = listRef.findIndex(item => item.id === docId);
+        if (idx !== -1) listRef.splice(idx, 1);
+        saveLocalStore();
+      }
+    }
+
+    // =========================================================================
+    // 5. UI ТУСЛАХ ФУНКЦҮҮД (TOAST, MODAL, IMAGE COMPRESSION)
+    // =========================================================================
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+      const el = document.createElement("div");
+      const colors = {
+        success: "bg-emerald-600 text-white border-emerald-500",
+        error: "bg-rose-600 text-white border-rose-500",
+        warning: "bg-amber-500 text-white border-amber-400",
+        info: "bg-slate-800 text-white border-slate-700"
+      };
+      el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-lg border text-xs sm:text-sm font-medium flex items-center justify-between gap-3 transition-all transform translate-y-0 opacity-100 ${colors[type] || colors.info}`;
+      el.innerHTML = `<span>${escapeHtml(message)}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(-8px)";
+        setTimeout(() => el.remove(), 250);
+      }, 3400);
+    }
+
+    function showConfirmModal(title, message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById("confirm-modal");
+        document.getElementById("confirm-modal-title").textContent = title;
+        document.getElementById("confirm-modal-message").textContent = message;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        const okBtn = document.getElementById("confirm-ok-btn");
+        const cancelBtn = document.getElementById("confirm-cancel-btn");
+
+        const cleanup = (result) => {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+          resolve(result);
+        };
+
+        okBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+      });
+    }
+
+    window.openImageModal = function(src) {
+      if (!src) return;
+      const modal = document.getElementById("image-modal");
+      document.getElementById("image-modal-src").src = src;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    window.closeImageModal = function() {
+      const modal = document.getElementById("image-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+
+    window.togglePasswordVisibility = function(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.type = input.type === "password" ? "text" : "password";
+    };
+
+    function compressImageFile(file, maxWidth = 860, quality = 0.78) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type.startsWith("image/")) {
+          reject(new Error("Зөвхөн зураг файл сонгоно уу."));
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => reject(new Error("Зураг уншихад алдаа гарлаа."));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error("Файл уншихад алдаа гарлаа."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.insertFormulaToken = function(textareaId, token, previewId) {
+      const ta = document.getElementById(textareaId);
+      if (!ta) return;
+      const start = ta.selectionStart || 0;
+      const end = ta.selectionEnd || 0;
+      const val = ta.value;
+      ta.value = val.slice(0, start) + token + val.slice(end);
+      ta.focus();
+      ta.selectionStart = ta.selectionEnd = start + token.length;
+      if (previewId) {
+        const pv = document.getElementById(previewId);
+        if (pv) pv.innerHTML = renderSafeMath(ta.value) || '<span class="text-slate-400 text-xs">Томьёоны урьдчилсан харагдац энд гарна...</span>';
+      }
+    };
+
+    // =========================================================================
+    // 6. НЭВТРЭХ БА ЭРХ СОНГОХ (SELECTROLE + BRUTE-FORCE ХАМГААЛАЛТ)
+    // =========================================================================
+    let lockoutTimerInterval = null;
+
+    function getRateLimitState() {
+      try {
+        return JSON.parse(localStorage.getItem(RATE_LIMIT_KEY)) || { count: 0, lockedUntil: 0 };
+      } catch (_) {
+        return { count: 0, lockedUntil: 0 };
+      }
+    }
+
+    function setRateLimitState(data) {
+      try {
+        localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(data));
+      } catch (_) {}
+    }
+
+    function updateLockoutUI() {
+      const rl = getRateLimitState();
+      const errorBox = document.getElementById("login-error-box");
+      const submitBtn = document.getElementById("login-submit-btn");
+      if (!errorBox || !submitBtn) return;
+
+      const now = Date.now();
+      if (rl.lockedUntil > now) {
+        const sec = Math.ceil((rl.lockedUntil - now) / 1000);
+        errorBox.textContent = `Хэт олон удаа буруу оролдлого хийлээ. ${sec} секундийн дараа дахин оролдоно уу.`;
+        errorBox.classList.remove("hidden");
+        submitBtn.disabled = true;
+        if (!lockoutTimerInterval) {
+          lockoutTimerInterval = setInterval(updateLockoutUI, 500);
+        }
+      } else {
+        if (lockoutTimerInterval) {
+          clearInterval(lockoutTimerInterval);
+          lockoutTimerInterval = null;
+        }
+        submitBtn.disabled = false;
+        if (rl.lockedUntil > 0) {
+          setRateLimitState({ count: 0, lockedUntil: 0 });
+          errorBox.classList.add("hidden");
+        }
+      }
+    }
+
+    window.selectRole = function(role) {
+      state.loginRole = role;
+      const stBtn = document.getElementById("role-btn-student");
+      const tcBtn = document.getElementById("role-btn-teacher");
+      const stIcon = document.getElementById("role-icon-student");
+      const tcIcon = document.getElementById("role-icon-teacher");
+      const subtitle = document.getElementById("login-subtitle");
+      const errorBox = document.getElementById("login-error-box");
+
+      if (errorBox) errorBox.classList.add("hidden");
+
+      if (role === "teacher") {
+        tcBtn.className = "flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-indigo-500 bg-indigo-50/80 text-indigo-900 shadow-xs transition cursor-pointer select-none";
+        tcIcon.className = "w-11 h-11 rounded-xl bg-white text-indigo-600 shadow-xs flex items-center justify-center pointer-events-none";
+
+        stBtn.className = "flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-sky-300 text-slate-600 transition cursor-pointer select-none";
+        stIcon.className = "w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center pointer-events-none";
+
+        if (subtitle) {
+          subtitle.textContent = "Багшийн нэвтрэх хэсэг";
+          subtitle.className = "mt-1.5 text-xs sm:text-sm font-semibold text-indigo-700";
+        }
+      } else {
+        stBtn.className = "flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-sky-500 bg-sky-50/80 text-sky-900 shadow-xs transition cursor-pointer select-none";
+        stIcon.className = "w-11 h-11 rounded-xl bg-white text-sky-600 shadow-xs flex items-center justify-center pointer-events-none";
+
+        tcBtn.className = "flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-indigo-300 text-slate-600 transition cursor-pointer select-none";
+        tcIcon.className = "w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center pointer-events-none";
+
+        if (subtitle) {
+          subtitle.textContent = "Сурагчийн нэвтрэх хэсэг";
+          subtitle.className = "mt-1.5 text-xs sm:text-sm font-semibold text-sky-700";
+        }
+      }
+
+      const uInput = document.getElementById("login-username");
+      if (uInput) uInput.focus();
+    };
+
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const rl = getRateLimitState();
+      if (rl.lockedUntil > Date.now()) {
+        updateLockoutUI();
+        return;
+      }
+
+      const usernameInput = document.getElementById("login-username").value.trim();
+      const passwordInput = document.getElementById("login-password").value;
+      const errorBox = document.getElementById("login-error-box");
+
+      if (!usernameInput || !passwordInput) {
+        errorBox.textContent = "Нэвтрэх нэр болон нууц үгээ бүрэн оруулна уу.";
+        errorBox.classList.remove("hidden");
+        return;
+      }
+
+      const enteredHash = hashPassword(passwordInput);
+
+      if (state.loginRole === "teacher") {
+        const isTeacherMatch =
+          usernameInput.toLowerCase() === "admin" &&
+          enteredHash === state.adminPasswordHash;
+
+        if (!isTeacherMatch) {
+          recordFailedAttempt();
+          return;
+        }
+
+        setRateLimitState({ count: 0, lockedUntil: 0 });
+        errorBox.classList.add("hidden");
+        document.getElementById("login-password").value = "";
+
+        state.session = {
+          role: "teacher",
+          userId: "admin",
+          username: "admin",
+          fullName: "Физикийн багш",
+          grade: "",
+          section: "",
+          classGroup: ""
+        };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(state.session));
+        showToast("Багшийн удирдлагын самбарт амжилттай нэвтэрлээ.", "success");
+        renderAppShell();
+      } else {
+        if (usernameInput.toLowerCase() === "admin") {
+          errorBox.textContent = "Багшийн эрхээр нэвтрэхийн тулд дээрээс 'Багш' төрлийг сонгоно уу.";
+          errorBox.classList.remove("hidden");
+          return;
+        }
+
+        const foundStudent = state.students.find(
+          s => String(s.username || "").trim().toLowerCase() === usernameInput.toLowerCase()
+        );
+
+        if (!foundStudent || foundStudent.passwordHash !== enteredHash) {
+          recordFailedAttempt();
+          return;
+        }
+
+        setRateLimitState({ count: 0, lockedUntil: 0 });
+        errorBox.classList.add("hidden");
+        document.getElementById("login-password").value = "";
+
+        const gInfo = getStudentGradeInfo(foundStudent);
+        state.session = {
+          role: "student",
+          userId: foundStudent.id,
+          username: foundStudent.username,
+          fullName: foundStudent.fullName,
+          grade: gInfo.grade,
+          section: gInfo.section,
+          classGroup: gInfo.label
+        };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(state.session));
+        showToast(`Тавтай морил, ${foundStudent.fullName}!`, "success");
+        renderAppShell();
+      }
+    });
+
+    function recordFailedAttempt() {
+      const rl = getRateLimitState();
+      const nextCount = (rl.count || 0) + 1;
+      const errorBox = document.getElementById("login-error-box");
+
+      if (nextCount >= MAX_LOGIN_ATTEMPTS) {
+        setRateLimitState({
+          count: nextCount,
+          lockedUntil: Date.now() + LOCKOUT_DURATION_MS
+        });
+        updateLockoutUI();
+      } else {
+        setRateLimitState({ count: nextCount, lockedUntil: 0 });
+        const left = MAX_LOGIN_ATTEMPTS - nextCount;
+        errorBox.textContent = `Нэвтрэх нэр эсвэл нууц үг буруу байна. (Үлдсэн оролдлого: ${left})`;
+        errorBox.classList.remove("hidden");
+      }
+    }
+
+    window.logoutUser = function() {
+      sessionStorage.removeItem(SESSION_KEY);
+      state.session = null;
+      state.studentActiveLevel = null;
+      state.activeStudentExamId = null;
+      renderAppShell();
+      showToast("Системээс гарлаа.", "info");
+    };
+
+    // =========================================================================
+    // 7. БАГШИЙН НУУЦ ҮГ СОЛИХ БА FIREBASE МОДАЛ
+    // =========================================================================
+    window.openTeacherSecurityModal = function() {
+      const modal = document.getElementById("teacher-security-modal");
+      document.getElementById("t-old-pw").value = "";
+      document.getElementById("t-new-pw").value = "";
+      document.getElementById("t-confirm-pw").value = "";
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    window.closeTeacherSecurityModal = function() {
+      const modal = document.getElementById("teacher-security-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+
+    window.openFirebaseModal = function() {
+      const modal = document.getElementById("firebase-info-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    window.closeFirebaseModal = function() {
+      const modal = document.getElementById("firebase-info-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+
+    document.getElementById("teacher-change-pw-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const oldPw = document.getElementById("t-old-pw").value;
+      const newPw = document.getElementById("t-new-pw").value;
+      const confirmPw = document.getElementById("t-confirm-pw").value;
+
+      if (newPw.length < 4) {
+        showToast("Шинэ нууц үг хамгийн багадаа 4 тэмдэгт байх ёстой.", "error");
+        return;
+      }
+      if (newPw !== confirmPw) {
+        showToast("Шинэ нууц үгийн давталт таарахгүй байна.", "error");
+        return;
+      }
+
+      const oldHash = hashPassword(oldPw);
+      if (oldHash !== state.adminPasswordHash) {
+        showToast("Одоогийн нууц үг буруу байна.", "error");
+        return;
+      }
+
+      const newHash = hashPassword(newPw);
+      state.adminPasswordHash = newHash;
+
+      try {
+        await dbSetDocument("settings", "admin_auth", {
+          passwordHash: newHash,
+          updatedAt: Date.now()
+        });
+        closeTeacherSecurityModal();
+        showToast("Багшийн нууц үг амжилттай шинэчлэгдлээ.", "success");
+      } catch (err) {
+        showToast("Нууц үг хадгалахад алдаа гарлаа.", "error");
+      }
+    });
+
+    window.copyFirestoreRules = function() {
+      const text = document.getElementById("firestore-rules-snippet").textContent;
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      showToast("Firestore Security Rules санах ойд хуулагдлаа.", "success");
+    };
+
+    // =========================================================================
+    // 8. ЯВЦ БА ТҮВШНИЙ ТООЦООЛОЛ
+    // =========================================================================
+    function getTasksFor(topicId, level) {
+      return state.tasks
+        .filter(t => t.topicId === topicId && Number(t.level) === Number(level))
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    }
+
+    function getStudentProgressObj(studentId) {
+      return state.progress[studentId] || { solvedTasks: {}, cooldowns: {} };
+    }
+
+    function isLevelCompletedByStudent(studentId, topicId, level) {
+      const tasks = getTasksFor(topicId, level);
+      if (tasks.length === 0) return false;
+      const prog = getStudentProgressObj(studentId);
+      const solved = prog.solvedTasks || {};
+      return tasks.every(t => Boolean(solved[t.id]));
+    }
+
+    function getLevelCooldownRemainingMs(studentId, topicId, level) {
+      const prog = getStudentProgressObj(studentId);
+      const key = `${topicId}_${level}`;
+      const until = Number((prog.cooldowns || {})[key] || 0);
+      return Math.max(0, until - Date.now());
+    }
+
+    function getStudentTopicReachedLevel(studentId, topicId) {
+      for (let lvl = 1; lvl <= 8; lvl++) {
+        const tasks = getTasksFor(topicId, lvl);
+        if (tasks.length === 0) return lvl;
+        if (!isLevelCompletedByStudent(studentId, topicId, lvl)) return lvl;
+      }
+      return 9; // 8 түвшин бүрэн дууссан
+    }
+
+    function getStudentActiveCooldownCount(studentId) {
+      const prog = getStudentProgressObj(studentId);
+      const cds = prog.cooldowns || {};
+      const now = Date.now();
+      return Object.values(cds).filter(ts => Number(ts) > now).length;
+    }
+
+    function formatCountdown(ms) {
+      const totalSec = Math.max(0, Math.ceil(ms / 1000));
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return [h, m, s].map(v => String(v).padStart(2, "0")).join(":");
+    }
+
+    // =========================================================================
+    // 9. ҮНДСЭН ХАРАГДАЦ УДИРДАГЧ
+    // =========================================================================
+    function renderAppShell() {
+      const loginView = document.getElementById("login-view");
+      const teacherView = document.getElementById("teacher-view");
+      const studentView = document.getElementById("student-view");
+
+      if (!state.session) {
+        loginView.classList.remove("hidden");
+        teacherView.classList.add("hidden");
+        studentView.classList.add("hidden");
+        updateLockoutUI();
+        return;
+      }
+
+      loginView.classList.add("hidden");
+
+      if (state.session.role === "teacher") {
+        teacherView.classList.remove("hidden");
+        studentView.classList.add("hidden");
+        renderTeacherDashboard();
+      } else {
+        teacherView.classList.add("hidden");
+        studentView.classList.remove("hidden");
+        renderStudentDashboard();
+      }
+    }
+
+    function refreshActiveView() {
+      if (!state.session) return;
+      if (state.session.role === "teacher") {
+        const activeTag = document.activeElement ? document.activeElement.tagName : "";
+        if (activeTag === "INPUT" || activeTag === "TEXTAREA" || activeTag === "SELECT") return;
+        renderTeacherDashboard();
+      } else {
+        renderStudentDashboard();
+      }
+    }
+
+    // =========================================================================
+    // 10. БАГШИЙН УДИРДЛАГЫН САМБАР (6 ТАБ)
+    // =========================================================================
+    window.switchTeacherTab = function(tabName) {
+      state.teacherTab = tabName;
+      renderTeacherDashboard();
+    };
+
+    function renderTeacherDashboard() {
+      document.querySelectorAll(".t-tab-btn").forEach(btn => {
+        const isActive = btn.dataset.ttab === state.teacherTab;
+        btn.className = isActive
+          ? "t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-600 text-white shadow-xs transition cursor-pointer"
+          : "t-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer";
+      });
+
+      const container = document.getElementById("teacher-content");
+      switch (state.teacherTab) {
+        case "tasks":
+          container.innerHTML = renderTeacherTasksTab();
+          bindTeacherTaskEvents();
+          break;
+        case "progress":
+          container.innerHTML = renderTeacherProgressTab();
+          break;
+        case "users":
+          container.innerHTML = renderTeacherUsersTab();
+          bindTeacherUserEvents();
+          break;
+        case "lessons":
+          container.innerHTML = renderTeacherLessonsTab();
+          bindTeacherLessonEvents();
+          break;
+        case "attendance":
+          container.innerHTML = renderTeacherAttendanceTab();
+          break;
+        case "exams":
+          container.innerHTML = renderTeacherExamsTab();
+          bindTeacherExamEvents();
+          break;
+      }
+      runKatexAutoRender();
+    }
+
+    // -------------------------------------------------------------------------
+    // ТАБ 1: ДААЛГАВАР ОРУУЛАХ (5 СЭДЭВ x 8 ТҮВШИН + TOMЬЁО + ЗУРАГ + ABCD)
+    // -------------------------------------------------------------------------
+    function renderTeacherTasksTab() {
+      const currentTasks = getTasksFor(state.selectedTopic, state.selectedLevel);
+      const topicObj = TOPICS.find(t => t.id === state.selectedTopic) || TOPICS[0];
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs">
+            <h2 class="text-sm font-bold text-slate-800 mb-3">1. Физикийн 5 бүлэг сэдвээс сонгох</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+              ${TOPICS.map(t => {
+                const active = t.id === state.selectedTopic;
+                const topicTaskCount = state.tasks.filter(x => x.topicId === t.id).length;
+                return `
+                  <button
+                    type="button"
+                    onclick="selectTeacherTopic('${t.id}')"
+                    class="flex items-center justify-between gap-2 p-3 rounded-xl border text-left transition cursor-pointer ${
+                      active
+                        ? "border-sky-500 bg-gradient-to-r from-sky-50 to-indigo-50/60 text-sky-900 font-bold shadow-xs"
+                        : "border-slate-200 bg-white hover:border-slate-300 text-slate-700 font-medium"
+                    }"
+                  >
+                    <span class="text-xs sm:text-sm truncate">${t.icon} ${escapeHtml(t.name)}</span>
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${active ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-600"}">
+                      ${topicTaskCount}
+                    </span>
+                  </button>
+                `;
+              }).join("")}
+            </div>
+
+            <h2 class="text-sm font-bold text-slate-800 mt-5 mb-3">2. Түвшин сонгох (1–8 түвшин)</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
+              ${LEVELS.map(lvl => {
+                const count = getTasksFor(state.selectedTopic, lvl).length;
+                const isLockedEmpty = count === 0;
+                const isSelected = state.selectedLevel === lvl;
+                return `
+                  <button
+                    type="button"
+                    onclick="selectTeacherLevel(${lvl})"
+                    class="p-3 rounded-xl border flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
+                      isSelected
+                        ? "border-indigo-500 bg-indigo-50/70 text-indigo-900 ring-2 ring-indigo-500/15"
+                        : isLockedEmpty
+                          ? "border-slate-200 bg-slate-50/80 text-slate-400 hover:border-slate-300"
+                          : "border-emerald-200 bg-emerald-50/40 text-slate-800 hover:border-emerald-300"
+                    }"
+                  >
+                    <div class="flex items-center gap-1">
+                      ${isLockedEmpty
+                        ? `<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>`
+                        : `<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>`
+                      }
+                      <span class="text-xs font-bold">${lvl}-р түвшин</span>
+                    </div>
+                    <span class="text-[11px] font-medium ${isLockedEmpty ? "text-slate-400" : "text-emerald-700"}">
+                      ${isLockedEmpty ? "Цоожтой (0)" : `${count} бодлого`}
+                    </span>
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+              <div class="pb-3 border-b border-slate-100">
+                <span class="text-xs font-semibold text-sky-600">${escapeHtml(topicObj.name)}</span>
+                <h3 class="text-base font-bold text-slate-900">${state.selectedLevel}-р түвшинд даалгавар нэмэх</h3>
+              </div>
+
+              <form id="add-task-form" class="mt-4 space-y-4">
+                <div>
+                  <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                    <label class="text-xs font-semibold text-slate-700">Бодлогын өгүүлбэр (Томьёог $...$ дотор бичнэ)</label>
+                    <div class="flex flex-wrap gap-1">
+                      ${[
+                        { label: "a/b", tok: "$\\frac{a}{b}$" },
+                        { label: "√x", tok: "$\\sqrt{x}$" },
+                        { label: "F⃗", tok: "$\\vec{F}$" },
+                        { label: "Δ", tok: "$\\Delta $" },
+                        { label: "Ω", tok: "$\\Omega$" },
+                        { label: "λ", tok: "$\\lambda$" },
+                        { label: "π", tok: "$\\pi$" },
+                        { label: "x²", tok: "$^2$" },
+                        { label: "v₀", tok: "$v_0$" }
+                      ].map(btn => `
+                        <button type="button" onclick="insertFormulaToken('task-question-input', '${btn.tok.replace(/\\/g, "\\\\")}', 'task-formula-preview')" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-sky-100 text-slate-700 hover:text-sky-800 text-[11px] font-mono cursor-pointer">
+                          ${btn.label}
+                        </button>
+                      `).join("")}
+                    </div>
+                  </div>
+                  <textarea
+                    id="task-question-input"
+                    rows="3"
+                    required
+                    placeholder="Жишээ: $m = 2\\text{ кг}$ масстай биед $F = 10\\text{ Н}$ хүч үйлчилбэл хурдатгалыг ол."
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none"
+                  ></textarea>
+                  <div id="task-formula-preview" class="mt-2 p-3 rounded-xl bg-sky-50/50 border border-sky-100 text-sm text-slate-800 min-h-[42px]">
+                    <span class="text-slate-400 text-xs">Томьёоны урьдчилсан харагдац энд гарна...</span>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                  <label class="block text-xs font-semibold text-slate-700">Бодлогын зураг / схем (заавал биш)</label>
+                  <label class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-sky-300 bg-white hover:bg-sky-50/50 text-xs font-semibold text-sky-700 cursor-pointer transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                    </svg>
+                    <span>Зураг сонгож оруулах</span>
+                    <input id="task-image-file" type="file" accept="image/*" class="hidden" />
+                  </label>
+                  <div id="task-image-preview-box" class="${state.pendingTaskImage ? "" : "hidden"} flex items-center justify-between gap-2 pt-1">
+                    <img id="task-image-preview" src="${escapeHtml(state.pendingTaskImage)}" alt="Урьдчилсан зураг" class="h-20 rounded-lg border border-slate-200 object-contain bg-white" />
+                    <button type="button" onclick="clearPendingImage('task')" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 text-xs font-semibold cursor-pointer">Зураг авах</button>
+                  </div>
+                </div>
+
+                <div class="space-y-2.5">
+                  <label class="block text-xs font-semibold text-slate-700">Хариултын 4 хувилбар (Томьёо бол $...$ дотор бичнэ)</label>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    ${["A", "B", "C", "D"].map((opt, idx) => `
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">${opt} хувилбар</label>
+                        <input id="task-opt-${idx}" type="text" required placeholder="${opt} хариу (Жишээ: $5\\text{ м/с}^2$)" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:border-sky-500 outline-none" />
+                      </div>
+                    `).join("")}
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Зөв хариултын хувилбар</label>
+                    <select id="task-correct-opt" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white focus:border-sky-500 outline-none">
+                      <option value="0">A хувилбар зөв</option>
+                      <option value="1">B хувилбар зөв</option>
+                      <option value="2">C хувилбар зөв</option>
+                      <option value="3">D хувилбар зөв</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-sm transition cursor-pointer">
+                  + Даалгавар нэмэх
+                </button>
+              </form>
+            </div>
+
+            <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col">
+              <div class="pb-3 border-b border-slate-100">
+                <h3 class="text-base font-bold text-slate-900">
+                  ${escapeHtml(topicObj.name)} — ${state.selectedLevel}-р түвшний даалгаврууд (${currentTasks.length})
+                </h3>
+              </div>
+
+              <div class="mt-4 space-y-3.5 flex-1 overflow-y-auto max-h-[680px] pr-1">
+                ${currentTasks.length === 0 ? `
+                  <div class="py-12 text-center border-2 border-dashed border-slate-200 rounded-2xl px-4">
+                    <div class="mx-auto w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mb-3">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                      </svg>
+                    </div>
+                    <p class="text-sm font-bold text-slate-700">Энэ түвшинд даалгавар ороогүй тул цоожтой байна</p>
+                    <p class="text-xs text-slate-500 mt-1">Зүүн талын маягтаар эхний даалгавраа нэмснээр сурагчдад нээгдэнэ.</p>
+                  </div>
+                ` : currentTasks.map((task, index) => `
+                  <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2.5">
+                    <div class="flex items-start justify-between gap-2">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg bg-sky-100 text-sky-800 text-xs font-bold">
+                        Бодлого #${index + 1}
+                      </span>
+                      <button type="button" onclick="deleteTaskItem('${task.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold transition cursor-pointer">
+                        Устгах
+                      </button>
+                    </div>
+                    <div class="text-sm text-slate-800 leading-relaxed">${renderSafeMath(task.question)}</div>
+                    ${task.imageUrl ? `
+                      <img src="${escapeHtml(task.imageUrl)}" alt="Бодлогын зураг" onclick="openImageModal(this.src)" class="max-h-40 rounded-xl border border-slate-200 bg-white p-1 cursor-zoom-in" />
+                    ` : ""}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                      ${(task.options || []).map((opt, idx) => {
+                        const isCorr = Number(task.correctIndex) === idx;
+                        const letters = ["A", "B", "C", "D"];
+                        return `
+                          <div class="px-3 py-1.5 rounded-lg text-xs border ${isCorr ? "bg-emerald-50 border-emerald-300 text-emerald-900 font-bold" : "bg-white border-slate-200 text-slate-700"}">
+                            <span class="font-bold mr-1">${letters[idx]})</span> ${renderSafeMath(opt)}
+                          </div>
+                        `;
+                      }).join("")}
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    window.selectTeacherTopic = function(topicId) {
+      state.selectedTopic = topicId;
+      renderTeacherDashboard();
+    };
+
+    window.selectTeacherLevel = function(lvl) {
+      state.selectedLevel = lvl;
+      renderTeacherDashboard();
+    };
+
+    window.clearPendingImage = function(kind) {
+      if (kind === "task") state.pendingTaskImage = "";
+      if (kind === "lesson") state.pendingLessonImage = "";
+      if (kind === "exam") state.pendingExamImage = "";
+      renderTeacherDashboard();
+    };
+
+    function bindTeacherTaskEvents() {
+      const qInput = document.getElementById("task-question-input");
+      const preview = document.getElementById("task-formula-preview");
+      if (qInput && preview) {
+        qInput.addEventListener("input", () => {
+          preview.innerHTML = renderSafeMath(qInput.value) || '<span class="text-slate-400 text-xs">Томьёоны урьдчилсан харагдац энд гарна...</span>';
+        });
+      }
+
+      const fileInput = document.getElementById("task-image-file");
+      if (fileInput) {
+        fileInput.addEventListener("change", async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          try {
+            state.pendingTaskImage = await compressImageFile(file);
+            const box = document.getElementById("task-image-preview-box");
+            const img = document.getElementById("task-image-preview");
+            if (box && img) {
+              img.src = state.pendingTaskImage;
+              box.classList.remove("hidden");
+            }
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+      }
+
+      const form = document.getElementById("add-task-form");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const question = document.getElementById("task-question-input").value.trim();
+          if (!question) return;
+
+          const taskData = {
+            topicId: state.selectedTopic,
+            level: state.selectedLevel,
+            question,
+            imageUrl: state.pendingTaskImage || "",
+            options: [
+              document.getElementById("task-opt-0").value.trim(),
+              document.getElementById("task-opt-1").value.trim(),
+              document.getElementById("task-opt-2").value.trim(),
+              document.getElementById("task-opt-3").value.trim()
+            ],
+            correctIndex: Number(document.getElementById("task-correct-opt").value),
+            createdAt: Date.now()
+          };
+
+          await dbAddDocument("tasks", state.tasks, taskData);
+          state.pendingTaskImage = "";
+          showToast("Даалгавар амжилттай нэмэгдлээ.", "success");
+          renderTeacherDashboard();
+        });
+      }
+    }
+
+    window.deleteTaskItem = async function(taskId) {
+      const ok = await showConfirmModal("Даалгавар устгах", "Энэ даалгаврыг бүрмөсөн устгах уу?");
+      if (!ok) return;
+      await dbDeleteDocument("tasks", state.tasks, taskId);
+      showToast("Даалгавар устгагдлаа.", "info");
+      renderTeacherDashboard();
+    };
+
+    // -------------------------------------------------------------------------
+    // ТАБ 2: СУРАГЧДЫН ЯВЦ БА ДҮН (10–12 АНГИАР АНГИЛЖ ХАРАХ + НЭГДСЭН ХҮСНЭГТ)
+    // -------------------------------------------------------------------------
+    function renderStudentProgressRow(st) {
+      const gInfo = getStudentGradeInfo(st);
+      const gradeSummary = getStudentGradeSummary(st.id);
+      const cdCount = getStudentActiveCooldownCount(st.id);
+      const stAtt = state.attendance.filter(a => a.studentId === st.id);
+      const presentDays = stAtt.filter(a => a.status === "present").length;
+      const absentDays = stAtt.filter(a => a.status === "absent").length;
+
+      return `
+        <tr class="hover:bg-sky-50/30 transition">
+          <td class="py-3.5 px-4">
+            <div class="font-semibold text-slate-900">${escapeHtml(st.fullName)}</div>
+            <div class="text-[11px] text-slate-400">@${escapeHtml(st.username)}</div>
+          </td>
+          <td class="py-3.5 px-3">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-100">
+              ${escapeHtml(gInfo.label)}
+            </span>
+          </td>
+          ${TOPICS.map(t => {
+            const lvl = getStudentTopicReachedLevel(st.id, t.id);
+            const isDoneAll = lvl === 9;
+            return `
+              <td class="py-3.5 px-2.5 text-center">
+                ${isDoneAll
+                  ? `<span class="inline-flex items-center px-2 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">8/8 ✓</span>`
+                  : `<span class="inline-flex items-center px-2 py-1 rounded-lg text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">${lvl}-р түвшин</span>`
+                }
+              </td>
+            `;
+          }).join("")}
+          <td class="py-3.5 px-3 text-center">
+            <span class="text-xs font-extrabold text-slate-800">${gradeSummary.completedLevels} / 40</span>
+          </td>
+          <td class="py-3.5 px-3 text-center">
+            ${gradeSummary.examCount > 0 ? `
+              <div class="inline-flex flex-col items-center">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${gradeSummary.letterInfo.badgeCls}">
+                  ${gradeSummary.averagePct}% (${gradeSummary.letterInfo.letter})
+                </span>
+                <span class="text-[10px] text-slate-400 mt-0.5">${gradeSummary.examCount} шалгалт</span>
+              </div>
+            ` : `
+              <span class="text-xs text-slate-400 font-medium">Шалгалт өгөөгүй</span>
+            `}
+          </td>
+          <td class="py-3.5 px-3 text-center">
+            <div class="text-[11px] text-slate-600">
+              <span class="text-emerald-700 font-bold">Суусан: ${presentDays}</span>
+              ${absentDays > 0 ? `<span class="text-rose-600 font-semibold ml-1.5">Тас: ${absentDays}</span>` : ""}
+            </div>
+            ${cdCount > 0 ? `<span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">24ц хүлээлт (${cdCount})</span>` : ""}
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderProgressTableHtml(studentList) {
+      if (studentList.length === 0) {
+        return `
+          <div class="py-10 text-center text-slate-400 text-sm">
+            Сонгосон шүүлтүүрт тохирох сурагч олдсонгүй.
+          </div>
+        `;
+      }
+      return `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[980px]">
+            <thead>
+              <tr class="border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50/80">
+                <th class="py-3 px-4 rounded-tl-xl">Сурагчийн овог нэр</th>
+                <th class="py-3 px-3">Анги бүлэг</th>
+                ${TOPICS.map(t => `<th class="py-3 px-2.5 text-center">${t.icon} ${escapeHtml(t.name)}</th>`).join("")}
+                <th class="py-3 px-3 text-center">Нийт түвшин</th>
+                <th class="py-3 px-3 text-center">Дүн (Шалгалт)</th>
+                <th class="py-3 px-3 text-center rounded-tr-xl">Ирц / Төлөв</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm">
+              ${studentList.map(st => renderStudentProgressRow(st)).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    window.toggleGradeCollapse = function(grade) {
+      state.collapsedGrades[grade] = !state.collapsedGrades[grade];
+      renderTeacherDashboard();
+    };
+
+    function renderTeacherProgressTab() {
+      const filtered = state.students
+        .filter(s => {
+          const gInfo = getStudentGradeInfo(s);
+          return state.progressGradeFilter === "ALL" || gInfo.grade === state.progressGradeFilter;
+        })
+        .filter(s => !state.progressSearch || String(s.fullName).toLowerCase().includes(state.progressSearch.toLowerCase()))
+        .sort((a, b) => {
+          const ga = getStudentGradeInfo(a);
+          const gb = getStudentGradeInfo(b);
+          return ga.label.localeCompare(gb.label) || String(a.fullName).localeCompare(String(b.fullName));
+        });
+
+      const gradesToShow = state.progressGradeFilter === "ALL" ? GRADES : [state.progressGradeFilter];
+
+      return `
+        <div class="space-y-5">
+          <!-- Дээд удирдлага: Анги шүүлтүүр (Бүх анги, 10, 11, 12) ба Харагдац солих -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">Сурагчдын явц ба дүнгийн хяналт</h2>
+                <p class="text-xs text-slate-500 mt-0.5">10–12-р ангийн сурагчдын 5 сэдвийн түвшин (X / 40), шалгалтын дүн болон ирцийг ангиар нь ангилж хянана.</p>
+              </div>
+
+              <!-- Харагдац солих: Ангиар ангилж харах vs Нэгдсэн хүснэгт -->
+              <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/70 self-start">
+                <button
+                  type="button"
+                  onclick="state.progressViewMode = 'grouped'; renderTeacherDashboard();"
+                  class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                    state.progressViewMode === "grouped"
+                      ? "bg-white text-sky-700 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }"
+                >
+                  Ангиар ангилж харах
+                </button>
+                <button
+                  type="button"
+                  onclick="state.progressViewMode = 'table'; renderTeacherDashboard();"
+                  class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                    state.progressViewMode === "table"
+                      ? "bg-white text-sky-700 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }"
+                >
+                  Нэгдсэн хүснэгт
+                </button>
+              </div>
+            </div>
+
+            <!-- Ангийн товчнууд + Хайлт -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+              <div class="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onclick="state.progressGradeFilter = 'ALL'; renderTeacherDashboard();"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                    state.progressGradeFilter === "ALL"
+                      ? "bg-sky-600 text-white border-sky-600 shadow-xs"
+                      : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                  }"
+                >
+                  Бүх анги (${state.students.length})
+                </button>
+                ${GRADES.map(g => {
+                  const cnt = state.students.filter(s => getStudentGradeInfo(s).grade === g).length;
+                  const active = state.progressGradeFilter === g;
+                  return `
+                    <button
+                      type="button"
+                      onclick="state.progressGradeFilter = '${g}'; renderTeacherDashboard();"
+                      class="px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                        active
+                          ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
+                          : "bg-white text-slate-700 border-slate-200 hover:border-indigo-300"
+                      }"
+                    >
+                      ${g} (${cnt})
+                    </button>
+                  `;
+                }).join("")}
+              </div>
+
+              <input
+                type="text"
+                value="${escapeHtml(state.progressSearch)}"
+                oninput="state.progressSearch = this.value; renderTeacherDashboard();"
+                placeholder="Сурагчийн нэрээр хайх..."
+                class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-sky-500 outline-none w-full sm:w-64"
+              />
+            </div>
+          </div>
+
+          <!-- Агуулга: Ангиар ангилсан эсвэл Нэгдсэн хүснэгт -->
+          ${state.students.length === 0 ? `
+            <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center text-sm text-slate-400">
+              Бүртгэлтэй сурагч олдсонгүй. "3. Хэрэглэгч үүсгэх / устгах" хэсгээс 10–12-р ангийн сурагч нэмнэ үү.
+            </div>
+          ` : state.progressViewMode === "table" ? `
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+              ${renderProgressTableHtml(filtered)}
+            </div>
+          ` : `
+            <div class="space-y-4">
+              ${gradesToShow.map(g => {
+                const gradeStudents = filtered.filter(s => getStudentGradeInfo(s).grade === g);
+                const isCollapsed = Boolean(state.collapsedGrades[g]);
+
+                // Ангийн дундаж дүн ба дундаж түвшин тооцоолох
+                let totalLevels = 0;
+                const examScores = [];
+                gradeStudents.forEach(st => {
+                  const sum = getStudentGradeSummary(st.id);
+                  totalLevels += sum.completedLevels;
+                  if (sum.averagePct !== null) examScores.push(sum.averagePct);
+                });
+                const avgLevels = gradeStudents.length > 0 ? (totalLevels / gradeStudents.length).toFixed(1) : "0.0";
+                const avgExam = examScores.length > 0 ? Math.round(examScores.reduce((a, b) => a + b, 0) / examScores.length) + "%" : "—";
+
+                return `
+                  <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <button
+                      type="button"
+                      onclick="toggleGradeCollapse('${g}')"
+                      class="w-full px-5 py-4 bg-gradient-to-r from-sky-50/80 via-indigo-50/50 to-white hover:from-sky-50 flex flex-wrap items-center justify-between gap-3 text-left border-b border-slate-100 cursor-pointer"
+                    >
+                      <div class="flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-indigo-600 text-white font-extrabold text-sm flex items-center justify-center shadow-xs">
+                          ${g.slice(0, 2)}
+                        </span>
+                        <div>
+                          <h3 class="text-base font-extrabold text-slate-900">${g}</h3>
+                          <p class="text-xs text-slate-500">Нийт ${gradeStudents.length} сурагч • Дундаж түвшин: ${avgLevels}/40 • Шалгалтын дундаж дүн: ${avgExam}</p>
+                        </div>
+                      </div>
+                      <span class="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-600">
+                        ${isCollapsed ? "Дэлгэх ▼" : "Хураах ▲"}
+                      </span>
+                    </button>
+
+                    ${isCollapsed ? "" : `
+                      <div class="p-4 sm:p-5">
+                        ${renderProgressTableHtml(gradeStudents)}
+                      </div>
+                    `}
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // ТАБ 3: ХЭРЭГЛЭГЧ ҮҮСГЭХ / УСТГАХ (10–12 АНГИ СОНГОХ + БҮЛЭГ + ЗАСАХ)
+    // -------------------------------------------------------------------------
+    function renderTeacherUsersTab() {
+      const filteredStudents = state.students
+        .filter(s => {
+          const gInfo = getStudentGradeInfo(s);
+          return state.userGradeFilter === "ALL" || gInfo.grade === state.userGradeFilter;
+        })
+        .filter(s => !state.userSearch || String(s.fullName).toLowerCase().includes(state.userSearch.toLowerCase()) || String(s.username).toLowerCase().includes(state.userSearch.toLowerCase()))
+        .sort((a, b) => {
+          const ga = getStudentGradeInfo(a);
+          const gb = getStudentGradeInfo(b);
+          return ga.label.localeCompare(gb.label) || String(a.fullName).localeCompare(String(b.fullName));
+        });
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs h-fit">
+            <h2 class="text-base font-bold text-slate-900">Шинэ сурагч бүртгэх</h2>
+            <p class="text-xs text-slate-500 mt-1">10–12-р анги болон бүлгийг сонгож бүртгэнэ. Нууц үг SHA-256 алгоритмаар шифрлэгдэнэ.</p>
+
+            <form id="create-student-form" class="mt-4 space-y-3.5" autocomplete="off">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Овог, нэр</label>
+                <input id="st-fullname" type="text" required placeholder="Жишээ: Бат-Эрдэнэ Болд" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Анги сонгох (10–12)</label>
+                  <select id="st-grade" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold bg-white focus:border-sky-500 outline-none">
+                    <option value="10-р анги">10-р анги</option>
+                    <option value="11-р анги">11-р анги</option>
+                    <option value="12-р анги">12-р анги</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Бүлэг (заавал биш)</label>
+                  <select id="st-section" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:border-sky-500 outline-none">
+                    <option value="">Бүлэггүй</option>
+                    <option value="А">А бүлэг</option>
+                    <option value="Б">Б бүлэг</option>
+                    <option value="В">В бүлэг</option>
+                    <option value="Г">Г бүлэг</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Нэвтрэх нэр</label>
+                <input id="st-username" type="text" required placeholder="Сурагчийн нэвтрэх нэр" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Нууц үг</label>
+                <input id="st-password" type="password" required minlength="4" placeholder="Хамгийн багадаа 4 тэмдэгт" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+              </div>
+
+              <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-sm transition cursor-pointer">
+                + Сурагч үүсгэх
+              </button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+              <h2 class="text-base font-bold text-slate-900">Бүртгэлтэй сурагчид (${filteredStudents.length})</h2>
+              <input type="text" value="${escapeHtml(state.userSearch)}" oninput="state.userSearch = this.value; renderTeacherDashboard();" placeholder="Нэр эсвэл нэвтрэх нэрээр хайх..." class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:w-64 outline-none focus:border-sky-500" />
+            </div>
+
+            <!-- Ангийн шүүлтүүр товчнууд -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onclick="state.userGradeFilter = 'ALL'; renderTeacherDashboard();"
+                class="px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                  state.userGradeFilter === "ALL"
+                    ? "bg-sky-600 text-white border-sky-600"
+                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                }"
+              >
+                Бүгд (${state.students.length})
+              </button>
+              ${GRADES.map(g => {
+                const cnt = state.students.filter(s => getStudentGradeInfo(s).grade === g).length;
+                const active = state.userGradeFilter === g;
+                return `
+                  <button
+                    type="button"
+                    onclick="state.userGradeFilter = '${g}'; renderTeacherDashboard();"
+                    class="px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                      active
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-indigo-300"
+                    }"
+                  >
+                    ${g} (${cnt})
+                  </button>
+                `;
+              }).join("")}
+            </div>
+
+            <div class="space-y-2.5 max-h-[600px] overflow-y-auto pr-1">
+              ${filteredStudents.length === 0 ? `
+                <div class="py-12 text-center text-sm text-slate-400">Одоогоор бүртгэлтэй сурагч байхгүй байна.</div>
+              ` : filteredStudents.map(st => {
+                const gInfo = getStudentGradeInfo(st);
+                return `
+                  <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-bold text-sm text-slate-900">${escapeHtml(st.fullName)}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800">${escapeHtml(gInfo.label)}</span>
+                      </div>
+                      <div class="text-xs text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
+                        <span>Нэвтрэх нэр: <strong class="text-slate-700">${escapeHtml(st.username)}</strong></span>
+                        <span class="text-emerald-600 font-medium">• SHA-256 хамгаалалттай</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 self-end sm:self-center">
+                      <select
+                        aria-label="Анги солих"
+                        onchange="quickChangeStudentGrade('${st.id}', this.value)"
+                        class="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 cursor-pointer"
+                      >
+                        ${GRADES.map(g => `<option value="${g}" ${gInfo.grade === g ? "selected" : ""}>${g}</option>`).join("")}
+                      </select>
+                      <button type="button" onclick="openStudentEditModal('${st.id}')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-sky-300 text-xs font-semibold text-slate-700 transition cursor-pointer">
+                        Засах / Нууц үг
+                      </button>
+                      <button type="button" onclick="deleteStudentUser('${st.id}', '${escapeHtml(st.fullName)}')" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-xs font-semibold text-rose-600 transition cursor-pointer">
+                        Устгах
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindTeacherUserEvents() {
+      const form = document.getElementById("create-student-form");
+      if (!form) return;
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fullName = document.getElementById("st-fullname").value.trim();
+        const grade = document.getElementById("st-grade").value;
+        const section = document.getElementById("st-section").value;
+        const classGroup = formatStudentClassLabel(grade, section);
+        const username = document.getElementById("st-username").value.trim();
+        const password = document.getElementById("st-password").value;
+
+        if (username.toLowerCase() === "admin") {
+          showToast("Энэ нэвтрэх нэрийг ашиглах боломжгүй.", "error");
+          return;
+        }
+        const exists = state.students.some(s => String(s.username).toLowerCase() === username.toLowerCase());
+        if (exists) {
+          showToast("Энэ нэвтрэх нэр бүртгэлтэй байна. Өөр нэр сонгоно уу.", "error");
+          return;
+        }
+
+        const passwordHash = hashPassword(password);
+        await dbAddDocument("students", state.students, {
+          fullName,
+          grade,
+          section,
+          classGroup,
+          username,
+          passwordHash,
+          createdAt: Date.now()
+        });
+
+        showToast(`${fullName} (${classGroup}) амжилттай бүртгэгдлээ.`, "success");
+        renderTeacherDashboard();
+      });
+    }
+
+    window.quickChangeStudentGrade = async function(studentId, newGrade) {
+      const st = state.students.find(s => s.id === studentId);
+      if (!st) return;
+      const gInfo = getStudentGradeInfo(st);
+      const newClassGroup = formatStudentClassLabel(newGrade, gInfo.section);
+      st.grade = newGrade;
+      st.section = gInfo.section;
+      st.classGroup = newClassGroup;
+
+      if (db && fsOps) {
+        await fsOps.updateDoc(fsOps.doc(db, "students", studentId), {
+          grade: newGrade,
+          section: gInfo.section,
+          classGroup: newClassGroup
+        });
+      } else {
+        saveLocalStore();
+      }
+      showToast(`${st.fullName} сурагчийн анги ${newClassGroup} болж шинэчлэгдлээ.`, "success");
+      renderTeacherDashboard();
+    };
+
+    window.openStudentEditModal = function(studentId) {
+      const st = state.students.find(s => s.id === studentId);
+      if (!st) return;
+      const gInfo = getStudentGradeInfo(st);
+
+      document.getElementById("edit-student-id").value = st.id;
+      document.getElementById("student-edit-modal-title").textContent = `${st.fullName} — Мэдээлэл засах`;
+      document.getElementById("edit-student-fullname").value = st.fullName;
+      document.getElementById("edit-student-grade").value = gInfo.grade;
+      document.getElementById("edit-student-section").value = gInfo.section;
+      document.getElementById("edit-student-new-pw").value = "";
+
+      const modal = document.getElementById("student-edit-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    };
+
+    window.closeStudentEditModal = function() {
+      const modal = document.getElementById("student-edit-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+
+    document.getElementById("student-edit-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const studentId = document.getElementById("edit-student-id").value;
+      const fullName = document.getElementById("edit-student-fullname").value.trim();
+      const grade = document.getElementById("edit-student-grade").value;
+      const section = document.getElementById("edit-student-section").value;
+      const classGroup = formatStudentClassLabel(grade, section);
+      const newPw = document.getElementById("edit-student-new-pw").value;
+
+      if (newPw && newPw.length < 4) {
+        showToast("Нууц үг хамгийн багадаа 4 тэмдэгт байх ёстой.", "error");
+        return;
+      }
+
+      const updatePayload = { fullName, grade, section, classGroup };
+      if (newPw) {
+        updatePayload.passwordHash = hashPassword(newPw);
+      }
+
+      const st = state.students.find(s => s.id === studentId);
+      if (st) Object.assign(st, updatePayload);
+
+      if (db && fsOps) {
+        await fsOps.updateDoc(fsOps.doc(db, "students", studentId), updatePayload);
+      } else {
+        saveLocalStore();
+      }
+      closeStudentEditModal();
+      showToast("Сурагчийн мэдээлэл амжилттай хадгалагдлаа.", "success");
+      renderTeacherDashboard();
+    });
+
+    window.deleteStudentUser = async function(studentId, fullName) {
+      const ok = await showConfirmModal("Сурагч устгах", `"${fullName}" сурагчийн бүртгэлийг устгах уу?`);
+      if (!ok) return;
+      await dbDeleteDocument("students", state.students, studentId);
+      showToast("Сурагчийн бүртгэл устгагдлаа.", "info");
+      renderTeacherDashboard();
+    };
+
+    // -------------------------------------------------------------------------
+    // ТАБ 4: ХИЧЭЭЛ ОРУУЛАХ
+    // -------------------------------------------------------------------------
+    function renderTeacherLessonsTab() {
+      const filteredLessons = state.lessons
+        .filter(l => state.lessonTopicFilter === "ALL" || l.topicId === state.lessonTopicFilter)
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs h-fit">
+            <h2 class="text-base font-bold text-slate-900">Шинэ хичээл оруулах</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Сурагчид 24 цагийн хүлээлтийн үед ч хичээлүүдийг чөлөөтэй уншина.</p>
+
+            <form id="add-lesson-form" class="mt-4 space-y-3.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Бүлэг сэдэв</label>
+                <select id="lesson-topic" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:border-sky-500 outline-none">
+                  ${TOPICS.map(t => `<option value="${t.id}">${t.icon} ${escapeHtml(t.name)}</option>`).join("")}
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Хичээлийн гарчиг</label>
+                <input id="lesson-title" type="text" required placeholder="Жишээ: Ньютоны хоёрдугаар хууль" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-xs font-semibold text-slate-700">Агуулга ба томьёо ($...$)</label>
+                  <div class="flex gap-1">
+                    <button type="button" onclick="insertFormulaToken('lesson-content', '$\\vec{F} = m\\vec{a}$', 'lesson-formula-preview')" class="px-2 py-0.5 rounded bg-slate-100 text-[11px] font-mono cursor-pointer">F=ma</button>
+                    <button type="button" onclick="insertFormulaToken('lesson-content', '$\\frac{a}{b}$', 'lesson-formula-preview')" class="px-2 py-0.5 rounded bg-slate-100 text-[11px] font-mono cursor-pointer">a/b</button>
+                    <button type="button" onclick="insertFormulaToken('lesson-content', '$\\Delta $', 'lesson-formula-preview')" class="px-2 py-0.5 rounded bg-slate-100 text-[11px] font-mono cursor-pointer">Δ</button>
+                  </div>
+                </div>
+                <textarea id="lesson-content" rows="5" required placeholder="Хичээлийн онол, тайлбар, томьёонуудыг бичнэ үү..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none"></textarea>
+                <div id="lesson-formula-preview" class="mt-2 p-3 rounded-xl bg-sky-50/50 border border-sky-100 text-xs text-slate-800 min-h-[38px]">
+                  <span class="text-slate-400">Томьёоны урьдчилсан харагдац...</span>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                <label class="block text-xs font-semibold text-slate-700">Зураг оруулах (заавал биш)</label>
+                <label class="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-dashed border-sky-300 bg-white text-xs font-semibold text-sky-700 cursor-pointer">
+                  <span>Зураг сонгох</span>
+                  <input id="lesson-image-file" type="file" accept="image/*" class="hidden" />
+                </label>
+                <div id="lesson-image-preview-box" class="${state.pendingLessonImage ? "" : "hidden"} flex items-center justify-between pt-1">
+                  <img id="lesson-image-preview" src="${escapeHtml(state.pendingLessonImage)}" alt="Зураг" class="h-16 rounded-lg border bg-white" />
+                  <button type="button" onclick="clearPendingImage('lesson')" class="text-xs font-semibold text-rose-600 cursor-pointer">Авах</button>
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold text-sm shadow-sm transition cursor-pointer">
+                + Хичээл нийтлэх
+              </button>
+            </form>
+          </div>
+
+          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+              <h2 class="text-base font-bold text-slate-900">Нийтэлсэн хичээлүүд (${filteredLessons.length})</h2>
+              <select onchange="state.lessonTopicFilter = this.value; renderTeacherDashboard();" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50">
+                <option value="ALL" ${state.lessonTopicFilter === "ALL" ? "selected" : ""}>Бүх сэдэв</option>
+                ${TOPICS.map(t => `<option value="${t.id}" ${state.lessonTopicFilter === t.id ? "selected" : ""}>${escapeHtml(t.name)}</option>`).join("")}
+              </select>
+            </div>
+
+            <div class="mt-4 space-y-4 max-h-[680px] overflow-y-auto pr-1">
+              ${filteredLessons.length === 0 ? `
+                <div class="py-12 text-center text-sm text-slate-400">Одоогоор оруулсан хичээл алга байна.</div>
+              ` : filteredLessons.map(ls => {
+                const tObj = TOPICS.find(t => t.id === ls.topicId);
+                return `
+                  <article class="p-4 rounded-2xl border border-slate-200 bg-slate-50/40 space-y-2.5">
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700">
+                          ${tObj ? `${tObj.icon} ${escapeHtml(tObj.name)}` : ""}
+                        </span>
+                        <h3 class="text-base font-bold text-slate-900 mt-1">${escapeHtml(ls.title)}</h3>
+                      </div>
+                      <button type="button" onclick="deleteLessonItem('${ls.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer">
+                        Устгах
+                      </button>
+                    </div>
+                    <div class="text-sm text-slate-700 leading-relaxed">${renderSafeMath(ls.content)}</div>
+                    ${ls.imageUrl ? `<img src="${escapeHtml(ls.imageUrl)}" alt="Хичээлийн зураг" onclick="openImageModal(this.src)" class="max-h-44 rounded-xl border border-slate-200 bg-white p-1 cursor-zoom-in" />` : ""}
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindTeacherLessonEvents() {
+      const contentTa = document.getElementById("lesson-content");
+      const preview = document.getElementById("lesson-formula-preview");
+      if (contentTa && preview) {
+        contentTa.addEventListener("input", () => {
+          preview.innerHTML = renderSafeMath(contentTa.value) || '<span class="text-slate-400">Томьёоны урьдчилсан харагдац...</span>';
+        });
+      }
+
+      const fileInput = document.getElementById("lesson-image-file");
+      if (fileInput) {
+        fileInput.addEventListener("change", async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          try {
+            state.pendingLessonImage = await compressImageFile(file);
+            const box = document.getElementById("lesson-image-preview-box");
+            const img = document.getElementById("lesson-image-preview");
+            if (box && img) {
+              img.src = state.pendingLessonImage;
+              box.classList.remove("hidden");
+            }
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+      }
+
+      const form = document.getElementById("add-lesson-form");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const topicId = document.getElementById("lesson-topic").value;
+          const title = document.getElementById("lesson-title").value.trim();
+          const content = document.getElementById("lesson-content").value.trim();
+
+          await dbAddDocument("lessons", state.lessons, {
+            topicId,
+            title,
+            content,
+            imageUrl: state.pendingLessonImage || "",
+            createdAt: Date.now()
+          });
+
+          state.pendingLessonImage = "";
+          showToast("Хичээл амжилттай нийтлэгдлээ.", "success");
+          renderTeacherDashboard();
+        });
+      }
+    }
+
+    window.deleteLessonItem = async function(lessonId) {
+      const ok = await showConfirmModal("Хичээл устгах", "Энэ хичээлийг устгах уу?");
+      if (!ok) return;
+      await dbDeleteDocument("lessons", state.lessons, lessonId);
+      showToast("Хичээл устгагдлаа.", "info");
+      renderTeacherDashboard();
+    };
+
+    // -------------------------------------------------------------------------
+    // ТАБ 5: СУРАГЧИЙН ИРЦ (10–12 АНГИАР ШҮҮХ + СУУСАН/ЧӨЛӨӨТЭЙ/ТАСАЛСАН/ӨВЧТЭЙ)
+    // -------------------------------------------------------------------------
+    function renderTeacherAttendanceTab() {
+      const classStudents = state.students
+        .filter(s => state.attendanceGradeFilter === "ALL" || getStudentGradeInfo(s).grade === state.attendanceGradeFilter)
+        .sort((a, b) => String(a.fullName).localeCompare(String(b.fullName)));
+
+      const statuses = [
+        { key: "present", label: "Суусан", activeCls: "bg-emerald-600 text-white border-emerald-600" },
+        { key: "excused", label: "Чөлөөтэй", activeCls: "bg-sky-600 text-white border-sky-600" },
+        { key: "absent", label: "Тасалсан", activeCls: "bg-rose-600 text-white border-rose-600" },
+        { key: "sick", label: "Өвчтэй", activeCls: "bg-amber-500 text-white border-amber-500" }
+      ];
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">Сурагчийн ирц бүртгэл</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Огноо болон 10–12-р ангиа сонгон сурагч бүрийн ирцийг тэмдэглэнэ.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <input
+                  type="date"
+                  value="${escapeHtml(state.attendanceDate)}"
+                  onchange="state.attendanceDate = this.value; renderTeacherDashboard();"
+                  class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-slate-50"
+                />
+                <select
+                  onchange="state.attendanceGradeFilter = this.value; renderTeacherDashboard();"
+                  class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-slate-50"
+                >
+                  <option value="ALL" ${state.attendanceGradeFilter === "ALL" ? "selected" : ""}>Бүх анги (10–12)</option>
+                  ${GRADES.map(g => `<option value="${g}" ${state.attendanceGradeFilter === g ? "selected" : ""}>${g}</option>`).join("")}
+                </select>
+                ${classStudents.length > 0 ? `
+                  <button type="button" onclick="markAllPresent()" class="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition cursor-pointer">
+                    Бүгдийг "Суусан" болгох
+                  </button>
+                  <button type="button" onclick="saveAttendanceNotify()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                    Ирц хадгалах
+                  </button>
+                ` : ""}
+              </div>
+            </div>
+
+            ${classStudents.length === 0 ? `
+              <div class="py-12 text-center text-sm text-slate-400">
+                Сонгосон ангид сурагч алга байна. Эхлээд "3. Хэрэглэгч үүсгэх / устгах" цэснээс сурагч бүртгэнэ үү.
+              </div>
+            ` : `
+              <div class="space-y-2.5">
+                ${classStudents.map(st => {
+                  const gInfo = getStudentGradeInfo(st);
+                  const docId = `${state.attendanceDate}_${st.id}`;
+                  const rec = state.attendance.find(a => a.id === docId);
+                  const currentStatus = rec ? rec.status : "";
+
+                  const stAll = state.attendance.filter(a => a.studentId === st.id);
+                  const pCnt = stAll.filter(a => a.status === "present").length;
+                  const eCnt = stAll.filter(a => a.status === "excused").length;
+                  const aCnt = stAll.filter(a => a.status === "absent").length;
+                  const sCnt = stAll.filter(a => a.status === "sick").length;
+
+                  return `
+                    <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/40 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <span class="font-bold text-sm text-slate-900">${escapeHtml(st.fullName)}</span>
+                          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-50 text-sky-700">${escapeHtml(gInfo.label)}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-1 flex flex-wrap gap-3">
+                          <span class="text-emerald-700 font-semibold">Нийт суусан: ${pCnt}</span>
+                          <span class="text-sky-700 font-semibold">Чөлөөтэй: ${eCnt}</span>
+                          <span class="text-rose-700 font-semibold">Тасалсан: ${aCnt}</span>
+                          <span class="text-amber-700 font-semibold">Өвчтэй: ${sCnt}</span>
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        ${statuses.map(stt => {
+                          const isSel = currentStatus === stt.key;
+                          return `
+                            <button
+                              type="button"
+                              onclick="setStudentAttendance('${st.id}', '${stt.key}')"
+                              class="px-3 py-2 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                                isSel ? stt.activeCls : "bg-white border-slate-200 text-slate-600 hover:bg-slate-100"
+                              }"
+                            >
+                              ${stt.label}
+                            </button>
+                          `;
+                        }).join("")}
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    window.setStudentAttendance = async function(studentId, status) {
+      const st = state.students.find(s => s.id === studentId);
+      const gInfo = getStudentGradeInfo(st);
+      const docId = `${state.attendanceDate}_${studentId}`;
+      const payload = {
+        date: state.attendanceDate,
+        grade: gInfo.grade,
+        classGroup: gInfo.label,
+        studentId,
+        status,
+        updatedAt: Date.now()
+      };
+
+      const existing = state.attendance.find(a => a.id === docId);
+      if (existing) {
+        Object.assign(existing, payload);
+      } else {
+        state.attendance.push({ id: docId, ...payload });
+      }
+
+      await dbSetDocument("attendance", docId, payload);
+      renderTeacherDashboard();
+    };
+
+    window.markAllPresent = async function() {
+      const classStudents = state.students.filter(s => state.attendanceGradeFilter === "ALL" || getStudentGradeInfo(s).grade === state.attendanceGradeFilter);
+      for (const st of classStudents) {
+        await setStudentAttendance(st.id, "present");
+      }
+      showToast("Сонгосон ангийн бүх сурагчийг 'Суусан' төлөвт бүртгэлээ.", "success");
+    };
+
+    window.saveAttendanceNotify = function() {
+      saveLocalStore();
+      showToast(`${state.attendanceDate} өдрийн ирц амжилттай хадгалагдлаа.`, "success");
+    };
+
+    // -------------------------------------------------------------------------
+    // ТАБ 6: ШАЛГАЛТ (ШАЛГАЛТ ҮҮСГЭХ + НЭЭХ/ХААХ + ДҮН 10–12 АНГИАР ШҮҮХ)
+    // -------------------------------------------------------------------------
+    function renderTeacherExamsTab() {
+      if (state.exams.length === 0) {
+        state.exams.push({
+          id: "default_exam",
+          title: "Физикийн нэгдсэн шалгалт",
+          targetGrade: "ALL",
+          durationMinutes: 40,
+          isOpen: false,
+          createdAt: Date.now()
+        });
+      }
+      const selectedExam = state.exams.find(ex => ex.id === state.selectedExamId) || state.exams[0];
+      state.selectedExamId = selectedExam.id;
+
+      const selectedQuestions = state.examQuestions.filter(q => (q.examId || "default_exam") === selectedExam.id);
+      const filteredSubmissions = state.examSubmissions
+        .filter(sub => {
+          if (state.examResultGradeFilter === "ALL") return true;
+          const st = state.students.find(s => s.id === sub.studentId);
+          const grade = st ? getStudentGradeInfo(st).grade : (sub.grade || "");
+          return grade === state.examResultGradeFilter;
+        })
+        .sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+
+      return `
+        <div class="space-y-6">
+          <!-- Шинэ шалгалт үүсгэх ба Одоо байгаа шалгалтуудыг нээх/хаах -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+              <h2 class="text-base font-bold text-slate-900">Шинэ шалгалт үүсгэх</h2>
+              <form id="create-exam-form" class="mt-3.5 space-y-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Шалгалтын нэр</label>
+                  <input id="new-exam-title" type="text" required placeholder="Жишээ: 10-р анги Механикийн шалгалт" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none" />
+                </div>
+                <div class="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Хамрах анги</label>
+                    <select id="new-exam-grade" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-white outline-none">
+                      <option value="ALL">Бүх анги (10–12)</option>
+                      <option value="10-р анги">10-р анги</option>
+                      <option value="11-р анги">11-р анги</option>
+                      <option value="12-р анги">12-р анги</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Хугацаа (минут)</label>
+                    <input id="new-exam-duration" type="number" min="5" max="240" value="40" required class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-center outline-none" />
+                  </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold shadow-xs transition cursor-pointer">
+                  + Шалгалт үүсгэх
+                </button>
+              </form>
+            </div>
+
+            <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+              <h2 class="text-base font-bold text-slate-900 pb-3 border-b border-slate-100">
+                Шалгалтын жагсаалт (${state.exams.length})
+              </h2>
+              <div class="mt-3 space-y-2.5 max-h-[250px] overflow-y-auto pr-1">
+                ${state.exams.map(ex => {
+                  const qCnt = state.examQuestions.filter(q => (q.examId || "default_exam") === ex.id).length;
+                  const isSel = ex.id === selectedExam.id;
+                  const targetLabel = ex.targetGrade === "ALL" ? "Бүх анги" : ex.targetGrade;
+                  return `
+                    <div class="p-3.5 rounded-2xl border ${isSel ? "border-sky-500 bg-sky-50/40" : "border-slate-200 bg-slate-50/40"} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div class="cursor-pointer flex-1" onclick="state.selectedExamId = '${ex.id}'; renderTeacherDashboard();">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="font-bold text-sm text-slate-900">${escapeHtml(ex.title)}</span>
+                          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700">${escapeHtml(targetLabel)}</span>
+                          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${ex.isOpen ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"}">
+                            ${ex.isOpen ? "Нээлттэй" : "Хаалттай"}
+                          </span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">${qCnt} асуулт • ${ex.durationMinutes || 40} минут</p>
+                      </div>
+
+                      <div class="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onclick="toggleExamStatusById('${ex.id}')"
+                          class="px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-xs transition cursor-pointer ${
+                            ex.isOpen ? "bg-rose-600 hover:bg-rose-700" : "bg-emerald-600 hover:bg-emerald-700"
+                          }"
+                        >
+                          ${ex.isOpen ? "Шалгалт хаах" : "Шалгалт нээх"}
+                        </button>
+                        ${state.exams.length > 1 ? `
+                          <button type="button" onclick="deleteExamItem('${ex.id}')" class="px-2.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer">
+                            ✕
+                          </button>
+                        ` : ""}
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+          </div>
+
+          <!-- Сонгосон шалгалтад асуулт нэмэх ба Сурагчдын дүн -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs h-fit">
+              <span class="text-xs font-semibold text-sky-600">${escapeHtml(selectedExam.title)}</span>
+              <h3 class="text-base font-bold text-slate-900">Шалгалтын асуулт нэмэх</h3>
+              <form id="add-exam-q-form" class="mt-4 space-y-3.5">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-semibold text-slate-700">Асуултын өгүүлбэр ($...$ томьёо)</label>
+                    <div class="flex gap-1">
+                      <button type="button" onclick="insertFormulaToken('exam-q-text', '$\\frac{a}{b}$', 'exam-q-preview')" class="px-2 py-0.5 rounded bg-slate-100 text-[11px] font-mono cursor-pointer">a/b</button>
+                      <button type="button" onclick="insertFormulaToken('exam-q-text', '$\\sqrt{x}$', 'exam-q-preview')" class="px-2 py-0.5 rounded bg-slate-100 text-[11px] font-mono cursor-pointer">√x</button>
+                      <button type="button" onclick="insertFormulaToken('exam-q-text', '$\\vec{F}$', 'exam-q-preview')" class="px-2 py-0.5 rounded bg-slate-100 text-[11px] font-mono cursor-pointer">F⃗</button>
+                    </div>
+                  </div>
+                  <textarea id="exam-q-text" rows="3" required placeholder="Шалгалтын асуултаа бичнэ үү..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 outline-none"></textarea>
+                  <div id="exam-q-preview" class="mt-2 p-2.5 rounded-xl bg-sky-50/50 border border-sky-100 text-xs text-slate-800 min-h-[34px]">
+                    <span class="text-slate-400">Томьёоны урьдчилсан харагдац...</span>
+                  </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                  <label class="block text-xs font-semibold text-slate-700">Зураг хавсаргах (заавал биш)</label>
+                  <label class="flex items-center justify-center px-3 py-2.5 rounded-xl border border-dashed border-sky-300 bg-white text-xs font-semibold text-sky-700 cursor-pointer">
+                    <span>Зураг сонгох</span>
+                    <input id="exam-image-file" type="file" accept="image/*" class="hidden" />
+                  </label>
+                  <div id="exam-image-preview-box" class="${state.pendingExamImage ? "" : "hidden"} flex items-center justify-between pt-1">
+                    <img id="exam-image-preview" src="${escapeHtml(state.pendingExamImage)}" alt="Зураг" class="h-16 rounded-lg border bg-white" />
+                    <button type="button" onclick="clearPendingImage('exam')" class="text-xs font-semibold text-rose-600 cursor-pointer">Авах</button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  ${["A", "B", "C", "D"].map((l, idx) => `
+                    <input id="exam-opt-${idx}" type="text" required placeholder="${l} хувилбар ($...$)" class="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-sky-500" />
+                  `).join("")}
+                </div>
+                <select id="exam-correct-opt" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold bg-white">
+                  <option value="0">Зөв хариу: A хувилбар</option>
+                  <option value="1">Зөв хариу: B хувилбар</option>
+                  <option value="2">Зөв хариу: C хувилбар</option>
+                  <option value="3">Зөв хариу: D хувилбар</option>
+                </select>
+
+                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold text-sm shadow-sm cursor-pointer">
+                  + Асуулт нэмэх
+                </button>
+              </form>
+            </div>
+
+            <div class="lg:col-span-7 space-y-6">
+              <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+                <h3 class="text-base font-bold text-slate-900 pb-3 border-b border-slate-100">
+                  «${escapeHtml(selectedExam.title)}» — Асуултууд (${selectedQuestions.length})
+                </h3>
+                <div class="mt-4 space-y-3 max-h-[360px] overflow-y-auto pr-1">
+                  ${selectedQuestions.length === 0 ? `
+                    <p class="py-8 text-center text-sm text-slate-400">Одоогоор энэ шалгалтад асуулт нэмээгүй байна.</p>
+                  ` : selectedQuestions.map((q, idx) => `
+                    <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2">
+                      <div class="flex items-start justify-between gap-2">
+                        <span class="text-xs font-bold text-indigo-700">Асуулт #${idx + 1}</span>
+                        <button type="button" onclick="deleteExamQuestion('${q.id}')" class="text-xs font-semibold text-rose-600 hover:underline cursor-pointer">Устгах</button>
+                      </div>
+                      <div class="text-sm text-slate-800">${renderSafeMath(q.question)}</div>
+                      ${q.imageUrl ? `<img src="${escapeHtml(q.imageUrl)}" alt="Шалгалтын зураг" onclick="openImageModal(this.src)" class="max-h-36 rounded-xl border bg-white p-1 cursor-zoom-in" />` : ""}
+                      <div class="grid grid-cols-2 gap-1.5 text-xs">
+                        ${(q.options || []).map((o, i) => `
+                          <div class="px-2.5 py-1 rounded-lg border ${Number(q.correctIndex) === i ? "bg-emerald-50 border-emerald-300 font-bold text-emerald-900" : "bg-white border-slate-200"}">
+                            ${["A", "B", "C", "D"][i]}) ${renderSafeMath(o)}
+                          </div>
+                        `).join("")}
+                      </div>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+
+              <!-- Сурагчдын шалгалтын дүн (10–12 ангиар шүүх) -->
+              <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                  <h3 class="text-base font-bold text-slate-900">
+                    Сурагчдын шалгалтын дүн (${filteredSubmissions.length})
+                  </h3>
+                  <select onchange="state.examResultGradeFilter = this.value; renderTeacherDashboard();" class="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50">
+                    <option value="ALL" ${state.examResultGradeFilter === "ALL" ? "selected" : ""}>Бүх анги (10–12)</option>
+                    ${GRADES.map(g => `<option value="${g}" ${state.examResultGradeFilter === g ? "selected" : ""}>${g}</option>`).join("")}
+                  </select>
+                </div>
+
+                ${filteredSubmissions.length === 0 ? `
+                  <p class="py-6 text-center text-sm text-slate-400">Одоогоор шалгалт илгээсэн сурагч алга байна.</p>
+                ` : `
+                  <div class="mt-3 overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                      <thead>
+                        <tr class="border-b border-slate-200 text-xs text-slate-500">
+                          <th class="py-2 px-3">Сурагч</th>
+                          <th class="py-2 px-3">Анги</th>
+                          <th class="py-2 px-3">Шалгалт</th>
+                          <th class="py-2 px-3">Оноо</th>
+                          <th class="py-2 px-3">Дүн</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-100">
+                        ${filteredSubmissions.map(sub => {
+                          const pct = sub.total > 0 ? Math.round((sub.score / sub.total) * 100) : 0;
+                          const lInfo = getLetterGradeInfo(pct);
+                          return `
+                            <tr>
+                              <td class="py-2.5 px-3 font-semibold text-slate-900">${escapeHtml(sub.studentName)}</td>
+                              <td class="py-2.5 px-3 text-xs font-semibold text-sky-700">${escapeHtml(sub.classGroup)}</td>
+                              <td class="py-2.5 px-3 text-xs text-slate-600">${escapeHtml(sub.examTitle || "Шалгалт")}</td>
+                              <td class="py-2.5 px-3 font-bold text-indigo-700">${sub.score} / ${sub.total}</td>
+                              <td class="py-2.5 px-3">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${lInfo.badgeCls}">${pct}% (${lInfo.letter})</span>
+                              </td>
+                            </tr>
+                          `;
+                        }).join("")}
+                      </tbody>
+                    </table>
+                  </div>
+                `}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindTeacherExamEvents() {
+      const createExamForm = document.getElementById("create-exam-form");
+      if (createExamForm) {
+        createExamForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const title = document.getElementById("new-exam-title").value.trim();
+          const targetGrade = document.getElementById("new-exam-grade").value;
+          const durationMinutes = Math.max(5, Math.min(240, Number(document.getElementById("new-exam-duration").value || 40)));
+
+          const newExam = {
+            title,
+            targetGrade,
+            durationMinutes,
+            isOpen: false,
+            createdAt: Date.now()
+          };
+          const newId = await dbAddDocument("exams", state.exams, newExam);
+          state.selectedExamId = newId;
+          showToast(`"${title}" шалгалт үүслээ. Одоо асуултуудаа нэмнэ үү.`, "success");
+          renderTeacherDashboard();
+        });
+      }
+
+      const qTa = document.getElementById("exam-q-text");
+      const pv = document.getElementById("exam-q-preview");
+      if (qTa && pv) {
+        qTa.addEventListener("input", () => {
+          pv.innerHTML = renderSafeMath(qTa.value) || '<span class="text-slate-400">Томьёоны урьдчилсан харагдац...</span>';
+        });
+      }
+
+      const fileInput = document.getElementById("exam-image-file");
+      if (fileInput) {
+        fileInput.addEventListener("change", async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          try {
+            state.pendingExamImage = await compressImageFile(file);
+            const box = document.getElementById("exam-image-preview-box");
+            const img = document.getElementById("exam-image-preview");
+            if (box && img) {
+              img.src = state.pendingExamImage;
+              box.classList.remove("hidden");
+            }
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+      }
+
+      const form = document.getElementById("add-exam-q-form");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const question = document.getElementById("exam-q-text").value.trim();
+
+          const qData = {
+            examId: state.selectedExamId,
+            question,
+            imageUrl: state.pendingExamImage || "",
+            options: [
+              document.getElementById("exam-opt-0").value.trim(),
+              document.getElementById("exam-opt-1").value.trim(),
+              document.getElementById("exam-opt-2").value.trim(),
+              document.getElementById("exam-opt-3").value.trim()
+            ],
+            correctIndex: Number(document.getElementById("exam-correct-opt").value),
+            createdAt: Date.now()
+          };
+
+          await dbAddDocument("exam_questions", state.examQuestions, qData);
+          state.pendingExamImage = "";
+          showToast("Шалгалтын асуулт нэмэгдлээ.", "success");
+          renderTeacherDashboard();
+        });
+      }
+    }
+
+    window.toggleExamStatusById = async function(examId) {
+      const ex = state.exams.find(x => x.id === examId);
+      if (!ex) return;
+      const qCount = state.examQuestions.filter(q => (q.examId || "default_exam") === examId).length;
+      if (!ex.isOpen && qCount === 0) {
+        showToast("Шалгалт нээхийн өмнө дор хаяж 1 асуулт оруулна уу.", "warning");
+        return;
+      }
+      ex.isOpen = !ex.isOpen;
+      await dbSetDocument("exams", examId, ex);
+      showToast(
+        ex.isOpen ? `"${ex.title}" шалгалт нээгдлээ! Сурагчдад 'Шалгалт өгөх' товч нээгдлээ.` : `"${ex.title}" шалгалт хаагдлаа.`,
+        ex.isOpen ? "success" : "info"
+      );
+      renderTeacherDashboard();
+    };
+
+    window.deleteExamItem = async function(examId) {
+      const ok = await showConfirmModal("Шалгалт устгах", "Энэ шалгалтыг устгах уу?");
+      if (!ok) return;
+      await dbDeleteDocument("exams", state.exams, examId);
+      if (state.exams.length > 0) state.selectedExamId = state.exams[0].id;
+      showToast("Шалгалт устгагдлаа.", "info");
+      renderTeacherDashboard();
+    };
+
+    window.deleteExamQuestion = async function(qId) {
+      const ok = await showConfirmModal("Асуулт устгах", "Энэ шалгалтын асуултыг устгах уу?");
+      if (!ok) return;
+      await dbDeleteDocument("exam_questions", state.examQuestions, qId);
+      showToast("Асуулт устгагдлаа.", "info");
+      renderTeacherDashboard();
+    };
+
+    // =========================================================================
+    // 11. СУРАГЧИЙН ПОРТАЛ (ДААЛГАВАР + 24 ЦАГИЙН ЦООЖ + ХИЧЭЭЛ + ДҮН БА ИРЦ + ШАЛГАЛТ)
+    // =========================================================================
+    window.switchStudentTab = function(tabName) {
+      state.studentTab = tabName;
+      state.studentActiveLevel = null;
+      if (tabName === "exam" && !state.examTimerStartedAt) {
+        state.examTimerStartedAt = Date.now();
+      }
+      renderStudentDashboard();
+    };
+
+    function getAvailableExamsForStudent(studentGrade) {
+      return state.exams.filter(ex => ex.isOpen && (ex.targetGrade === "ALL" || ex.targetGrade === studentGrade));
+    }
+
+    function renderStudentDashboard() {
+      const currentStudentObj = state.students.find(s => s.id === state.session.userId);
+      const gInfo = currentStudentObj ? getStudentGradeInfo(currentStudentObj) : { grade: state.session.grade || "10-р анги", label: state.session.classGroup || "10-р анги" };
+      const gradeSummary = getStudentGradeSummary(state.session.userId);
+
+      document.getElementById("student-header-name").textContent = currentStudentObj ? currentStudentObj.fullName : state.session.fullName;
+      document.getElementById("student-header-class").textContent = gInfo.label;
+
+      const gradeBadgeEl = document.getElementById("student-header-grade-badge");
+      if (gradeBadgeEl) {
+        if (gradeSummary.examCount > 0) {
+          gradeBadgeEl.textContent = `Дүн: ${gradeSummary.averagePct}% (${gradeSummary.letterInfo.letter})`;
+        } else {
+          gradeBadgeEl.textContent = `Түвшин: ${gradeSummary.completedLevels}/40`;
+        }
+      }
+
+      const openExams = getAvailableExamsForStudent(gInfo.grade);
+      const myExamSubs = state.examSubmissions.filter(s => s.studentId === state.session.userId);
+
+      const examNavBtn = document.getElementById("student-exam-nav-btn");
+      const examBanner = document.getElementById("student-exam-banner");
+      if (openExams.length > 0 || myExamSubs.length > 0) {
+        examNavBtn.classList.remove("hidden");
+        examNavBtn.textContent = openExams.length > 0 ? "Шалгалт өгөх" : "Шалгалтын дүн";
+      } else {
+        examNavBtn.classList.add("hidden");
+      }
+
+      if (openExams.length > 0 && state.studentTab !== "exam") {
+        examBanner.classList.remove("hidden");
+        document.getElementById("student-exam-banner-title").textContent = openExams[0].title;
+      } else {
+        examBanner.classList.add("hidden");
+      }
+
+      document.querySelectorAll(".s-tab-btn").forEach(btn => {
+        const isActive = btn.dataset.stab === state.studentTab;
+        btn.className = isActive
+          ? "s-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-600 text-white shadow-xs transition cursor-pointer"
+          : "s-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer";
+      });
+
+      const container = document.getElementById("student-content");
+      switch (state.studentTab) {
+        case "tasks":
+          container.innerHTML = renderStudentTasksTab();
+          break;
+        case "lessons":
+          container.innerHTML = renderStudentLessonsTab();
+          break;
+        case "attendance":
+          container.innerHTML = renderStudentAttendanceAndGradesTab();
+          break;
+        case "exam":
+          container.innerHTML = renderStudentExamTab(gInfo.grade);
+          bindStudentExamSubmit();
+          break;
+      }
+      runKatexAutoRender();
+    }
+
+    function renderStudentTasksTab() {
+      const studentId = state.session.userId;
+      const topicObj = TOPICS.find(t => t.id === state.studentTopic) || TOPICS[0];
+
+      if (state.studentActiveLevel !== null) {
+        return renderStudentLevelSolver(studentId, topicObj, state.studentActiveLevel);
+      }
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs">
+            <h2 class="text-sm font-bold text-slate-800 mb-3">Физикийн сэдэв сонгох</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+              ${TOPICS.map(t => {
+                const active = t.id === state.studentTopic;
+                return `
+                  <button
+                    type="button"
+                    onclick="state.studentTopic = '${t.id}'; renderStudentDashboard();"
+                    class="p-3 rounded-xl border text-left transition cursor-pointer ${
+                      active
+                        ? "border-sky-500 bg-gradient-to-r from-sky-50 to-indigo-50/70 text-sky-900 font-bold shadow-xs"
+                        : "border-slate-200 bg-white hover:border-slate-300 text-slate-700 font-medium"
+                    }"
+                  >
+                    <span class="text-xs sm:text-sm">${t.icon} ${escapeHtml(t.name)}</span>
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <!-- 8 Түвшний карт -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            ${LEVELS.map(lvl => {
+              const tasks = getTasksFor(state.studentTopic, lvl);
+              const hasTasks = tasks.length > 0;
+              const prevCompleted = lvl === 1 ? true : isLevelCompletedByStudent(studentId, state.studentTopic, lvl - 1);
+              const completed = hasTasks && isLevelCompletedByStudent(studentId, state.studentTopic, lvl);
+              const cooldownMs = getLevelCooldownRemainingMs(studentId, state.studentTopic, lvl);
+              const isCooldown = cooldownMs > 0;
+
+              if (!hasTasks) {
+                return `
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 flex flex-col justify-between opacity-75">
+                    <div class="flex items-center justify-between">
+                      <span class="text-base font-extrabold text-slate-500">${lvl}-р түвшин</span>
+                      <div class="w-9 h-9 rounded-xl bg-slate-200/70 text-slate-500 flex items-center justify-center" title="Цоожтой">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <p class="mt-4 text-xs font-medium text-slate-500">Даалгавар ороогүй (Цоожтой)</p>
+                  </div>
+                `;
+              }
+
+              if (!prevCompleted) {
+                return `
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-5 flex flex-col justify-between opacity-80">
+                    <div class="flex items-center justify-between">
+                      <span class="text-base font-extrabold text-slate-600">${lvl}-р түвшин</span>
+                      <div class="w-9 h-9 rounded-xl bg-slate-200/70 text-slate-500 flex items-center justify-center" title="Цоожтой">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <p class="mt-4 text-xs font-medium text-slate-500">Өмнөх түвшинг дуусгана уу</p>
+                  </div>
+                `;
+              }
+
+              if (isCooldown) {
+                return `
+                  <div class="rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50/80 to-rose-50/50 p-5 flex flex-col justify-between">
+                    <div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-base font-extrabold text-amber-900">${lvl}-р түвшин</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">24 цаг цоожтой</span>
+                      </div>
+                      <p class="mt-2 text-xs text-amber-800 leading-relaxed">
+                        Буруу хариулсан тул түр хүлээнэ үү. Энэ хугацаанд хичээлээ унших боломжтой.
+                      </p>
+                      <div class="mt-3 px-3 py-2 rounded-xl bg-white/90 border border-amber-200 text-center">
+                        <span class="text-[11px] text-slate-500 block">Дахин оролдох хугацаа:</span>
+                        <span data-cooldown-topic="${state.studentTopic}" data-cooldown-level="${lvl}" class="font-mono text-base font-extrabold text-rose-600">
+                          ${formatCountdown(cooldownMs)}
+                        </span>
+                      </div>
+                    </div>
+                    <button type="button" onclick="switchStudentTab('lessons')" class="mt-3 w-full py-2 rounded-xl bg-white hover:bg-sky-50 border border-sky-200 text-xs font-bold text-sky-700 transition cursor-pointer">
+                      Хичээл үзэх →
+                    </button>
+                  </div>
+                `;
+              }
+
+              if (completed) {
+                return `
+                  <div class="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50/70 to-white p-5 flex flex-col justify-between shadow-xs">
+                    <div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-base font-extrabold text-emerald-900">${lvl}-р түвшин</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">✓ Дууссан</span>
+                      </div>
+                      <p class="mt-2 text-xs text-emerald-700">Нийт ${tasks.length} даалгаврыг амжилттай бодсон.</p>
+                    </div>
+                    <button type="button" onclick="openStudentLevel(${lvl})" class="mt-4 w-full py-2.5 rounded-xl bg-white hover:bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 transition cursor-pointer">
+                      Даалгаврууд харах
+                    </button>
+                  </div>
+                `;
+              }
+
+              return `
+                <div class="rounded-2xl border-2 border-sky-200 bg-white p-5 flex flex-col justify-between shadow-sm hover:border-sky-400 transition">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-base font-extrabold text-slate-900">${lvl}-р түвшин</span>
+                      <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-700">Нээлттэй</span>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-600">Нийт <strong>${tasks.length}</strong> бодлого байна. Бүгдийг зөв бодвол дараагийн түвшин нээгдэнэ.</p>
+                  </div>
+                  <button type="button" onclick="openStudentLevel(${lvl})" class="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-bold shadow-xs transition cursor-pointer">
+                    Бодож эхлэх →
+                  </button>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    window.openStudentLevel = function(lvl) {
+      const cooldownMs = getLevelCooldownRemainingMs(state.session.userId, state.studentTopic, lvl);
+      if (cooldownMs > 0) {
+        showToast("Энэ түвшин 24 цагийн хүлээлтийн горимд байна.", "warning");
+        return;
+      }
+      state.studentActiveLevel = lvl;
+      renderStudentDashboard();
+    };
+
+    function renderStudentLevelSolver(studentId, topicObj, lvl) {
+      const tasks = getTasksFor(topicObj.id, lvl);
+      const prog = getStudentProgressObj(studentId);
+      const solvedMap = prog.solvedTasks || {};
+      const cooldownMs = getLevelCooldownRemainingMs(studentId, topicObj.id, lvl);
+
+      if (cooldownMs > 0) {
+        state.studentActiveLevel = null;
+        return renderStudentTasksTab();
+      }
+
+      return `
+        <div class="space-y-5">
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 flex items-center justify-between gap-3 shadow-xs">
+            <div>
+              <span class="text-xs font-semibold text-sky-600">${escapeHtml(topicObj.name)}</span>
+              <h2 class="text-lg font-bold text-slate-900">${lvl}-р түвшний даалгаврууд</h2>
+            </div>
+            <button type="button" onclick="state.studentActiveLevel = null; renderStudentDashboard();" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs sm:text-sm font-semibold text-slate-700 cursor-pointer">
+              ← Түвшин рүү буцах
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            ${tasks.map((task, idx) => {
+              const isSolved = Boolean(solvedMap[task.id]);
+              return `
+                <div class="bg-white rounded-2xl border ${isSolved ? "border-emerald-200 bg-emerald-50/20" : "border-slate-200"} p-5 sm:p-6 shadow-xs space-y-4">
+                  <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-lg text-xs font-bold ${isSolved ? "bg-emerald-100 text-emerald-800" : "bg-sky-50 text-sky-800"}">
+                      Бодлого #${idx + 1} ${isSolved ? "— Зөв бодсон ✓" : ""}
+                    </span>
+                  </div>
+
+                  <div class="text-sm sm:text-base text-slate-900 leading-relaxed">
+                    ${renderSafeMath(task.question)}
+                  </div>
+
+                  ${task.imageUrl ? `
+                    <img src="${escapeHtml(task.imageUrl)}" alt="Бодлогын зураг" onclick="openImageModal(this.src)" class="max-h-56 rounded-xl border border-slate-200 bg-white p-1.5 cursor-zoom-in" />
+                  ` : ""}
+
+                  ${isSolved ? `
+                    <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+                      Та энэ бодлогыг зөв бодсон байна.
+                    </div>
+                  ` : `
+                    <div class="pt-1 space-y-3">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${(task.options || []).map((opt, optIdx) => `
+                          <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/40 cursor-pointer transition">
+                            <input type="radio" name="ans_${task.id}" value="${optIdx}" class="w-4 h-4 text-sky-600" />
+                            <span class="text-sm text-slate-800"><strong>${["A", "B", "C", "D"][optIdx]})</strong> ${renderSafeMath(opt)}</span>
+                          </label>
+                        `).join("")}
+                      </div>
+
+                      <button
+                        type="button"
+                        onclick="submitStudentTaskAnswer('${task.id}', '${topicObj.id}', ${lvl})"
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold shadow-xs transition cursor-pointer"
+                      >
+                        Хариу шалгах
+                      </button>
+                    </div>
+                  `}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    window.submitStudentTaskAnswer = async function(taskId, topicId, lvl) {
+      const studentId = state.session.userId;
+      const task = state.tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      const selected = document.querySelector(`input[name="ans_${taskId}"]:checked`);
+      if (!selected) {
+        showToast("Аль нэг хувилбарыг сонгоно уу.", "warning");
+        return;
+      }
+
+      const isCorrect = Number(selected.value) === Number(task.correctIndex);
+      const prog = getStudentProgressObj(studentId);
+      if (!prog.solvedTasks) prog.solvedTasks = {};
+      if (!prog.cooldowns) prog.cooldowns = {};
+
+      if (isCorrect) {
+        prog.solvedTasks[taskId] = true;
+        state.progress[studentId] = prog;
+        await dbSetDocument("progress", studentId, prog);
+
+        if (isLevelCompletedByStudent(studentId, topicId, lvl)) {
+          showToast(`Баяр хүргэе! Та ${lvl}-р түвшинг бүрэн дуусгаж дараагийн түвшинг нээлээ.`, "success");
+          state.studentActiveLevel = null;
+        } else {
+          showToast("Зөв хариуллаа! Үлдсэн бодлогыг үргэлжлүүлнэ үү.", "success");
+        }
+        renderStudentDashboard();
+      } else {
+        const key = `${topicId}_${lvl}`;
+        prog.cooldowns[key] = Date.now() + COOLDOWN_MS;
+        state.progress[studentId] = prog;
+        await dbSetDocument("progress", studentId, prog);
+
+        state.studentActiveLevel = null;
+        showToast("Хариулт буруу байна. Энэ түвшин 24 цагийн турш цоожлогдлоо. Хичээл үзэх хэсгээс онолоо сэргээнэ үү.", "error");
+        renderStudentDashboard();
+      }
+    };
+
+    // 24 цагийн тоолуур болон шалгалтын цагийг секунд тутам шинэчлэх
+    setInterval(() => {
+      if (!state.session || state.session.role !== "student") return;
+      document.querySelectorAll("[data-cooldown-topic]").forEach(el => {
+        const topicId = el.getAttribute("data-cooldown-topic");
+        const lvl = Number(el.getAttribute("data-cooldown-level"));
+        const rem = getLevelCooldownRemainingMs(state.session.userId, topicId, lvl);
+        if (rem <= 0) {
+          renderStudentDashboard();
+        } else {
+          el.textContent = formatCountdown(rem);
+        }
+      });
+
+      const examTimerEl = document.getElementById("student-exam-timer");
+      if (examTimerEl && state.examTimerStartedAt) {
+        const activeExam = state.exams.find(ex => ex.id === state.activeStudentExamId);
+        const durMin = activeExam ? Number(activeExam.durationMinutes || 40) : 40;
+        const totalMs = durMin * 60 * 1000;
+        const leftMs = Math.max(0, totalMs - (Date.now() - state.examTimerStartedAt));
+        examTimerEl.textContent = formatCountdown(leftMs);
+        if (leftMs <= 0) {
+          const form = document.getElementById("student-exam-submit-form");
+          if (form) form.dispatchEvent(new Event("submit"));
+        }
+      }
+    }, 1000);
+
+    // -------------------------------------------------------------------------
+    // СУРАГЧИЙН ТАБ 2: ХИЧЭЭЛ ҮЗЭХ
+    // -------------------------------------------------------------------------
+    function renderStudentLessonsTab() {
+      const lessons = state.lessons
+        .filter(l => state.studentLessonFilter === "ALL" || l.topicId === state.studentLessonFilter)
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      return `
+        <div class="space-y-5">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Физикийн цахим хичээлүүд</h2>
+              <p class="text-xs text-slate-500">Онолын материал, томьёо болон зургуудыг хүссэн үедээ судална уу.</p>
+            </div>
+            <select onchange="state.studentLessonFilter = this.value; renderStudentDashboard();" class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold bg-slate-50">
+              <option value="ALL" ${state.studentLessonFilter === "ALL" ? "selected" : ""}>Бүх сэдэв</option>
+              ${TOPICS.map(t => `<option value="${t.id}" ${state.studentLessonFilter === t.id ? "selected" : ""}>${t.icon} ${escapeHtml(t.name)}</option>`).join("")}
+            </select>
+          </div>
+
+          ${lessons.length === 0 ? `
+            <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center text-sm text-slate-400">
+              Одоогоор нийтлэгдсэн хичээл байхгүй байна.
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              ${lessons.map(ls => {
+                const tObj = TOPICS.find(t => t.id === ls.topicId);
+                return `
+                  <article class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-3">
+                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-100">
+                      ${tObj ? `${tObj.icon} ${escapeHtml(tObj.name)}` : ""}
+                    </span>
+                    <h3 class="text-lg font-bold text-slate-900">${escapeHtml(ls.title)}</h3>
+                    <div class="text-sm text-slate-700 leading-relaxed">${renderSafeMath(ls.content)}</div>
+                    ${ls.imageUrl ? `
+                      <img src="${escapeHtml(ls.imageUrl)}" alt="Хичээлийн зураг" onclick="openImageModal(this.src)" class="max-h-56 rounded-xl border border-slate-200 bg-slate-50 p-1 cursor-zoom-in" />
+                    ` : ""}
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // СУРАГЧИЙН ТАБ 3: МИНИЙ ДҮН БА ИРЦ
+    // -------------------------------------------------------------------------
+    function renderStudentAttendanceAndGradesTab() {
+      const studentId = state.session.userId;
+      const gradeSummary = getStudentGradeSummary(studentId);
+      const myLogs = state.attendance
+        .filter(a => a.studentId === studentId)
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+      const counts = {
+        present: myLogs.filter(x => x.status === "present").length,
+        excused: myLogs.filter(x => x.status === "excused").length,
+        absent: myLogs.filter(x => x.status === "absent").length,
+        sick: myLogs.filter(x => x.status === "sick").length
+      };
+
+      const labels = {
+        present: { text: "Суусан", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+        excused: { text: "Чөлөөтэй", cls: "bg-sky-50 text-sky-700 border-sky-200" },
+        absent: { text: "Тасалсан", cls: "bg-rose-50 text-rose-700 border-rose-200" },
+        sick: { text: "Өвчтэй", cls: "bg-amber-50 text-amber-700 border-amber-200" }
+      };
+
+      return `
+        <div class="space-y-6">
+          <!-- Миний дүнгийн нэгтгэл -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Миний сурлагын дүн ба түвшин</h2>
+                <p class="text-xs text-slate-500">5 бүлэг сэдвийн түвшний ахиц болон өгсөн шалгалтуудын дүн.</p>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <span class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-800 border border-sky-100 text-xs font-bold">
+                  Түвшин: ${gradeSummary.completedLevels} / 40
+                </span>
+                ${gradeSummary.examCount > 0 ? `
+                  <span class="px-3 py-1.5 rounded-xl border text-xs font-extrabold ${gradeSummary.letterInfo.badgeCls}">
+                    Дундаж дүн: ${gradeSummary.averagePct}% (${gradeSummary.letterInfo.letter})
+                  </span>
+                ` : ""}
+              </div>
+            </div>
+
+            <!-- Сэдэв тус бүрийн явц -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              ${TOPICS.map(t => {
+                const lvl = getStudentTopicReachedLevel(studentId, t.id);
+                const doneAll = lvl === 9;
+                return `
+                  <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/50">
+                    <span class="text-xs font-bold text-slate-700 block truncate">${t.icon} ${escapeHtml(t.name)}</span>
+                    <span class="mt-1 inline-block text-xs font-extrabold ${doneAll ? "text-emerald-600" : "text-indigo-700"}">
+                      ${doneAll ? "8/8 Дууссан ✓" : `${lvl}-р түвшин`}
+                    </span>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+
+            <!-- Өгсөн шалгалтуудын дүн -->
+            ${gradeSummary.submissions.length === 0 ? `
+              <p class="text-xs text-slate-400 pt-1">Одоогоор өгсөн шалгалтын дүн бүртгэгдээгүй байна.</p>
+            ` : `
+              <div class="divide-y divide-slate-100 pt-2">
+                ${gradeSummary.submissions.map(sub => {
+                  const pct = sub.total > 0 ? Math.round((sub.score / sub.total) * 100) : 0;
+                  const lInfo = getLetterGradeInfo(pct);
+                  return `
+                    <div class="py-2.5 flex items-center justify-between text-sm">
+                      <div>
+                        <span class="font-bold text-slate-800">${escapeHtml(sub.examTitle || "Физикийн шалгалт")}</span>
+                        <span class="text-xs text-slate-500 ml-2">(${sub.score}/${sub.total} оноо)</span>
+                      </div>
+                      <span class="px-3 py-0.5 rounded-full text-xs font-extrabold border ${lInfo.badgeCls}">
+                        ${pct}% (${lInfo.letter})
+                      </span>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            `}
+          </div>
+
+          <!-- Ирцийн нэгтгэл -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl border border-emerald-200 p-4 shadow-xs">
+              <span class="text-xs font-semibold text-emerald-700">Нийт суусан</span>
+              <p class="mt-1 text-2xl font-extrabold text-emerald-900">${counts.present} <span class="text-xs font-medium">өдөр</span></p>
+            </div>
+            <div class="bg-white rounded-2xl border border-sky-200 p-4 shadow-xs">
+              <span class="text-xs font-semibold text-sky-700">Чөлөөтэй</span>
+              <p class="mt-1 text-2xl font-extrabold text-sky-900">${counts.excused} <span class="text-xs font-medium">өдөр</span></p>
+            </div>
+            <div class="bg-white rounded-2xl border border-rose-200 p-4 shadow-xs">
+              <span class="text-xs font-semibold text-rose-700">Тасалсан</span>
+              <p class="mt-1 text-2xl font-extrabold text-rose-900">${counts.absent} <span class="text-xs font-medium">өдөр</span></p>
+            </div>
+            <div class="bg-white rounded-2xl border border-amber-200 p-4 shadow-xs">
+              <span class="text-xs font-semibold text-amber-700">Өвчтэй</span>
+              <p class="mt-1 text-2xl font-extrabold text-amber-900">${counts.sick} <span class="text-xs font-medium">өдөр</span></p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+            <h2 class="text-base font-bold text-slate-900 pb-3 border-b border-slate-100">Ирцийн дэлгэрэнгүй түүх</h2>
+            ${myLogs.length === 0 ? `
+              <p class="py-8 text-center text-sm text-slate-400">Одоогоор ирцийн бүртгэл ороогүй байна.</p>
+            ` : `
+              <div class="mt-3 divide-y divide-slate-100">
+                ${myLogs.map(log => {
+                  const st = labels[log.status] || { text: log.status, cls: "bg-slate-100 text-slate-700" };
+                  return `
+                    <div class="py-3 flex items-center justify-between text-sm">
+                      <span class="font-semibold text-slate-800">${escapeHtml(log.date)}</span>
+                      <span class="px-3 py-1 rounded-full text-xs font-bold border ${st.cls}">${st.text}</span>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------------------
+    // СУРАГЧИЙН ТАБ 4: ШАЛГАЛТ ӨГӨХ
+    // -------------------------------------------------------------------------
+    function renderStudentExamTab(studentGrade) {
+      const openExams = getAvailableExamsForStudent(studentGrade);
+      const mySubs = state.examSubmissions.filter(s => s.studentId === state.session.userId);
+
+      // Одоо өгөх боломжтой (хараахан өгөөгүй) нээлттэй шалгалт байгаа эсэх
+      const unsubmittedOpenExams = openExams.filter(ex => !mySubs.some(sub => (sub.examId || "default_exam") === ex.id));
+
+      if (unsubmittedOpenExams.length === 0) {
+        if (mySubs.length === 0) {
+          return `
+            <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center text-sm text-slate-500">
+              Одоогоор таны ангид нээлттэй шалгалт байхгүй байна.
+            </div>
+          `;
+        }
+        return `
+          <div class="space-y-4 max-w-2xl mx-auto">
+            ${mySubs.map(mySub => {
+              const pct = mySub.total > 0 ? Math.round((mySub.score / mySub.total) * 100) : 0;
+              const lInfo = getLetterGradeInfo(pct);
+              return `
+                <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs text-center space-y-4">
+                  <div class="mx-auto w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                  </div>
+                  <h2 class="text-lg font-extrabold text-slate-900">Шалгалтын дүн бүртгэгдсэн</h2>
+                  <p class="text-sm text-slate-500">${escapeHtml(mySub.examTitle || "Физикийн шалгалт")}</p>
+                  <div class="inline-flex items-center gap-4 px-6 py-4 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-100">
+                    <div>
+                      <span class="text-xs text-slate-500 block">Авсан оноо</span>
+                      <span class="text-2xl font-extrabold text-indigo-700">${mySub.score} / ${mySub.total}</span>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <div>
+                      <span class="text-xs text-slate-500 block">Дүн</span>
+                      <span class="text-2xl font-extrabold text-emerald-600">${pct}% (${lInfo.letter})</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      const targetExam = unsubmittedOpenExams.find(ex => ex.id === state.activeStudentExamId) || unsubmittedOpenExams[0];
+      state.activeStudentExamId = targetExam.id;
+      if (!state.examTimerStartedAt) state.examTimerStartedAt = Date.now();
+
+      const questions = state.examQuestions.filter(q => (q.examId || "default_exam") === targetExam.id);
+      const durSec = Number(targetExam.durationMinutes || 40) * 60 * 1000;
+      const leftMs = Math.max(0, durSec - (Date.now() - state.examTimerStartedAt));
+
+      return `
+        <form id="student-exam-submit-form" class="space-y-5 max-w-3xl mx-auto">
+          ${unsubmittedOpenExams.length > 1 ? `
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold text-slate-600">Шалгалт сонгох:</span>
+              ${unsubmittedOpenExams.map(ex => `
+                <button
+                  type="button"
+                  onclick="state.activeStudentExamId = '${ex.id}'; state.examTimerStartedAt = Date.now(); renderStudentDashboard();"
+                  class="px-3 py-1.5 rounded-xl text-xs font-bold border cursor-pointer ${ex.id === targetExam.id ? "bg-indigo-600 text-white border-indigo-600" : "bg-slate-50 text-slate-700 border-slate-200"}"
+                >
+                  ${escapeHtml(ex.title)}
+                </button>
+              `).join("")}
+            </div>
+          ` : ""}
+
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 mb-2">Нээлттэй шалгалт</span>
+              <h2 class="text-xl font-extrabold text-slate-900">${escapeHtml(targetExam.title)}</h2>
+              <p class="text-xs text-slate-500 mt-1">Нийт ${questions.length} асуулт.</p>
+            </div>
+            <div class="px-4 py-2.5 rounded-2xl bg-sky-50 border border-sky-100 text-center shrink-0">
+              <span class="text-[11px] text-slate-500 block">Үлдсэн хугацаа</span>
+              <span id="student-exam-timer" class="font-mono text-lg font-extrabold text-indigo-700">${formatCountdown(leftMs)}</span>
+            </div>
+          </div>
+
+          ${questions.map((q, idx) => `
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-3.5">
+              <span class="text-xs font-bold text-sky-700">Асуулт #${idx + 1}</span>
+              <div class="text-sm sm:text-base text-slate-900 leading-relaxed">${renderSafeMath(q.question)}</div>
+              ${q.imageUrl ? `<img src="${escapeHtml(q.imageUrl)}" alt="Шалгалтын зураг" onclick="openImageModal(this.src)" class="max-h-56 rounded-xl border bg-white p-1 cursor-zoom-in" />` : ""}
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${(q.options || []).map((opt, optIdx) => `
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-indigo-400 cursor-pointer">
+                    <input type="radio" name="exam_q_${q.id}" value="${optIdx}" class="w-4 h-4 text-indigo-600" />
+                    <span class="text-sm"><strong>${["A", "B", "C", "D"][optIdx]})</strong> ${renderSafeMath(opt)}</span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+          `).join("")}
+
+          <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white font-bold text-sm shadow-lg transition cursor-pointer">
+            Шалгалтын хариу илгээх
+          </button>
+        </form>
+      `;
+    }
+
+    function bindStudentExamSubmit() {
+      const form = document.getElementById("student-exam-submit-form");
+      if (!form) return;
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const targetExam = state.exams.find(ex => ex.id === state.activeStudentExamId);
+        if (!targetExam) return;
+
+        const questions = state.examQuestions.filter(q => (q.examId || "default_exam") === targetExam.id);
+        let score = 0;
+        const total = questions.length;
+
+        for (const q of questions) {
+          const sel = document.querySelector(`input[name="exam_q_${q.id}"]:checked`);
+          if (sel && Number(sel.value) === Number(q.correctIndex)) {
+            score++;
+          }
+        }
+
+        const currentStudentObj = state.students.find(s => s.id === state.session.userId);
+        const gInfo = currentStudentObj ? getStudentGradeInfo(currentStudentObj) : { grade: state.session.grade || "10-р анги", label: state.session.classGroup || "10-р анги" };
+
+        const subId = `exam_${targetExam.id}_${state.session.userId}`;
+        const subData = {
+          examId: targetExam.id,
+          examTitle: targetExam.title,
+          studentId: state.session.userId,
+          studentName: currentStudentObj ? currentStudentObj.fullName : state.session.fullName,
+          grade: gInfo.grade,
+          classGroup: gInfo.label,
+          score,
+          total,
+          submittedAt: Date.now()
+        };
+
+        const idx = state.examSubmissions.findIndex(s => s.id === subId);
+        if (idx !== -1) state.examSubmissions[idx] = { id: subId, ...subData };
+        else state.examSubmissions.push({ id: subId, ...subData });
+
+        state.examTimerStartedAt = null;
+        state.activeStudentExamId = null;
+        await dbSetDocument("exam_submissions", subId, subData);
+        const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+        showToast(`Шалгалт илгээгдлээ! Таны дүн: ${score}/${total} (${pct}%)`, "success");
+        renderStudentDashboard();
+      });
+    }
+
+    // =========================================================================
+    // 12. СИСТЕМИЙГ ШУУД ЭХЛҮҮЛЭХ
+    // =========================================================================
+    (function bootstrapApp() {
+      initFirebase();
+      try {
+        const savedSession = sessionStorage.getItem(SESSION_KEY);
+        if (savedSession) {
+          state.session = JSON.parse(savedSession);
+        }
+      } catch (_) {}
+      selectRole("student");
+      renderAppShell();
+      window.addEventListener("load", runKatexAutoRender);
+    })();
+  </script>
+</body>
+</html>
