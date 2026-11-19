@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ЭЕШ 2024 • Физик (В хувилбар)</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      scroll-behavior: smooth;
+    }
+    .digit-box:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+    }
+    /* Smooth custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- ==================== STICKY TOP HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+      <!-- Exam Title -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-extrabold text-xs sm:text-sm shadow-sm shrink-0">
+          ЭЕШ
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+            ЭЕШ 2024 • Физик (В хувилбар)
+          </h1>
+          <p class="text-[11px] sm:text-xs text-slate-500">
+            Нийт 100 оноо • I хэсэг (76) + II хэсэг (24)
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Controls: Progress, Timer, Grade CTA -->
+      <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+        <!-- Progress Counter -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs sm:text-sm font-semibold text-slate-700" title="Бөглөсөн даалгаврын тоо">
+          <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+          <span id="progress-text">0 / 50 бөглөсөн</span>
+        </div>
+
+        <!-- Desktop Timer (100 min countdown) -->
+        <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs sm:text-sm font-mono font-semibold text-slate-700">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path stroke-linecap="round" d="M12 7v5l3 2"></path>
+          </svg>
+          <span id="timer-display">100:00</span>
+          <button id="timer-toggle-btn" type="button" class="ml-1 px-2 py-0.5 text-[11px] font-sans font-semibold rounded-md bg-white border border-slate-300 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300 transition">
+            Эхлүүлэх
+          </button>
+        </div>
+
+        <!-- Submit & Grade Button -->
+        <button id="submit-btn" type="button" class="px-3.5 sm:px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold shadow-sm transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Шалгах &amp; Оноо харах</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Navigation Tabs & Collapsible Grid Toggle -->
+    <div class="border-t border-slate-100 bg-slate-50/90">
+      <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2">
+        <nav class="flex flex-wrap items-center gap-1.5" aria-label="Хэсгийн шилжилт">
+          <a href="#part1-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:text-indigo-700 transition">
+            I хэсэг (1–46)
+          </a>
+          <a href="#part2-section" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:text-indigo-700 transition">
+            II хэсэг (2.1–2.4)
+          </a>
+          <a id="nav-results-tab" href="#result-summary" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition">
+            Дүнгийн хуудас
+          </a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <!-- Mobile Timer Button -->
+          <button id="mobile-timer-btn" type="button" class="md:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-mono font-semibold text-slate-700">
+            <span id="mobile-timer-display">100:00</span>
+            <span id="mobile-timer-icon" class="text-indigo-600 font-sans">▶</span>
+          </button>
+
+          <!-- Collapsible Navigator Toggle -->
+          <button id="toggle-nav-btn" type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path>
+            </svg>
+            <span>Асуултын самбар</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="max-w-5xl mx-auto px-3 sm:px-6 py-6 space-y-6">
+
+    <!-- RESULT SUMMARY BANNER (Revealed after submission) -->
+    <section id="result-summary" class="hidden scroll-mt-28 rounded-2xl bg-white border border-slate-200 shadow-md overflow-hidden">
+      <div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-700 px-5 sm:px-7 py-5 text-white flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-semibold mb-1.5">
+            Шалгалтын дүнгийн хуудас
+          </span>
+          <h2 class="text-xl sm:text-2xl font-extrabold">Таны нийт үнэлгээ</h2>
+          <p id="result-message" class="text-indigo-100 text-xs sm:text-sm mt-0.5"></p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <div class="text-3xl sm:text-4xl font-extrabold leading-none">
+              <span id="total-score-val">0</span><span class="text-lg sm:text-xl font-semibold text-indigo-200"> / 100</span>
+            </div>
+            <div id="total-percent-val" class="text-xs sm:text-sm font-semibold text-indigo-100 mt-1">0% • Үнэлгээ: F</div>
+          </div>
+          <div class="px-3.5 py-2 rounded-xl bg-white/15 border border-white/25 text-center">
+            <div class="text-[10px] uppercase tracking-wider text-indigo-100 font-semibold">Хэмжээст (ойр.)</div>
+            <div id="scaled-score-val" class="text-xl sm:text-2xl font-extrabold leading-tight">200</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-5 sm:p-6 space-y-5">
+        <!-- Score Breakdown Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-xs text-slate-500 font-medium">I хэсэг (Сонгох)</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5"><span id="part1-score-val">0</span> / 76</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-xs text-slate-500 font-medium">II хэсэг (Бодлого)</div>
+            <div class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5"><span id="part2-score-val">0</span> / 24</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="text-xs text-emerald-700 font-medium">Зөв хариулсан</div>
+            <div class="text-lg sm:text-xl font-bold text-emerald-700 mt-0.5"><span id="correct-count-val">0</span> <span class="text-xs font-medium">/ 61</span></div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+            <div class="text-xs text-rose-700 font-medium">Алдаатай / Дутуу</div>
+            <div class="text-lg sm:text-xl font-bold text-rose-700 mt-0.5"><span id="wrong-count-val">0</span></div>
+          </div>
+        </div>
+
+        <!-- Visual Progress Bar -->
+        <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+          <div id="score-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-700" style="width: 0%"></div>
+        </div>
+
+        <!-- Filter & Reset Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-semibold text-slate-500 mr-1">Шүүх:</span>
+            <button type="button" data-filter="all" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition">Бүгд</button>
+            <button type="button" data-filter="wrong" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Зөвхөн алдаатай</button>
+            <button type="button" data-filter="correct" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Зөвхөн зөв</button>
+          </div>
+          <button id="reset-btn" type="button" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path>
+            </svg>
+            <span>Дахин эхлэх</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUESTION NAVIGATOR PANEL -->
+    <section id="navigator-panel" class="rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h2 class="text-sm font-bold text-slate-800">Асуултын шилжилтийн самбар</h2>
+        <div class="flex flex-wrap items-center gap-3 text-[11px] font-medium text-slate-500">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-slate-100 border border-slate-300 inline-block"></span> Бөглөөгүй</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-indigo-600 inline-block"></span> Бөглөсөн</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span> Зөв</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-rose-500 inline-block"></span> Буруу</span>
+        </div>
+      </div>
+      <div id="navigator-grid" class="grid grid-cols-7 sm:grid-cols-10 md:grid-cols-13 lg:grid-cols-17 gap-1.5">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- PART I SECTION -->
+    <section id="part1-section" class="scroll-mt-28">
+      <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 sm:p-6 border-l-4 border-l-indigo-600">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">НЭГДҮГЭЭР ХЭСЭГ</h2>
+          <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold">46 даалгавар • 76 оноо</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+          <strong>САНАМЖ:</strong> Нэгдүгээр хэсэг 46 сонгох даалгавартай нийт 76 оноотой. Даалгавар тус бүр таван сонгох хариулттай. Тэдгээрээс зөвхөн нэг зөв хариултыг сонгож асуулт бүрийн доорх харгалзах товч дээр дарж тэмдэглээрэй. Амжилт хүсье!
+        </p>
+      </div>
+
+      <div id="part1-container" class="mt-5 space-y-5">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- PART II SECTION -->
+    <section id="part2-section" class="scroll-mt-28 pt-4">
+      <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 sm:p-6 border-l-4 border-l-blue-600">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">ХОЁРДУГААР ХЭСЭГ</h2>
+          <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">4 даалгавар • 24 оноо</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+          <strong>САНАМЖ:</strong> Хоёрдугаар хэсэг 4 даалгавартай нийт 24 оноотой. Даалгавруудын <strong>a, b, c, d...</strong> үсэгт тохирох <strong>0–9</strong> цифрүүдээс сонгож харгалзах нүдэнд оруулна уу. Жишээ нь: <code>[cd.e] = 21.2</code> гэвэл <code>c = 2</code>, <code>d = 1</code>, <code>e = 2</code> гэж бөглөнө. Цэг, таслалын тэмдгийг үсгээр илэрхийлээгүй.
+        </p>
+      </div>
+
+      <div id="part2-container" class="mt-5 space-y-6">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- BOTTOM SUBMIT CTA -->
+    <div class="py-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <button id="bottom-submit-btn" type="button" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Шалгах &amp; Оноо харах</span>
+      </button>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white py-6 mt-8">
+    <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500">
+      Элсэлтийн ерөнхий шалгалт 2024 — Физик (В хувилбар) • Интерактив шалгалтын систем
+    </div>
+  </footer>
+
+  <!-- CUSTOM CONFIRMATION MODAL (No native alert/confirm) -->
+  <div id="modal-backdrop" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <h3 id="modal-title" class="text-lg font-bold text-slate-900">Баталгаажуулах</h3>
+      <p id="modal-body" class="text-sm text-slate-600 leading-relaxed"></p>
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button id="modal-cancel" type="button" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition">
+          Болих
+        </button>
+        <button id="modal-confirm" type="button" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition">
+          Тийм, үргэлжлүүлэх
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. INLINE SVG DIAGRAMS & SCHEMATICS (Crisp vector art for every figure)
+       ========================================================================= */
+    function getSvgDiagram(id) {
+      switch (id) {
+        case 'q1-mv': {
+          // Analog millivoltmeter 0 to 2.0 mV, major ticks at 0, 1, 2; minor ticks at 0.5, 1.5; needle at 1.0
+          const cx = 175, cy = 152, rOut = 110, rMaj = 88, rMin = 97;
+          const ang = (val) => (-145 + (val / 2) * 110) * Math.PI / 180;
+          let ticks = '';
+          [0, 0.5, 1.0, 1.5, 2.0].forEach(v => {
+            const a = ang(v);
+            const isMaj = Number.isInteger(v);
+            const r1 = isMaj ? rMaj : rMin;
+            ticks += `<line x1="${(cx + r1 * Math.cos(a)).toFixed(1)}" y1="${(cy + r1 * Math.sin(a)).toFixed(1)}" x2="${(cx + rOut * Math.cos(a)).toFixed(1)}" y2="${(cy + rOut * Math.sin(a)).toFixed(1)}" stroke="#0f172a" stroke-width="${isMaj ? 2.6 : 1.6}"/>`;
+            if (isMaj) {
+              const rTxt = rOut + 18;
+              ticks += `<text x="${(cx + rTxt * Math.cos(a)).toFixed(1)}" y="${(cy + rTxt * Math.sin(a) + 5).toFixed(1)}" text-anchor="middle" font-size="16" font-weight="800" fill="#0f172a">${v}</text>`;
+            }
+          });
+          const a0 = ang(0), a2 = ang(2), aN = ang(1.0);
+          return `
+            <svg viewBox="0 0 350 185" class="w-full max-w-xs mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <rect x="20" y="12" width="310" height="160" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.6"/>
+              <path d="M ${(cx + rOut * Math.cos(a0)).toFixed(1)} ${(cy + rOut * Math.sin(a0)).toFixed(1)} A ${rOut} ${rOut} 0 0 1 ${(cx + rOut * Math.cos(a2)).toFixed(1)} ${(cy + rOut * Math.sin(a2)).toFixed(1)}" fill="none" stroke="#334155" stroke-width="2.2"/>
+              ${ticks}
+              <text x="${cx}" y="114" text-anchor="middle" font-size="22" font-weight="800" fill="#334155">mV</text>
+              <line x1="${cx}" y1="${cy}" x2="${(cx + (rOut - 6) * Math.cos(aN)).toFixed(1)}" y2="${(cy + (rOut - 6) * Math.sin(aN)).toFixed(1)}" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="${cx}" cy="${cy}" r="7" fill="#0f172a"/>
+              <circle cx="${cx}" cy="${cy}" r="3" fill="#fff"/>
+            </svg>`;
+        }
+
+        case 'q2-vt': {
+          // v(m/s) vs t(s): (0, 8) -> (4, 0) -> (6, -4)
+          // Origin (60, 145); x: 40px per 1s; y: 12px per 1 m/s
+          return `
+            <svg viewBox="0 0 350 220" class="w-full max-w-sm mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-q2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Axes -->
+              <line x1="60" y1="210" x2="60" y2="20" stroke="#0f172a" stroke-width="1.8" marker-end="url(#arr-q2)"/>
+              <line x1="60" y1="145" x2="325" y2="145" stroke="#0f172a" stroke-width="1.8" marker-end="url(#arr-q2)"/>
+              <!-- Dashed projections for (6, -4) -->
+              <line x1="300" y1="145" x2="300" y2="193" stroke="#64748b" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <line x1="60" y1="193" x2="300" y2="193" stroke="#64748b" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <!-- Main velocity line -->
+              <line x1="60" y1="49" x2="300" y2="193" stroke="#2563eb" stroke-width="2.8" stroke-linecap="round"/>
+              <circle cx="60" cy="49" r="3.5" fill="#1d4ed8"/>
+              <circle cx="220" cy="145" r="3.5" fill="#1d4ed8"/>
+              <circle cx="300" cy="193" r="3.5" fill="#1d4ed8"/>
+              <!-- Labels -->
+              <text x="16" y="25" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">v, м/с</text>
+              <text x="318" y="165" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">t, с</text>
+              <text x="48" y="54" text-anchor="end" font-size="14" font-weight="700" fill="#0f172a">8</text>
+              <text x="48" y="150" text-anchor="end" font-size="14" font-weight="700" fill="#0f172a">0</text>
+              <text x="48" y="198" text-anchor="end" font-size="14" font-weight="700" fill="#0f172a">−4</text>
+              <text x="220" y="166" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">4</text>
+              <text x="300" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">6</text>
+            </svg>`;
+        }
+
+        case 'q4-handle': {
+          return `
+            <svg viewBox="0 0 280 215" class="w-full max-w-[270px] mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-q4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+                <marker id="arr-f4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+                </marker>
+              </defs>
+              <!-- Vertical door lock plate -->
+              <rect x="195" y="16" width="60" height="182" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+              <!-- Keyhole -->
+              <ellipse cx="225" cy="162" rx="18" ry="10" fill="#f8fafc" stroke="#64748b" stroke-width="1.8"/>
+              <line x1="215" y1="162" x2="235" y2="162" stroke="#64748b" stroke-width="2.2"/>
+              <!-- Horizontal handle -->
+              <rect x="24" y="64" width="218" height="36" rx="4" fill="#f1f5f9" stroke="#64748b" stroke-width="1.8"/>
+              <!-- Pivot dot -->
+              <circle cx="225" cy="82" r="4.5" fill="#334155"/>
+              <!-- Dashed vertical guide lines -->
+              <line x1="56" y1="36" x2="56" y2="188" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4"/>
+              <line x1="225" y1="36" x2="225" y2="82" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4"/>
+              <!-- Distance d arrow -->
+              <line x1="60" y1="42" x2="221" y2="42" stroke="#0f172a" stroke-width="1.6" stroke-dasharray="4 3" marker-start="url(#arr-q4)" marker-end="url(#arr-q4)"/>
+              <text x="140" y="33" text-anchor="middle" font-size="16" font-weight="700" font-style="italic" fill="#0f172a">d</text>
+              <!-- Force arrow F at 30 deg from vertical -->
+              <line x1="56" y1="82" x2="104" y2="165" stroke="#dc2626" stroke-width="2.8" marker-end="url(#arr-f4)"/>
+              <!-- Angle arc -->
+              <path d="M 56 116 A 34 34 0 0 0 73 111" fill="none" stroke="#0f172a" stroke-width="1.4"/>
+              <text x="64" y="138" font-size="13" font-weight="700" fill="#0f172a">30°</text>
+              <text x="115" y="176" font-size="18" font-weight="800" font-style="italic" fill="#dc2626">F</text>
+            </svg>`;
+        }
+
+        case 'q6-incline': {
+          return `
+            <svg viewBox="0 0 320 195" class="w-full max-w-xs mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <!-- Right triangle incline -->
+              <polygon points="35,160 275,160 275,30" fill="#f8fafc" stroke="#334155" stroke-width="2.4" stroke-linejoin="round"/>
+              <!-- Right angle mark -->
+              <polyline points="262,160 262,147 275,147" fill="none" stroke="#64748b" stroke-width="1.4"/>
+              <!-- Block resting on slope (angle atan2(130, 240) ≈ -28.44 deg) -->
+              <g transform="translate(152, 96.5) rotate(-28.44)">
+                <rect x="-36" y="-34" width="72" height="34" rx="2" fill="#d6cfa6" stroke="#3f3f46" stroke-width="1.8"/>
+                <text x="0" y="-12" text-anchor="middle" font-size="14" font-style="italic" font-weight="700" fill="#1e293b">m</text>
+              </g>
+              <!-- Dimensions a and b -->
+              <text x="292" y="102" font-size="17" font-style="italic" font-weight="700" fill="#0f172a">a</text>
+              <text x="155" y="182" text-anchor="middle" font-size="17" font-style="italic" font-weight="700" fill="#0f172a">b</text>
+            </svg>`;
+        }
+
+        case 'q10-11-hill': {
+          return `
+            <svg viewBox="0 0 390 190" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-h10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Filled hill profile -->
+              <path d="M 48 45 C 120 45, 165 165, 222 165 C 265 165, 290 100, 345 100 L 345 165 L 48 165 Z" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+              <!-- Ground line -->
+              <line x1="25" y1="165" x2="375" y2="165" stroke="#0f172a" stroke-width="2.2"/>
+              <!-- Blocks at A, B, C -->
+              <rect x="40" y="33" width="14" height="12" fill="#0f172a"/>
+              <text x="47" y="25" text-anchor="middle" font-size="15" font-style="italic" font-weight="800" fill="#0f172a">A</text>
+
+              <rect x="215" y="153" width="14" height="12" fill="#0f172a"/>
+              <text x="222" y="144" text-anchor="middle" font-size="15" font-style="italic" font-weight="800" fill="#0f172a">B</text>
+
+              <rect x="338" y="88" width="14" height="12" fill="#0f172a"/>
+              <line x1="352" y1="94" x2="376" y2="94" stroke="#dc2626" stroke-width="2" marker-end="url(#arr-h10)"/>
+              <text x="345" y="79" text-anchor="middle" font-size="15" font-style="italic" font-weight="800" fill="#0f172a">C</text>
+
+              <!-- Height h1 arrow -->
+              <line x1="48" y1="49" x2="48" y2="161" stroke="#0f172a" stroke-width="1.5" marker-start="url(#arr-h10)" marker-end="url(#arr-h10)"/>
+              <text x="28" y="110" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">h<tspan dy="3" font-size="11" font-style="normal">1</tspan></text>
+
+              <!-- Height h2 arrow -->
+              <line x1="345" y1="104" x2="345" y2="161" stroke="#0f172a" stroke-width="1.5" marker-start="url(#arr-h10)" marker-end="url(#arr-h10)"/>
+              <text x="358" y="138" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">h<tspan dy="3" font-size="11" font-style="normal">2</tspan></text>
+            </svg>`;
+        }
+
+        case 'q14-gauges': {
+          // Five circular dial gauges: MPa(10), V(25), mA(35), °C(15), kg(20)
+          const gauges = [
+            { unit: 'MPa', max: 40, val: 10 },
+            { unit: 'V',   max: 40, val: 25 },
+            { unit: 'mA',  max: 40, val: 35 },
+            { unit: '°C',  max: 20, val: 15, highlight: true },
+            { unit: 'kg',  max: 40, val: 20 }
+          ];
+          const items = gauges.map((g, idx) => {
+            const cx = 56 + idx * 102, cy = 62, r = 42;
+            // Scale from 135 deg (bottom-left = 0) clockwise 270 deg to 405 deg (bottom-right = max)
+            const a = (v) => (135 + (v / g.max) * 270) * Math.PI / 180;
+            let tks = '';
+            const steps = 4;
+            for (let i = 0; i <= steps; i++) {
+              const v = (g.max / steps) * i;
+              const rad = a(v);
+              const x1 = cx + (r - 9) * Math.cos(rad), y1 = cy + (r - 9) * Math.sin(rad);
+              const x2 = cx + (r - 2) * Math.cos(rad), y2 = cy + (r - 2) * Math.sin(rad);
+              tks += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#1e293b" stroke-width="1.6"/>`;
+              const tx = cx + (r - 17) * Math.cos(rad), ty = cy + (r - 17) * Math.sin(rad) + 3;
+              tks += `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="#334155">${v}</text>`;
+            }
+            const na = a(g.val);
+            const nx = cx + (r - 10) * Math.cos(na), ny = cy + (r - 10) * Math.sin(na);
+            return `
+              <g>
+                <circle cx="${cx}" cy="${cy}" r="${r}" fill="#f8fafc" stroke="${g.highlight ? '#4f46e5' : '#475569'}" stroke-width="2.2"/>
+                ${tks}
+                <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+                <circle cx="${cx}" cy="${cy}" r="3.5" fill="#0f172a"/>
+                <text x="${cx}" y="${cy + 30}" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a">${g.unit}</text>
+              </g>`;
+          }).join('');
+          return `
+            <svg viewBox="0 0 520 120" class="w-full max-w-2xl mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              ${items}
+            </svg>`;
+        }
+
+        case 'q16-mixing': {
+          // Temp (0..100 °C) vs Time (0..7 min)
+          // Origin (58, 195); x: 46px per min; y: 1.7px per °C
+          const px = (t) => 58 + t * 46;
+          const py = (T) => 195 - T * 1.7;
+          let grid = '';
+          for (let T = 0; T <= 100; T += 10) {
+            grid += `<line x1="58" y1="${py(T)}" x2="390" y2="${py(T)}" stroke="#e2e8f0" stroke-width="1"/>`;
+            if (T % 20 === 0 || T === 50) {
+              grid += `<text x="50" y="${py(T) + 4}" text-anchor="end" font-size="11" font-weight="600" fill="#475569">${T}</text>`;
+            }
+          }
+          for (let t = 0; t <= 7; t++) {
+            grid += `<line x1="${px(t)}" y1="25" x2="${px(t)}" y2="195" stroke="#e2e8f0" stroke-width="1"/>`;
+            grid += `<text x="${px(t)}" y="211" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">${t}</text>`;
+          }
+          const bPts = [[0,80],[2,65],[4,54],[5,48],[6,48],[7,48]];
+          const aPts = [[0,20],[2,28],[4,37],[5,48],[6,48],[7,48]];
+          const toPoly = (arr) => arr.map(([t, T]) => `${px(t).toFixed(1)},${py(T).toFixed(1)}`).join(' ');
+          const dotsB = bPts.map(([t, T]) => `<circle cx="${px(t)}" cy="${py(T)}" r="3.5" fill="#2563eb"/>`).join('');
+          const dotsA = aPts.map(([t, T]) => `<circle cx="${px(t)}" cy="${py(T)}" r="3.5" fill="#ea580c"/>`).join('');
+          return `
+            <svg viewBox="0 0 420 232" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              ${grid}
+              <line x1="58" y1="195" x2="395" y2="195" stroke="#334155" stroke-width="1.6"/>
+              <line x1="58" y1="195" x2="58" y2="20" stroke="#334155" stroke-width="1.6"/>
+              <!-- Curve B (cooling) -->
+              <polyline points="${toPoly(bPts)}" fill="none" stroke="#1e293b" stroke-width="2.2"/>
+              <!-- Curve A (heating, dash-dot) -->
+              <polyline points="${toPoly(aPts)}" fill="none" stroke="#0f172a" stroke-width="2.6" stroke-dasharray="10 4 2 4"/>
+              ${dotsB}
+              ${dotsA}
+              <!-- Labels A and B -->
+              <text x="195" y="72" font-size="14" font-weight="800" fill="#2563eb">B</text>
+              <line x1="192" y1="76" x2="176" y2="90" stroke="#475569" stroke-width="1.2"/>
+              <text x="120" y="130" font-size="14" font-weight="800" fill="#ea580c">A</text>
+              <line x1="132" y1="133" x2="148" y2="145" stroke="#475569" stroke-width="1.2"/>
+              <text x="16" y="115" transform="rotate(-90 16 115)" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Температур, °C</text>
+              <text x="225" y="227" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Хугацаа, мин</text>
+            </svg>`;
+        }
+
+        case 'q17-18-phase': {
+          // t(°C) vs Q(kJ): A(20, 214)->B(480, 214)->C(5256, 2405)->D(7256, 2405)
+          return `
+            <svg viewBox="0 0 385 225" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-p17" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#3f6212"/>
+                </marker>
+              </defs>
+              <!-- Axes -->
+              <line x1="64" y1="192" x2="345" y2="192" stroke="#3f6212" stroke-width="1.8" marker-end="url(#arr-p17)"/>
+              <line x1="64" y1="192" x2="64" y2="20" stroke="#3f6212" stroke-width="1.8" marker-end="url(#arr-p17)"/>
+              <!-- Dashed guides -->
+              <line x1="64" y1="162" x2="88" y2="162" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <line x1="88" y1="162" x2="88" y2="192" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <line x1="128" y1="162" x2="128" y2="192" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <line x1="64" y1="54" x2="208" y2="54" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <line x1="208" y1="54" x2="208" y2="192" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <line x1="296" y1="54" x2="296" y2="192" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3"/>
+              <!-- Phase graph A->B->C->D -->
+              <polyline points="88,162 128,162 208,54 296,54" fill="none" stroke="#4d7c0f" stroke-width="2.8" stroke-linejoin="round"/>
+              <!-- Point labels -->
+              <text x="80" y="154" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">A</text>
+              <text x="134" y="168" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">B</text>
+              <text x="204" y="45" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">C</text>
+              <text x="294" y="45" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">D</text>
+              <!-- Axis numbers -->
+              <text x="56" y="59" text-anchor="end" font-size="12" font-weight="700" fill="#0f172a">2405</text>
+              <text x="56" y="167" text-anchor="end" font-size="12" font-weight="700" fill="#0f172a">214</text>
+              <text x="56" y="196" text-anchor="end" font-size="12" font-weight="700" fill="#0f172a">0</text>
+              <text x="88" y="209" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">20</text>
+              <text x="128" y="209" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">480</text>
+              <text x="208" y="209" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">5256</text>
+              <text x="296" y="209" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">7256</text>
+              <!-- Axis titles -->
+              <text x="24" y="19" font-size="13" font-style="italic" font-weight="700" fill="#0f172a">t°, °C</text>
+              <text x="348" y="197" font-size="13" font-weight="700" fill="#0f172a">Q, кЖ</text>
+            </svg>`;
+        }
+
+        case 'q22-symbols': {
+          // 1=Capacitor, 2=Resistor, 3=Photoresistor(LDR), 4=Thermistor, 5=Diode
+          return `
+            <svg viewBox="0 0 510 112" class="w-full max-w-2xl mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-ldr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+                </marker>
+              </defs>
+              <!-- 1: Capacitor -->
+              <g transform="translate(10, 12)">
+                <line x1="12" y1="36" x2="38" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="38" y1="18" x2="38" y2="54" stroke="#0f172a" stroke-width="2.6"/>
+                <line x1="50" y1="18" x2="50" y2="54" stroke="#0f172a" stroke-width="2.6"/>
+                <line x1="50" y1="36" x2="76" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <text x="44" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">1</text>
+              </g>
+              <!-- 2: Fixed Resistor -->
+              <g transform="translate(110, 12)">
+                <line x1="8" y1="36" x2="24" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <rect x="24" y="25" width="42" height="22" fill="#f8fafc" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="66" y1="36" x2="82" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <text x="45" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">2</text>
+              </g>
+              <!-- 3: Photoresistor (LDR) -->
+              <g transform="translate(210, 12)">
+                <circle cx="45" cy="40" r="24" fill="none" stroke="#475569" stroke-width="1.6"/>
+                <line x1="6" y1="40" x2="27" y2="40" stroke="#0f172a" stroke-width="2.2"/>
+                <rect x="27" y="31" width="36" height="18" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+                <line x1="63" y1="40" x2="84" y2="40" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="20" y1="6" x2="34" y2="21" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arr-ldr)"/>
+                <line x1="33" y1="4" x2="47" y2="19" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arr-ldr)"/>
+                <text x="45" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">3</text>
+              </g>
+              <!-- 4: Thermistor -->
+              <g transform="translate(310, 12)">
+                <line x1="8" y1="36" x2="24" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <rect x="24" y="25" width="42" height="22" fill="#f8fafc" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="66" y1="36" x2="82" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <polyline points="20,56 30,56 62,15" fill="none" stroke="#0f172a" stroke-width="2"/>
+                <text x="68" y="18" font-size="11" font-weight="800" fill="#dc2626">t°</text>
+                <text x="45" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">4</text>
+              </g>
+              <!-- 5: Diode -->
+              <g transform="translate(410, 12)">
+                <line x1="8" y1="36" x2="32" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <polygon points="32,22 32,50 56,36" fill="#f8fafc" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="56" y1="22" x2="56" y2="50" stroke="#0f172a" stroke-width="2.6"/>
+                <line x1="56" y1="36" x2="80" y2="36" stroke="#0f172a" stroke-width="2.2"/>
+                <text x="45" y="84" text-anchor="middle" font-size="14" font-weight="800" fill="#334155">5</text>
+              </g>
+            </svg>`;
+        }
+
+        case 'q23-divider': {
+          return `
+            <svg viewBox="0 0 290 210" class="w-full max-w-[280px] mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-d23" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Wires -->
+              <line x1="48" y1="26" x2="145" y2="26" stroke="#0f172a" stroke-width="2"/>
+              <line x1="48" y1="184" x2="220" y2="184" stroke="#0f172a" stroke-width="2"/>
+              <line x1="145" y1="26" x2="145" y2="48" stroke="#0f172a" stroke-width="2"/>
+              <line x1="145" y1="90" x2="145" y2="120" stroke="#0f172a" stroke-width="2"/>
+              <line x1="145" y1="162" x2="145" y2="184" stroke="#0f172a" stroke-width="2"/>
+              <line x1="145" y1="105" x2="220" y2="105" stroke="#0f172a" stroke-width="2"/>
+              <!-- Resistors -->
+              <rect x="136" y="48" width="18" height="42" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+              <rect x="136" y="120" width="18" height="42" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+              <!-- Terminals -->
+              <circle cx="48" cy="26" r="4.5" fill="#fff" stroke="#0f172a" stroke-width="2"/>
+              <circle cx="48" cy="184" r="4.5" fill="#fff" stroke="#0f172a" stroke-width="2"/>
+              <circle cx="220" cy="105" r="4.5" fill="#fff" stroke="#0f172a" stroke-width="2"/>
+              <circle cx="220" cy="184" r="4.5" fill="#fff" stroke="#0f172a" stroke-width="2"/>
+              <!-- Voltage arrows -->
+              <line x1="48" y1="38" x2="48" y2="172" stroke="#0f172a" stroke-width="1.5" marker-start="url(#arr-d23)" marker-end="url(#arr-d23)"/>
+              <line x1="220" y1="117" x2="220" y2="172" stroke="#0f172a" stroke-width="1.5" marker-start="url(#arr-d23)" marker-end="url(#arr-d23)"/>
+              <!-- Labels -->
+              <text x="10" y="109" font-size="14" font-weight="700" fill="#0f172a"><tspan font-style="italic">V</tspan><tspan dy="3" font-size="10">ор</tspan></text>
+              <text x="110" y="73" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">R<tspan dy="3" font-size="10" font-style="normal">1</tspan></text>
+              <text x="110" y="146" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">R<tspan dy="3" font-size="10" font-style="normal">2</tspan></text>
+              <text x="230" y="149" font-size="13" font-weight="700" fill="#0f172a"><tspan font-style="italic">V</tspan><tspan dy="3" font-size="10">гаралт</tspan></text>
+            </svg>`;
+        }
+
+        case 'q24-table': {
+          return `
+            <div class="overflow-x-auto my-2">
+              <table class="mx-auto border-collapse border border-slate-300 text-sm text-center bg-white rounded-lg overflow-hidden">
+                <thead>
+                  <tr class="bg-slate-100 font-bold text-slate-800">
+                    <th class="border border-slate-300 px-6 py-1.5">A</th>
+                    <th class="border border-slate-300 px-6 py-1.5">B</th>
+                    <th class="border border-slate-300 px-6 py-1.5 bg-indigo-50 text-indigo-800">C (Гаралт)</th>
+                  </tr>
+                </thead>
+                <tbody class="font-mono text-slate-700">
+                  <tr><td class="border border-slate-300 px-6 py-1">0</td><td class="border border-slate-300 px-6 py-1">0</td><td class="border border-slate-300 px-6 py-1 font-bold bg-indigo-50/40">0</td></tr>
+                  <tr><td class="border border-slate-300 px-6 py-1">0</td><td class="border border-slate-300 px-6 py-1">1</td><td class="border border-slate-300 px-6 py-1 font-bold bg-indigo-50/40">0</td></tr>
+                  <tr><td class="border border-slate-300 px-6 py-1">1</td><td class="border border-slate-300 px-6 py-1">0</td><td class="border border-slate-300 px-6 py-1 font-bold bg-indigo-50/40">0</td></tr>
+                  <tr><td class="border border-slate-300 px-6 py-1">1</td><td class="border border-slate-300 px-6 py-1">1</td><td class="border border-slate-300 px-6 py-1 font-bold bg-indigo-50/40">1</td></tr>
+                </tbody>
+              </table>
+            </div>`;
+        }
+
+        case 'q25-logic': {
+          // Inputs A, B -> AND gate -> OR gate (with C) -> X
+          return `
+            <svg viewBox="0 0 360 128" class="w-full max-w-sm mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <!-- Input lines -->
+              <line x1="36" y1="30" x2="90" y2="30" stroke="#0f172a" stroke-width="2"/>
+              <line x1="36" y1="62" x2="90" y2="62" stroke="#0f172a" stroke-width="2"/>
+              <polyline points="36,98 182,98 182,82 204,82" fill="none" stroke="#0f172a" stroke-width="2"/>
+              <!-- AND Gate -->
+              <path d="M 90 18 L 122 18 A 28 28 0 0 1 122 74 L 90 74 Z" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2.2"/>
+              <text x="116" y="50" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">AND</text>
+              <!-- Connector from AND to OR -->
+              <polyline points="150,46 182,46 182,58 204,58" fill="none" stroke="#0f172a" stroke-width="2"/>
+              <!-- OR Gate -->
+              <path d="M 196 42 Q 212 70 196 98 L 228 98 Q 254 98 270 70 Q 254 42 228 42 Z" fill="#fef3c7" stroke="#b45309" stroke-width="2.2"/>
+              <text x="231" y="74" text-anchor="middle" font-size="11" font-weight="800" fill="#b45309">OR</text>
+              <!-- Output line -->
+              <line x1="270" y1="70" x2="318" y2="70" stroke="#0f172a" stroke-width="2"/>
+              <!-- Labels -->
+              <text x="18" y="35" font-size="14" font-weight="800" fill="#0f172a">A</text>
+              <text x="18" y="67" font-size="14" font-weight="800" fill="#0f172a">B</text>
+              <text x="18" y="103" font-size="14" font-weight="800" fill="#0f172a">C</text>
+              <text x="326" y="75" font-size="15" font-weight="800" fill="#0f172a">X</text>
+            </svg>`;
+        }
+
+        case 'q26-ampere': {
+          // S pole block on left, N pole block on right, wire coming diagonally forward-right with I, vertical plane with arrows 1(left), 2(up), 3(right), 4(down), 5(along wire)
+          return `
+            <svg viewBox="0 0 430 195" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-a26" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Left Magnet S -->
+              <polygon points="16,58 115,58 144,32 45,32" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+              <polygon points="16,58 115,58 115,152 16,152" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+              <polygon points="115,58 144,32 144,126 115,152" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
+              <text x="92" y="114" font-size="26" font-weight="800" fill="#0f172a">S</text>
+
+              <!-- Right Magnet N -->
+              <polygon points="285,58 384,58 412,32 313,32" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+              <polygon points="285,58 384,58 384,152 285,152" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+              <polygon points="384,58 412,32 412,126 384,152" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
+              <text x="315" y="114" font-size="26" font-weight="800" fill="#0f172a">N</text>
+
+              <!-- Back segment of wire -->
+              <line x1="164" y1="12" x2="215" y2="88" stroke="#64748b" stroke-width="7" stroke-linecap="round"/>
+              <line x1="164" y1="12" x2="215" y2="88" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>
+              <!-- Current arrow back -->
+              <line x1="150" y1="18" x2="165" y2="40" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arr-a26)"/>
+              <text x="142" y="26" font-size="14" font-style="italic" font-weight="800" fill="#0f172a">I</text>
+
+              <!-- Central white plane -->
+              <polygon points="172,26 254,22 260,152 178,156" fill="#ffffff" fill-opacity="0.92" stroke="#475569" stroke-width="1.4"/>
+
+              <!-- 4 cardinal arrows on plane -->
+              <!-- 2: up -->
+              <line x1="215" y1="88" x2="215" y2="46" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-a26)"/>
+              <text x="200" y="54" font-size="14" font-weight="800" fill="#0f172a">2</text>
+              <!-- 1: left -->
+              <line x1="215" y1="88" x2="182" y2="88" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-a26)"/>
+              <text x="184" y="79" font-size="14" font-weight="800" fill="#0f172a">1</text>
+              <!-- 3: right -->
+              <line x1="215" y1="88" x2="248" y2="88" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-a26)"/>
+              <text x="238" y="79" font-size="14" font-weight="800" fill="#0f172a">3</text>
+              <!-- 4: down -->
+              <line x1="215" y1="88" x2="215" y2="132" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-a26)"/>
+              <text x="200" y="136" font-size="14" font-weight="800" fill="#0f172a">4</text>
+
+              <!-- Front segment of wire (coming toward viewer) -->
+              <line x1="215" y1="88" x2="282" y2="180" stroke="#475569" stroke-width="7.5" stroke-linecap="round"/>
+              <line x1="215" y1="88" x2="282" y2="180" stroke="#e2e8f0" stroke-width="4.2" stroke-linecap="round"/>
+              <!-- Arrow 5 along wire -->
+              <line x1="220" y1="95" x2="239" y2="121" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-a26)"/>
+              <text x="229" y="138" font-size="14" font-weight="800" fill="#0f172a">5</text>
+              <!-- Current arrow front -->
+              <line x1="258" y1="162" x2="275" y2="185" stroke="#0f172a" stroke-width="1.6" marker-end="url(#arr-a26)"/>
+              <text x="247" y="182" font-size="14" font-style="italic" font-weight="800" fill="#0f172a">I</text>
+            </svg>`;
+        }
+
+        case 'q29-pot': {
+          return `
+            <svg viewBox="0 0 340 88" class="w-full max-w-sm mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-p29" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+                </marker>
+              </defs>
+              <line x1="48" y1="36" x2="292" y2="36" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="5 3"/>
+              <!-- q1 -->
+              <circle cx="48" cy="36" r="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+              <text x="48" y="40" text-anchor="middle" font-size="13" font-weight="800" fill="#1d4ed8">−</text>
+              <text x="48" y="18" text-anchor="middle" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">q<tspan dy="3" font-size="10" font-style="normal">1</tspan></text>
+              <!-- Point A -->
+              <circle cx="170" cy="36" r="4.5" fill="#0f172a"/>
+              <text x="170" y="21" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a">A</text>
+              <!-- q2 -->
+              <circle cx="292" cy="36" r="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+              <text x="292" y="40" text-anchor="middle" font-size="13" font-weight="800" fill="#dc2626">+</text>
+              <text x="292" y="18" text-anchor="middle" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">q<tspan dy="3" font-size="10" font-style="normal">2</tspan></text>
+              <!-- Distance arrows -->
+              <line x1="58" y1="62" x2="165" y2="62" stroke="#475569" stroke-width="1.3" marker-start="url(#arr-p29)" marker-end="url(#arr-p29)"/>
+              <text x="111" y="79" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">5 см</text>
+              <line x1="175" y1="62" x2="282" y2="62" stroke="#475569" stroke-width="1.3" marker-start="url(#arr-p29)" marker-end="url(#arr-p29)"/>
+              <text x="229" y="79" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">5 см</text>
+            </svg>`;
+        }
+
+        case 'q30-power': {
+          return `
+            <svg viewBox="0 0 420 138" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <!-- Left circuit: Battery ε + Resistor R -->
+              <g transform="translate(15, 10)">
+                <polyline points="28,48 28,16 142,16 142,102 28,102 28,60" fill="none" stroke="#0f172a" stroke-width="2"/>
+                <line x1="12" y1="48" x2="44" y2="48" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="20" y1="60" x2="36" y2="60" stroke="#0f172a" stroke-width="3.6"/>
+                <text x="5" y="42" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">ε</text>
+                <rect x="132" y="36" width="20" height="44" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+                <text x="162" y="63" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">R</text>
+              </g>
+              <!-- Right circuit: Battery ε + R and 2R in series -->
+              <g transform="translate(220, 10)">
+                <polyline points="28,48 28,16 164,16 164,102 28,102 28,60" fill="none" stroke="#0f172a" stroke-width="2"/>
+                <line x1="12" y1="48" x2="44" y2="48" stroke="#0f172a" stroke-width="2.2"/>
+                <line x1="20" y1="60" x2="36" y2="60" stroke="#0f172a" stroke-width="3.6"/>
+                <text x="5" y="42" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">ε</text>
+                <rect x="74" y="7" width="44" height="18" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+                <text x="96" y="42" text-anchor="middle" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">R</text>
+                <rect x="154" y="36" width="20" height="44" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
+                <text x="180" y="63" font-size="14" font-weight="700" fill="#0f172a">2<tspan font-style="italic">R</tspan></text>
+              </g>
+            </svg>`;
+        }
+
+        case 'q31-wave': {
+          // Sine wave: x from 0 to 1.2 m, λ = 0.8 m
+          let d = 'M 55 82';
+          for (let i = 1; i <= 120; i++) {
+            const xVal = (i / 120) * 1.2;
+            const px = 55 + (xVal / 1.2) * 264;
+            const py = 82 - 48 * Math.sin((2 * Math.PI / 0.8) * xVal);
+            d += ` L ${px.toFixed(1)} ${py.toFixed(1)}`;
+          }
+          return `
+            <svg viewBox="0 0 385 155" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-w31" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <line x1="55" y1="142" x2="55" y2="16" stroke="#0f172a" stroke-width="1.7" marker-end="url(#arr-w31)"/>
+              <line x1="55" y1="82" x2="345" y2="82" stroke="#0f172a" stroke-width="1.7" marker-end="url(#arr-w31)"/>
+              <path d="${d}" fill="none" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+              <text x="48" y="97" text-anchor="end" font-size="12" font-weight="700" fill="#334155">0</text>
+              <text x="143" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">0.4</text>
+              <text x="231" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">0.8</text>
+              <text x="319" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">1.2</text>
+              <text x="64" y="22" font-size="12" font-weight="700" fill="#0f172a">шилжилт, м</text>
+              <text x="335" y="118" text-anchor="end" font-size="12" font-weight="700" fill="#0f172a">координат, м</text>
+            </svg>`;
+        }
+
+        case 'q32-doppler': {
+          return `
+            <svg viewBox="0 0 270 205" class="w-full max-w-[260px] mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-dp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Eccentric wavefront circles -->
+              <circle cx="105" cy="112" r="82" fill="none" stroke="#334155" stroke-width="1.8"/>
+              <circle cx="118" cy="112" r="62" fill="none" stroke="#334155" stroke-width="1.8"/>
+              <circle cx="131" cy="112" r="42" fill="none" stroke="#334155" stroke-width="1.8"/>
+              <circle cx="144" cy="112" r="23" fill="none" stroke="#334155" stroke-width="1.8"/>
+              <!-- Sound source moving right -->
+              <circle cx="144" cy="112" r="4.5" fill="#0f172a"/>
+              <line x1="144" y1="112" x2="165" y2="112" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-dp)"/>
+              <!-- Label -->
+              <line x1="150" y1="103" x2="188" y2="30" stroke="#475569" stroke-width="1.2"/>
+              <text x="155" y="22" font-size="13" font-weight="700" fill="#0f172a">Дуу үүсгэгч</text>
+            </svg>`;
+        }
+
+        case 'q34-pipe': {
+          // Tube closed on right, open on left with speaker, 3/4 wavelength standing wave inside
+          let w1 = 'M 72 34', w2 = 'M 72 86';
+          for (let i = 0; i <= 90; i++) {
+            const frac = i / 90; // 0 (open left) to 1 (closed right)
+            const x = 72 + frac * 228;
+            const env = 26 * Math.cos(frac * 1.5 * Math.PI);
+            w1 += ` L ${x.toFixed(1)} ${(60 - env).toFixed(1)}`;
+            w2 += ` L ${x.toFixed(1)} ${(60 + env).toFixed(1)}`;
+          }
+          return `
+            <svg viewBox="0 0 340 135" class="w-full max-w-sm mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-p34" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Speaker icon on left -->
+              <rect x="20" y="48" width="14" height="24" rx="2" fill="#64748b"/>
+              <polygon points="34,48 54,32 54,88 34,72" fill="#94a3b8" stroke="#334155" stroke-width="1.6"/>
+              <!-- Pipe walls (open left, closed right) -->
+              <polyline points="72,30 300,30 300,90 72,90" fill="#f8fafc" stroke="#0f172a" stroke-width="2.6"/>
+              <!-- Center axis -->
+              <line x1="72" y1="60" x2="300" y2="60" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3"/>
+              <!-- Standing wave (3/4 lambda) -->
+              <path d="${w1}" fill="none" stroke="#2563eb" stroke-width="2.2"/>
+              <path d="${w2}" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="5 3"/>
+              <!-- Length L arrow -->
+              <line x1="74" y1="112" x2="298" y2="112" stroke="#0f172a" stroke-width="1.5" marker-start="url(#arr-p34)" marker-end="url(#arr-p34)"/>
+              <text x="186" y="128" text-anchor="middle" font-size="15" font-style="italic" font-weight="800" fill="#0f172a">L</text>
+            </svg>`;
+        }
+
+        case 'q37-ax': {
+          // a(m/s^2) -80..80 vs x(m) -8..8, line (-8,80) -> (8,-80)
+          // Center (190, 108); x: 18px per 1m; y: 0.95px per 1 m/s^2
+          const cx = 190, cy = 108;
+          let grid = '';
+          for (let x = -8; x <= 8; x += 2) {
+            const px = cx + x * 18;
+            grid += `<line x1="${px}" y1="24" x2="${px}" y2="192" stroke="#e2e8f0" stroke-width="1"/>`;
+            if (x !== 0) grid += `<text x="${px}" y="${cy + 16}" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">${x}</text>`;
+          }
+          for (let a = -80; a <= 80; a += 40) {
+            const py = cy - a * 0.95;
+            grid += `<line x1="36" y1="${py}" x2="344" y2="${py}" stroke="#e2e8f0" stroke-width="1"/>`;
+            if (a !== 0) grid += `<text x="${cx - 8}" y="${py + 4}" text-anchor="end" font-size="11" font-weight="700" fill="#334155">${a}</text>`;
+          }
+          return `
+            <svg viewBox="0 0 430 212" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              ${grid}
+              <line x1="36" y1="${cy}" x2="348" y2="${cy}" stroke="#0f172a" stroke-width="1.8"/>
+              <line x1="${cx}" y1="22" x2="${cx}" y2="196" stroke="#0f172a" stroke-width="1.8"/>
+              <!-- a = -10x line -->
+              <line x1="${cx - 8 * 18}" y1="${cy - 80 * 0.95}" x2="${cx + 8 * 18}" y2="${cy + 80 * 0.95}" stroke="#2563eb" stroke-width="2.6"/>
+              <text x="${cx}" y="14" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Хурдатгал, м/с²</text>
+              <text x="355" y="${cy + 4}" font-size="12" font-weight="700" fill="#0f172a">Шилжилт, м</text>
+            </svg>`;
+        }
+
+        case 'q38-pendulum': {
+          return `
+            <svg viewBox="0 0 280 215" class="w-full max-w-[260px] mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-p38" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Table -->
+              <polygon points="24,185 52,135 260,135 260,185" fill="#f1f5f9" stroke="#475569" stroke-width="1.6"/>
+              <line x1="40" y1="185" x2="40" y2="210" stroke="#475569" stroke-width="4"/>
+              <line x1="65" y1="185" x2="65" y2="210" stroke="#475569" stroke-width="4"/>
+              <!-- Stand base -->
+              <rect x="148" y="142" width="76" height="24" rx="2" fill="#cbd5e1" stroke="#475569" stroke-width="1.6"/>
+              <!-- Vertical rod -->
+              <rect x="182" y="16" width="8" height="132" rx="3" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+              <!-- Clamp & horizontal arm -->
+              <line x1="126" y1="42" x2="210" y2="24" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+              <rect x="178" y="24" width="16" height="10" fill="#1e293b" transform="rotate(-12 186 29)"/>
+              <!-- Vertical dashed equilibrium -->
+              <line x1="138" y1="32" x2="138" y2="132" stroke="#64748b" stroke-width="1.3" stroke-dasharray="4 3"/>
+              <!-- Swinging strings & bobs -->
+              <line x1="138" y1="39" x2="156" y2="115" stroke="#94a3b8" stroke-width="1.4"/>
+              <circle cx="156" cy="117" r="7" fill="#cbd5e1"/>
+              <line x1="138" y1="39" x2="118" y2="115" stroke="#0f172a" stroke-width="1.7"/>
+              <circle cx="118" cy="117" r="7" fill="#1e293b"/>
+              <!-- Motion arc -->
+              <path d="M 127 120 Q 138 124 148 120" fill="none" stroke="#0f172a" stroke-width="1.3" marker-start="url(#arr-p38)" marker-end="url(#arr-p38)"/>
+              <!-- Pointing hand pushing periodically -->
+              <g transform="translate(52, 108)">
+                <path d="M 2 6 Q 16 0 28 3 L 48 3 Q 52 5 48 8 L 32 8 Q 35 12 28 14 L 10 14 Q 2 14 2 6 Z" fill="#fff" stroke="#0f172a" stroke-width="1.6"/>
+              </g>
+            </svg>`;
+        }
+
+        case 'q41-refract': {
+          return `
+            <svg viewBox="0 0 320 200" class="w-full max-w-xs mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-r41" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Medium 2 shaded bottom -->
+              <rect x="12" y="96" width="296" height="92" fill="#e2e8f0"/>
+              <!-- Boundary line -->
+              <line x1="12" y1="96" x2="308" y2="96" stroke="#0f172a" stroke-width="2.4"/>
+              <!-- Dashed normal -->
+              <line x1="162" y1="16" x2="162" y2="184" stroke="#0f172a" stroke-width="2" stroke-dasharray="8 5"/>
+              <!-- Incident ray -->
+              <line x1="68" y1="34" x2="158" y2="93" stroke="#0f172a" stroke-width="2.2" marker-end="url(#arr-r41)"/>
+              <!-- Incident wavefronts (spaced) -->
+              <line x1="78" y1="56" x2="94" y2="30" stroke="#0f172a" stroke-width="1.8"/>
+              <line x1="104" y1="73" x2="120" y2="47" stroke="#0f172a" stroke-width="1.8"/>
+              <line x1="130" y1="90" x2="146" y2="64" stroke="#0f172a" stroke-width="1.8"/>
+              <!-- 12 cm label -->
+              <line x1="88" y1="54" x2="110" y2="68" stroke="#4d7c0f" stroke-width="1.8" marker-start="url(#arr-r41)" marker-end="url(#arr-r41)"/>
+              <text x="42" y="84" font-size="14" font-style="italic" font-weight="700" fill="#0f172a">12 см</text>
+              <!-- Refracted ray (steeper, closer to normal) -->
+              <line x1="162" y1="96" x2="212" y2="180" stroke="#0f172a" stroke-width="2.2" marker-end="url(#arr-r41)"/>
+              <!-- Closer refracted wavefronts -->
+              <line x1="160" y1="120" x2="187" y2="104" stroke="#0f172a" stroke-width="1.8"/>
+              <line x1="170" y1="137" x2="197" y2="121" stroke="#0f172a" stroke-width="1.8"/>
+              <line x1="180" y1="154" x2="207" y2="138" stroke="#0f172a" stroke-width="1.8"/>
+              <line x1="190" y1="171" x2="217" y2="155" stroke="#0f172a" stroke-width="1.8"/>
+            </svg>`;
+        }
+
+        case 'q42-prism': {
+          const colors = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#2563eb','#7c3aed'];
+          let rays = '';
+          for (let i = 0; i < 7; i++) {
+            const yEnd = 46 + i * 19;
+            rays += `<line x1="210" y1="54" x2="352" y2="${yEnd}" stroke="${colors[i]}" stroke-width="1.9"/>`;
+            rays += `<text x="372" y="${yEnd + 5}" font-size="13" font-weight="800" fill="#0f172a">${i + 1}</text>`;
+          }
+          return `
+            <svg viewBox="0 0 400 185" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-p42" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Sun icon -->
+              <circle cx="42" cy="94" r="14" fill="#fbbf24" stroke="#d97706" stroke-width="1.8"/>
+              <g stroke="#d97706" stroke-width="2">
+                <line x1="42" y1="70" x2="42" y2="76"/><line x1="42" y1="112" x2="42" y2="118"/>
+                <line x1="18" y1="94" x2="24" y2="94"/><line x1="60" y1="94" x2="66" y2="94"/>
+                <line x1="25" y1="77" x2="30" y2="82"/><line x1="54" y1="106" x2="59" y2="111"/>
+                <line x1="25" y1="111" x2="30" y2="106"/><line x1="54" y1="82" x2="59" y2="77"/>
+              </g>
+              <!-- Glass prism -->
+              <polygon points="188,18 106,162 270,162" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+              <text x="188" y="148" text-anchor="middle" font-size="13" font-style="italic" font-weight="700" fill="#1e293b">Шилэн призм</text>
+              <!-- Incident white ray -->
+              <line x1="66" y1="86" x2="162" y2="57" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-p42)"/>
+              <line x1="164" y1="57" x2="210" y2="54" stroke="#0f172a" stroke-width="1.8"/>
+              <!-- 7 dispersed rays -->
+              ${rays}
+              <!-- Vertical screen -->
+              <rect x="355" y="32" width="8" height="142" fill="#94a3b8" rx="2"/>
+            </svg>`;
+        }
+
+        case 'q43-slab': {
+          // Parallel glass slab; exit ray at bottom has slope dx=42, dy=42 (45 deg), so incident ray 3 has exact same slope!
+          return `
+            <svg viewBox="0 0 330 200" class="w-full max-w-xs mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-s43" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Glass slab -->
+              <rect x="20" y="64" width="290" height="86" fill="#cbd5e1" stroke="#475569" stroke-width="1.8"/>
+              <!-- Normals -->
+              <line x1="96" y1="44" x2="96" y2="86" stroke="#334155" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <line x1="176" y1="128" x2="176" y2="170" stroke="#334155" stroke-width="1.4" stroke-dasharray="4 3"/>
+              <!-- 5 incoming rays converging at (96, 64) -->
+              <!-- Ray 1 (steepest) -->
+              <line x1="80" y1="16" x2="96" y2="64" stroke="#0f172a" stroke-width="1.6"/>
+              <text x="76" y="14" font-size="13" font-weight="800" fill="#0f172a">1</text>
+              <!-- Ray 2 -->
+              <line x1="65" y1="22" x2="96" y2="64" stroke="#0f172a" stroke-width="1.6"/>
+              <text x="56" y="20" font-size="13" font-weight="800" fill="#0f172a">2</text>
+              <!-- Ray 3 (45 deg, strictly parallel to exit ray) -->
+              <line x1="50" y1="18" x2="96" y2="64" stroke="#0f172a" stroke-width="1.8"/>
+              <text x="38" y="22" font-size="13" font-weight="800" fill="#0f172a">3</text>
+              <!-- Ray 4 -->
+              <line x1="38" y1="30" x2="96" y2="64" stroke="#0f172a" stroke-width="1.6"/>
+              <text x="26" y="34" font-size="13" font-weight="800" fill="#0f172a">4</text>
+              <!-- Ray 5 (shallowest) -->
+              <line x1="32" y1="45" x2="96" y2="64" stroke="#0f172a" stroke-width="1.6"/>
+              <text x="20" y="51" font-size="13" font-weight="800" fill="#0f172a">5</text>
+              <!-- Refracted ray inside slab -->
+              <line x1="96" y1="64" x2="176" y2="150" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-s43)"/>
+              <!-- Exiting ray (45 deg, parallel to ray 3) -->
+              <line x1="176" y1="150" x2="220" y2="194" stroke="#0f172a" stroke-width="2" marker-end="url(#arr-s43)"/>
+            </svg>`;
+        }
+
+        case 'q46-shadow': {
+          return `
+            <svg viewBox="0 0 410 195" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-sh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+              </defs>
+              <!-- Point light source -->
+              <circle cx="88" cy="98" r="4.5" fill="#0f172a"/>
+              <text x="44" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">Цэгэн</text>
+              <text x="44" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">гэрэл</text>
+              <text x="44" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">үүсгэгч</text>
+              <!-- Diverging light rays -->
+              <line x1="88" y1="98" x2="348" y2="22" stroke="#0f172a" stroke-width="1.8" marker-end="url(#arr-sh)"/>
+              <line x1="88" y1="98" x2="348" y2="174" stroke="#0f172a" stroke-width="1.8" marker-end="url(#arr-sh)"/>
+              <!-- Object (height h) -->
+              <line x1="196" y1="66" x2="196" y2="130" stroke="#0f172a" stroke-width="4.5"/>
+              <!-- Shadow on screen (height H) -->
+              <rect x="348" y="22" width="8" height="152" fill="#94a3b8"/>
+              <!-- Distance arrows a and b -->
+              <line x1="94" y1="98" x2="192" y2="98" stroke="#475569" stroke-width="1.4" marker-start="url(#arr-sh)" marker-end="url(#arr-sh)"/>
+              <text x="143" y="91" text-anchor="middle" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">a</text>
+              <line x1="201" y1="98" x2="344" y2="98" stroke="#475569" stroke-width="1.4" marker-start="url(#arr-sh)" marker-end="url(#arr-sh)"/>
+              <text x="275" y="91" text-anchor="middle" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">b</text>
+              <!-- Height labels h and H -->
+              <line x1="216" y1="68" x2="216" y2="128" stroke="#475569" stroke-width="1.2" marker-start="url(#arr-sh)" marker-end="url(#arr-sh)"/>
+              <text x="225" y="114" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">h</text>
+              <line x1="372" y1="24" x2="372" y2="172" stroke="#475569" stroke-width="1.2" marker-start="url(#arr-sh)" marker-end="url(#arr-sh)"/>
+              <text x="382" y="102" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">H</text>
+              <!-- Shadow label -->
+              <line x1="312" y1="60" x2="348" y2="44" stroke="#475569" stroke-width="1.2"/>
+              <text x="282" y="68" font-size="13" font-style="italic" font-weight="700" fill="#0f172a">сүүдэр</text>
+            </svg>`;
+        }
+
+        case 'p23-circuit': {
+          return `
+            <svg viewBox="0 0 380 210" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <!-- Top-left terminal to R1 -->
+              <line x1="24" y1="88" x2="54" y2="88" stroke="#3f6212" stroke-width="2.2"/>
+              <rect x="54" y="79" width="46" height="18" fill="#f8fafc" stroke="#3f6212" stroke-width="2"/>
+              <line x1="100" y1="88" x2="132" y2="88" stroke="#3f6212" stroke-width="2.2"/>
+              <text x="77" y="69" text-anchor="middle" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">R<tspan dy="3" font-size="10" font-style="normal">1</tspan></text>
+
+              <!-- Parallel block (R2 top, V middle, R3 bottom) -->
+              <polyline points="132,88 132,42 194,42" fill="none" stroke="#3f6212" stroke-width="2.2"/>
+              <rect x="194" y="33" width="46" height="18" fill="#f8fafc" stroke="#3f6212" stroke-width="2"/>
+              <polyline points="240,42 308,42 308,88" fill="none" stroke="#3f6212" stroke-width="2.2"/>
+              <text x="217" y="24" text-anchor="middle" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">R<tspan dy="3" font-size="10" font-style="normal">2</tspan></text>
+
+              <line x1="132" y1="88" x2="201" y2="88" stroke="#3f6212" stroke-width="2.2"/>
+              <circle cx="217" cy="88" r="16" fill="#fff" stroke="#3f6212" stroke-width="2"/>
+              <text x="217" y="94" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a">V</text>
+              <line x1="233" y1="88" x2="308" y2="88" stroke="#3f6212" stroke-width="2.2"/>
+
+              <polyline points="132,88 132,134 194,134" fill="none" stroke="#3f6212" stroke-width="2.2"/>
+              <rect x="194" y="125" width="46" height="18" fill="#f8fafc" stroke="#3f6212" stroke-width="2"/>
+              <polyline points="240,134 308,134 308,88" fill="none" stroke="#3f6212" stroke-width="2.2"/>
+              <text x="217" y="118" text-anchor="middle" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">R<tspan dy="3" font-size="10" font-style="normal">3</tspan></text>
+
+              <!-- Right return wire -> Ammeter A -> R4 -> bottom-left terminal -->
+              <polyline points="308,88 352,88 352,182 246,182" fill="none" stroke="#3f6212" stroke-width="2.2"/>
+              <circle cx="230" cy="182" r="16" fill="#fff" stroke="#3f6212" stroke-width="2"/>
+              <text x="230" y="188" text-anchor="middle" font-size="15" font-style="italic" font-weight="800" fill="#0f172a">A</text>
+              <line x1="214" y1="182" x2="176" y2="182" stroke="#3f6212" stroke-width="2.2"/>
+              <rect x="130" y="173" width="46" height="18" fill="#f8fafc" stroke="#3f6212" stroke-width="2"/>
+              <text x="153" y="165" text-anchor="middle" font-size="15" font-style="italic" font-weight="700" fill="#0f172a">R<tspan dy="3" font-size="10" font-style="normal">4</tspan></text>
+              <line x1="130" y1="182" x2="24" y2="182" stroke="#3f6212" stroke-width="2.2"/>
+
+              <!-- Nodes & terminals -->
+              <circle cx="24" cy="88" r="4.5" fill="#fff" stroke="#3f6212" stroke-width="2"/>
+              <circle cx="24" cy="182" r="4.5" fill="#fff" stroke="#3f6212" stroke-width="2"/>
+              <circle cx="132" cy="88" r="3.5" fill="#3f6212"/>
+              <circle cx="308" cy="88" r="3.5" fill="#3f6212"/>
+            </svg>`;
+        }
+
+        case 'p24-lens': {
+          // Grid, optical axis at y=98, lens at x=220, F = 46px (so 3F left = x=82, 1.5F right = x=289)
+          let grid = '';
+          for (let x = 20; x <= 400; x += 23) grid += `<line x1="${x}" y1="12" x2="${x}" y2="188" stroke="#e2e8f0" stroke-width="1"/>`;
+          for (let y = 12; y <= 188; y += 22) grid += `<line x1="20" y1="${y}" x2="400" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;
+          return `
+            <svg viewBox="0 0 420 200" class="w-full max-w-md mx-auto bg-white rounded-xl border border-slate-200 p-2">
+              <defs>
+                <marker id="arr-l24" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+                </marker>
+                <marker id="arr-ray24" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+                </marker>
+              </defs>
+              ${grid}
+              <!-- Optical axis -->
+              <line x1="16" y1="98" x2="404" y2="98" stroke="#0f172a" stroke-width="2"/>
+              <!-- Converging lens -->
+              <line x1="220" y1="22" x2="220" y2="174" stroke="#0f172a" stroke-width="2" marker-start="url(#arr-l24)" marker-end="url(#arr-l24)"/>
+              <!-- Focal & 2F points -->
+              <circle cx="174" cy="98" r="3.5" fill="#0f172a"/><text x="174" y="117" text-anchor="middle" font-size="13" font-weight="800" fill="#0f172a">F</text>
+              <circle cx="128" cy="98" r="3.5" fill="#0f172a"/>
+              <circle cx="266" cy="98" r="3.5" fill="#0f172a"/><text x="266" y="117" text-anchor="middle" font-size="13" font-weight="800" fill="#0f172a">F</text>
+              <circle cx="312" cy="98" r="3.5" fill="#0f172a"/>
+              <!-- Object "Бие" at 3F (x=82, height=44px) -->
+              <line x1="82" y1="98" x2="82" y2="54" stroke="#0f172a" stroke-width="3.2" marker-end="url(#arr-l24)"/>
+              <text x="42" y="48" font-size="13" font-weight="800" fill="#0f172a">Бие</text>
+              <line x1="58" y1="54" x2="74" y2="68" stroke="#475569" stroke-width="1.2"/>
+              <!-- Ray 1: Parallel to lens -> refracts through right F (266,98) -> passes (289, 120) -->
+              <line x1="82" y1="54" x2="220" y2="54" stroke="#2563eb" stroke-width="1.8"/>
+              <line x1="220" y1="54" x2="365" y2="192" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arr-ray24)"/>
+              <!-- Ray 2: Through optical center (220,98) -> passes (289, 120) -->
+              <line x1="82" y1="54" x2="372" y2="146" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arr-ray24)"/>
+              <!-- Inverted image "Дүрс" at 1.5F (x=289, height=22px) -->
+              <line x1="289" y1="98" x2="289" y2="120" stroke="#dc2626" stroke-width="3.2" marker-end="url(#arr-l24)"/>
+              <text x="330" y="116" font-size="13" font-weight="800" fill="#dc2626">Дүрс</text>
+              <line x1="325" y1="112" x2="300" y2="106" stroke="#475569" stroke-width="1.2"/>
+            </svg>`;
+        }
+
+        default:
+          return '';
+      }
+    }
+
+    // Helper to build compact truth tables for Q25 options
+    function makeTruthTableOption(xBits) {
+      const inputs = [
+        [0,0,0],[0,0,1],[0,1,0],[0,1,1],
+        [1,0,0],[1,0,1],[1,1,0],[1,1,1]
+      ];
+      const rows = inputs.map((r, i) => `
+        <tr>
+          <td class="px-1.5 py-0.5 border border-slate-200">${r[0]}</td>
+          <td class="px-1.5 py-0.5 border border-slate-200">${r[1]}</td>
+          <td class="px-1.5 py-0.5 border border-slate-200">${r[2]}</td>
+          <td class="px-1.5 py-0.5 border border-slate-200 font-bold text-indigo-700 bg-indigo-50/40">${xBits[i]}</td>
+        </tr>`).join('');
+      return `
+        <table class="border-collapse text-[11px] font-mono text-center bg-white rounded overflow-hidden mt-0.5">
+          <thead>
+            <tr class="bg-slate-100 font-bold text-slate-700">
+              <th class="px-1.5 py-0.5 border border-slate-200">A</th>
+              <th class="px-1.5 py-0.5 border border-slate-200">B</th>
+              <th class="px-1.5 py-0.5 border border-slate-200">C</th>
+              <th class="px-1.5 py-0.5 border border-slate-200 bg-indigo-50 text-indigo-800">X</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    /* =========================================================================
+       2. COMPLETE EXAM DATA (ЭЕШ 2024 • Физик • В хувилбар)
+       ========================================================================= */
+    const part1Groups = {
+      7: {
+        title: '7–8 даалгаврын өгөгдөл',
+        text: '<i>m</i><sub>1</sub> = 3 кг масстай, <i>v</i><sub>1</sub> = 4 м/с хурдтай, <i>m</i><sub>2</sub> = 5 кг масстай, <i>v</i><sub>2</sub> = 6 м/с хурдтай ижил хэмжээтэй хоёр бөмбөлөг хэвтээ гөлгөр гадарга дээр өөд өөдөөсөө хөдөлнө. Мөргөлдөхөөс өмнө ба дараах хөдөлгөөнүүд нэг шулуун дээр үргэлжилнэ. Мөргөлдөөний сэргэлтийн коэффициент <i>e</i> = 0.5.'
+      },
+      10: {
+        title: '10–11 даалгаврын өгөгдөл',
+        text: 'Үрэлтгүй гадаргын A цэгт байсан бие тайван байдлаас хөдөлж, C байрлалд хүрснийг зурагт үзүүлэв. Биеийн масс <i>m</i> = 1 кг, <i>h</i><sub>1</sub> = 8 м, <i>h</i><sub>2</sub> = 4 м, <i>g</i> = 10 м/с².',
+        svg: 'q10-11-hill'
+      },
+      17: {
+        title: '17–18 даалгаврын өгөгдөл',
+        text: 'Зурагт хатуу төлөвт байсан <i>m</i> = 10 кг масстай бодисын төлөвийн өөрчлөлтийг харуулсан график өгөгдөв.',
+        svg: 'q17-18-phase'
+      }
+    };
+
+    const part1Questions = [
+      {
+        num: 1, points: 2,
+        text: 'Дараах багажийн хуваарийн үнэ болон хэмжих хязгаарыг олно уу.',
+        svg: 'q1-mv',
+        options: { A: '0.8 mV, 2.0 mV', B: '1.0 mV, 2.0 mV', C: '0 mV, 2.0 mV', D: '0.8 mV, 1.0 mV', E: '0.5 mV, 2.0 mV' },
+        ans: 'E',
+        exp: '0-ээс 1 хүртэл 2 хуваарьтай тул хуваарийн үнэ (1 − 0)/2 = 0.5 mV, хамгийн их утга буюу хэмжих хязгаар 2.0 mV.'
+      },
+      {
+        num: 2, points: 2,
+        text: 'Хэвтээ гадарга дээр хөдөлж байгаа биеийн хурд хугацааны хамаарлын график өгөгджээ. <i>t</i> = 6 с дараах биеийн шилжилтийг олно уу.',
+        svg: 'q2-vt',
+        options: { A: '4 м', B: '20 м', C: '16 м', D: '12 м', E: '72 м' },
+        ans: 'D',
+        exp: 'Шилжилт нь графикийн доорх алгебрийн талбай: S = (4·8)/2 − (2·4)/2 = 16 − 4 = 12 м.'
+      },
+      {
+        num: 3, points: 2,
+        text: 'Массын төвүүд нь нэг шулуун дээр орших, <i>m</i><sub>1</sub> = 5 кг, <i>m</i><sub>2</sub> = 10 кг масстай хоёр бие хоорондоо 18 м зайд байрлана. Энэ системийн массын төв 1-р биеэс ямар зайд байх вэ?',
+        options: { A: '36 м', B: '6 м', C: '12 м', D: '18 м', E: '0.08 м' },
+        ans: 'C',
+        exp: 'x_c = (m₁·0 + m₂·18) / (m₁ + m₂) = (10 · 18) / 15 = 12 м.'
+      },
+      {
+        num: 4, points: 2,
+        text: 'Зурагт үзүүлснээр хаалганы бариулын эргэх тэнхлэгээс <i>d</i> зайтай цэгт босоо чиглэлтэй 30° өнцөг үүсгэх <i>F</i> хүчээр үйлчлэв. Энэ хүчний моментыг олно уу.',
+        svg: 'q4-handle',
+        options: { A: 'Fd', B: '(Fd√3)/2', C: 'Fd√3', D: 'Fd/√3', E: 'Fd/2' },
+        ans: 'B',
+        exp: 'Бариулд перпендикуляр хүчний байгуулагч F⊥ = F·cos30° = F√3/2 тул момент M = (Fd√3)/2.'
+      },
+      {
+        num: 5, points: 1,
+        text: 'СИ систем дэх энергийн нэгж аль нь вэ?',
+        options: {
+          A: 'кг·м·с<sup>−2</sup>',
+          B: 'кг·м·с<sup>−1</sup>',
+          C: 'кг·м<sup>2</sup>·с<sup>−2</sup>',
+          D: 'кг·м<sup>2</sup>·с<sup>−3</sup>',
+          E: 'кг·м<sup>−3</sup>·с<sup>−2</sup>'
+        },
+        ans: 'C',
+        exp: '1 Ж = 1 Н·м = 1 кг·м²·с⁻².'
+      },
+      {
+        num: 6, points: 2,
+        text: 'Зурагт өгөгдсөн хэмжээс бүхий налуу хавтгай дээр <i>m</i> масстай бие тайван байв. Биед үйлчлэх үрэлтийн хүчийг олно уу. Чөлөөт уналтын хурдатгал <i>g</i>.',
+        svg: 'q6-incline',
+        options: {
+          A: 'F<sub>үр</sub> = mg · √(a² + b²) / a',
+          B: 'F<sub>үр</sub> = mg · b / √(a² + b²)',
+          C: 'F<sub>үр</sub> = mg · √(a² + b²) / b',
+          D: 'F<sub>үр</sub> = mg · a / √(a² + b²)',
+          E: 'F<sub>үр</sub> = mg · a / b'
+        },
+        ans: 'D',
+        exp: 'Тайван байгаа тул F_үр = mg·sinα = mg·a / √(a² + b²).'
+      },
+      {
+        num: 7, points: 1,
+        text: 'Мөргөлдөхөөс өмнөх 2 дугаар биеийн хөдөлгөөний тоо хэмжээг олно уу.',
+        options: { A: 'P₂ = 30 кг·м/с', B: 'P₂ = 1.2 кг·м/с', C: 'P₂ = 1 кг·м/с', D: 'P₂ = 11 кг·м/с', E: 'P₂ = 18 кг·м/с' },
+        ans: 'A',
+        exp: 'P₂ = m₂·v₂ = 5 · 6 = 30 кг·м/с.'
+      },
+      {
+        num: 8, points: 2,
+        text: 'Мөргөлдөөний дараа бөмбөлгүүдийн харьцангуй хурд ямар байх вэ?',
+        options: { A: '5 м/с', B: '1 м/с', C: '3 м/с', D: '2 м/с', E: '0.5 м/с' },
+        ans: 'A',
+        exp: 'Өөд өөдөөсөө хөдлөх тул мөргөлдөхөөс өмнөх харьцангуй хурд v_хар = 4 + 6 = 10 м/с. Мөргөлдөөний дараа v\'_хар = e·v_хар = 0.5 · 10 = 5 м/с.'
+      },
+      {
+        num: 9, points: 1,
+        text: 'Машин 10 м/с хурдтай хөдөлж байхад кинетик энерги 8·10<sup>4</sup> Ж байсан бол машины массыг олно уу.',
+        options: { A: '8000 кг', B: '800 кг', C: '16000 кг', D: '1600 кг', E: '3200 кг' },
+        ans: 'D',
+        exp: 'm = 2E_k / v² = (2 · 8·10⁴) / 100 = 1600 кг.'
+      },
+      {
+        num: 10, points: 2,
+        text: 'Бие B байрлалд хүрэх үед хүндийн хүчний хийсэн ажлыг олно уу.',
+        options: { A: '160 Ж', B: '40 Ж', C: '80 Ж', D: '320 Ж', E: '32 Ж' },
+        ans: 'C',
+        exp: 'A = mgh₁ = 1 · 10 · 8 = 80 Ж.'
+      },
+      {
+        num: 11, points: 2,
+        text: 'Бие C байрлалд очиход ямар хурдтай болсон байх вэ?',
+        options: { A: '√40 м/с', B: '4√5 м/с', C: '4√10 м/с', D: '4√2 м/с', E: '10 м/с' },
+        ans: 'B',
+        exp: 'v_C = √(2g(h₁ − h₂)) = √(2·10·4) = √80 = 4√5 м/с.'
+      },
+      {
+        num: 12, points: 1,
+        text: 'Биеийн температурыг нэмэгдүүлэхэд аль хэмжигдэхүүн өөрчлөгдөх вэ?',
+        options: { A: 'молекулын тоо', B: 'масс', C: 'эзлэхүүн', D: 'бодисын тоо хэмжээ', E: 'хүндийн хүч' },
+        ans: 'C',
+        exp: 'Халаахад бие дулааны тэлэлтэд орж эзлэхүүн нь өөрчлөгдөнө.'
+      },
+      {
+        num: 13, points: 2,
+        text: 'Аль нь биеийн эзлэхүүн тэлэлтийн хуулийг илэрхийлэх вэ?',
+        options: {
+          A: 'V = V₀ / β',
+          B: 'V = V₀βt°',
+          C: 'V = V₀ / (1 + βt°)',
+          D: 'V = V₀(1 + βt°)',
+          E: 'V = V₀ / (βt°)'
+        },
+        ans: 'D',
+        exp: 'Эзлэхүүн тэлэлтийн хууль: V = V₀(1 + βt°).'
+      },
+      {
+        num: 14, points: 2,
+        text: 'Хэмжигч багажуудаас термометрийн заалтыг уншина уу.',
+        svg: 'q14-gauges',
+        options: { A: '35', B: '10', C: '25', D: '15', E: '20' },
+        ans: 'D',
+        exp: '°C тэмдэглэгээтэй термометрийн зүү 15 хуваарь дээр зааж байна.'
+      },
+      {
+        num: 15, points: 1,
+        text: '1 кг масстай бодисын температурыг 1°С-ээр өөрчлөхөд шаардагдах дулааны тоо хэмжээг илэрхийлдэг физик хэмжигдэхүүн аль нь вэ?',
+        options: {
+          A: 'Хувийн дулаан багтаамж',
+          B: 'Хайлахын хувийн дулаан',
+          C: 'Ууршихын хувийн дулаан',
+          D: 'Шаталтын хувийн дулаан',
+          E: 'Дулааны тоо хэмжээ'
+        },
+        ans: 'A',
+        exp: 'Хувийн дулаан багтаамжийн тодорхойлолт: c = Q / (m·Δt).'
+      },
+      {
+        num: 16, points: 2,
+        text: '<i>t</i><sub>1</sub>° = 20°C температуртай A шингэнийг <i>t</i><sub>2</sub>° = 80°C температуртай B шингэнтэй хольжээ. Энэ систем гаднаас дулаан аваагүй, гадагш дулаан алдаагүй бөгөөд 5 минутын дараа тэнцвэр тогтож температур нь θ = 48°C болжээ. Хоёр шингэний дулаан багтаамжийн харьцааг олно уу.',
+        svg: 'q16-mixing',
+        options: {
+          A: 'C<sub>A</sub> / C<sub>B</sub> = 8/7',
+          B: 'C<sub>A</sub> / C<sub>B</sub> = 7/8',
+          C: 'C<sub>A</sub> / C<sub>B</sub> = 1/4',
+          D: 'C<sub>A</sub> / C<sub>B</sub> = 4',
+          E: 'C<sub>A</sub> / C<sub>B</sub> = 8/5'
+        },
+        ans: 'A',
+        exp: 'Дулааны тэнцвэр: C_A(48 − 20) = C_B(80 − 48) ⇒ 28·C_A = 32·C_B ⇒ C_A / C_B = 32/28 = 8/7.'
+      },
+      {
+        num: 17, points: 1,
+        text: 'Графикийн BC хэсэгт ямар процесс явагдаж байна вэ?',
+        options: { A: 'Хайлах', B: 'Уурших', C: 'Царцах', D: 'Шингэн төлөвт халах', E: 'Конденсацлах' },
+        ans: 'D',
+        exp: 'AB хэсэгт хайлж дууссаны дараа BC хэсэгт шингэн төлөвтөө температур нь 214°C-ээс 2405°C хүртэл халж байна.'
+      },
+      {
+        num: 18, points: 2,
+        text: 'Уг бодисын хайлахын хувийн дулааныг олно уу.',
+        options: { A: '20 кЖ/кг', B: '478 кЖ/кг', C: '46 кЖ/кг', D: '678 кЖ/кг', E: '724 кЖ/кг' },
+        ans: 'C',
+        exp: 'λ = Q_AB / m = (480 − 20) / 10 = 46 кЖ/кг.'
+      },
+      {
+        num: 19, points: 2,
+        text: 'Идеал хийн температурыг тогтмол байлгаж, даралтыг 2 дахин ихэсгэвэл эзлэхүүн хэрхэн өөрчлөгдөх вэ?',
+        options: { A: '4 дахин багасна', B: '2 дахин багасна', C: '4 дахин ихэснэ', D: '2 дахин ихэснэ', E: 'өөрчлөгдөхгүй' },
+        ans: 'B',
+        exp: 'Изотерм процесс: pV = const тул даралт 2 дахин ихсэхэд эзлэхүүн 2 дахин багасна.'
+      },
+      {
+        num: 20, points: 1,
+        text: 'Идеал хийд гаднаас 600 Ж дулаан өгснөөр хийн дотоод энерги 100 Ж-аар нэмэгдсэн бол хий ямар ажил хийсэн бэ?',
+        options: { A: '600 Ж', B: '700 Ж', C: '500 Ж', D: '100 Ж', E: '350 Ж' },
+        ans: 'C',
+        exp: 'Q = ΔU + A ⇒ A = 600 − 100 = 500 Ж.'
+      },
+      {
+        num: 21, points: 2,
+        text: 'Идеал хий 2 л эзэлхүүнтэй саванд 5·10<sup>5</sup> Па тогтмол даралтанд оршино. Хий тэлэхдээ <i>A</i> = 4000 Ж ажил хийсэн бол хийн эзлэхүүн нь ямар болсон бэ?',
+        options: { A: '127 л', B: '6 л', C: '123 л', D: '10 л', E: '8 л' },
+        ans: 'D',
+        exp: 'ΔV = A / p = 4000 / (5·10⁵) = 0.008 м³ = 8 л ⇒ V₂ = 2 + 8 = 10 л.'
+      },
+      {
+        num: 22, points: 1,
+        text: 'Цахилгаан хэлхээний дараах элементүүдийн аль нь фоторезистор вэ?',
+        svg: 'q22-symbols',
+        options: { A: '4', B: '5', C: '2', D: '1', E: '3' },
+        ans: 'E',
+        exp: '3-р тэмдэглэгээ нь гэрлийн тусгалаас эсэргүүцэл нь хамаарах фоторезистор юм.'
+      },
+      {
+        num: 23, points: 2,
+        text: 'Зурагт үзүүлсэн хүчдэл хуваагч хэлхээ <i>R</i><sub>1</sub> = 4 Ω, <i>R</i><sub>2</sub> = 8 Ω эсэргүүцэл бүхий хоёр резистороос тогтоно. Гаралтын хүчдэл <i>V</i><sub>гаралт</sub> = 10 В бол оролтын хүчдэл <i>V</i><sub>ор</sub>-ийг олно уу.',
+        svg: 'q23-divider',
+        options: { A: '15 В', B: '5.0 В', C: '6.7 В', D: '20 В', E: '3.2 В' },
+        ans: 'A',
+        exp: 'V_гаралт = V_ор · R₂ / (R₁ + R₂) ⇒ 10 = V_ор · 8/12 ⇒ V_ор = 15 В.'
+      },
+      {
+        num: 24, points: 1,
+        text: 'Зурагт өгөгдсөн үнэний хүснэгт аль логик элементэд харгалзах вэ?',
+        svg: 'q24-table',
+        options: { A: 'NOT ба XOR', B: 'OR', C: 'NOT', D: 'XOR', E: 'AND' },
+        ans: 'E',
+        exp: 'Зөвхөн хоёр оролт хоёулаа 1 үед гаралт 1 байгаа тул AND элемент.'
+      },
+      {
+        num: 25, points: 2,
+        text: 'Дараах логик хэлхээний үнэний хүснэгт аль нь вэ?',
+        svg: 'q25-logic',
+        options: {
+          A: makeTruthTableOption([1,0,0,0,0,0,0,1]),
+          B: makeTruthTableOption([0,1,0,1,0,1,1,1]),
+          C: makeTruthTableOption([1,0,1,0,1,0,0,0]),
+          D: makeTruthTableOption([0,0,0,1,0,1,1,1]),
+          E: makeTruthTableOption([0,0,0,0,0,0,0,1])
+        },
+        ans: 'B',
+        exp: 'Хэлхээний илэрхийлэл X = (A·B) + C. C = 1 эсвэл (A = 1 ба B = 1) үед X = 1 байна.'
+      },
+      {
+        num: 26, points: 1,
+        text: 'Соронзон оронд байгаа гүйдэлтэй дамжуулагчид үйлчлэх Амперийн хүчний чиглэлийг зөв сонгоно уу. Тогтмол соронзонгийн хувьд соронзон орны индукцийн векторын чиглэл N туйлаас гарч S туйл руу орсон байдаг.',
+        svg: 'q26-ampere',
+        options: { A: '3', B: '5', C: '4', D: '2', E: '1' },
+        ans: 'D',
+        exp: 'Зүүн гарын дүрмээр B зүүн тийш (N→S) алганд орж, 4 хуруу I чигт (нааш) чиглэхэд эрхий хуруу дээш (2) чиглэнэ.'
+      },
+      {
+        num: 27, points: 2,
+        text: 'Соронзон оронд перпендикуляр чигт хөдөлж байгаа цэнэгт бөөмд орны зүгээс үйлчлэх хүчийг олно уу. Соронзон орны индукц <i>B</i> = 2 Тл, бөөмийн цэнэг <i>q</i> = 8·10<sup>−6</sup> Кл, бөөмийн хурд <i>v</i> = 200 м/с.',
+        options: {
+          A: '8.0·10<sup>−4</sup> Н',
+          B: '3.2·10<sup>−3</sup> Н',
+          C: '0.5·10<sup>8</sup> Н',
+          D: '8·10<sup>−8</sup> Н',
+          E: '7.2·10<sup>−3</sup> Н'
+        },
+        ans: 'B',
+        exp: 'Лоренцын хүч: F = qvB = 8·10⁻⁶ · 200 · 2 = 3.2·10⁻³ Н.'
+      },
+      {
+        num: 28, points: 1,
+        text: 'Цахилгаан орны тухай дараах өгүүлэмжүүдээс аль нь БУРУУ вэ?',
+        options: {
+          A: 'Цахилгаан орны хүчний шугамууд эерэг цэнэгээс гарч сөрөг цэнэг дээр төгсөнө.',
+          B: 'Эерэг цэнэгт үйлчлэх хүчийг цэнэгийн тоо хэмжээнд хуваахад хүчлэг нь гарна.',
+          C: 'Ижил потенциалтай цэгүүдийн хооронд цэнэгийг шилжүүлэхэд тодорхой ажил хийнэ.',
+          D: 'Хүчний шугам нь орныг үүсгэх цэнэгтэй биеийн гадаргад ямагт перпендикуляр байна.',
+          E: 'Цэнэглэгдсэн бөмбөлөг дамжуулагч доторх цахилгаан орны хүчлэг тэг байна.'
+        },
+        ans: 'C',
+        exp: 'Ижил потенциалтай цэгүүдийн хооронд цэнэг шилжүүлэхэд A = q(φ₁ − φ₂) = 0 тул ажил хийгдэхгүй.'
+      },
+      {
+        num: 29, points: 2,
+        text: 'Зурагт өгөгдсөн A цэг дээрх потенциалыг олно уу. Цэнэгүүдээс A цэг хүртэлх зай 5 см байна. <i>q</i><sub>1</sub> = −2 нКл, <i>q</i><sub>2</sub> = 5 нКл, ε = 1, <i>k</i> = 9·10<sup>9</sup> Н·м²/Кл².',
+        svg: 'q29-pot',
+        options: { A: '900 В', B: '1260 В', C: '450 В', D: '540 В', E: '108 В' },
+        ans: 'D',
+        exp: 'φ = k(q₁ + q₂) / r = 9·10⁹ · (−2 + 5)·10⁻⁹ / 0.05 = 27 / 0.05 = 540 В.'
+      },
+      {
+        num: 30, points: 2,
+        text: 'Зурагт үзүүлсэн хэлхээнүүдийн ц.х.х нь ижилхэн ε ба дотоод эсэргүүцлийг тооцохгүй. Зүүн талын хэлхээний <i>R</i> эсэргүүцэл дээр ялгарах чадал <i>P</i> бол баруун талын хэлхээнд ялгарах чадлыг олно уу.',
+        svg: 'q30-power',
+        options: { A: 'P/3', B: '3P', C: 'P/6', D: 'P', E: '6P' },
+        ans: 'A',
+        exp: 'Зүүн хэлхээнд P = ε²/R. Баруун хэлхээнд R_ер = 3R тул P\' = ε²/(3R) = P/3.'
+      },
+      {
+        num: 31, points: 2,
+        text: 'Зурагт долгионы шилжилт-координатын хамаарлын график өгөгдөв. Долгион 5 Гц давтамжтай тархаж байгаа бол графикийг ашиглан долгионы хурдыг олно уу.',
+        svg: 'q31-wave',
+        options: { A: '4 м/с', B: '2 м/с', C: '3 м/с', D: '5 м/с', E: '6 м/с' },
+        ans: 'A',
+        exp: 'Графикаас долгионы урт λ = 0.8 м. Хурд v = λ·ν = 0.8 · 5 = 4 м/с.'
+      },
+      {
+        num: 32, points: 2,
+        text: 'Дуу үүсгэгч <i>v</i> хурдтайгаар ажиглагчаас холдонгоо тодорхой давтамжтай дуу үүсгэсэн. Ажиглагчаас холдож байгаа дууны долгионы фронтыг зурагт харуулав. Долгион үүсгэгч хөдлөхөд ажиглагчийн сонсох дууны долгионы давтамж болон хурд яаж өөрчлөгдөх вэ? Ажиглагч хөдөлгөөнгүй байна.',
+        svg: 'q32-doppler',
+        options: {
+          A: 'Давтамж: өөрчлөгдөхгүй | Долгионы хурд: нэмэгдэнэ',
+          B: 'Давтамж: нэмэгдэнэ | Долгионы хурд: нэмэгдэнэ',
+          C: 'Давтамж: багасна | Долгионы хурд: нэмэгдэнэ',
+          D: 'Давтамж: өөрчлөгдөхгүй | Долгионы хурд: багасна',
+          E: 'Давтамж: багасна | Долгионы хурд: өөрчлөгдөхгүй'
+        },
+        ans: 'E',
+        exp: 'Доплерийн эффектээр үүсгэгч холдоход сонсогдох давтамж багасна, харин орчин дахь дууны хурд өөрчлөгдөхгүй.'
+      },
+      {
+        num: 33, points: 2,
+        text: 'Нэг орчноос нөгөө орчин руу дууны долгион нэвтрэх үед долгион тархах хурд 2 дахин багассан бол долгионы урт болон давтамж хэрхэн өөрчлөгдөх вэ?',
+        options: {
+          A: 'Долгионы урт 2 дахин багасна, давтамж 2 дахин багасна.',
+          B: 'Долгионы урт 2 дахин ихэснэ, давтамж өөрчлөгдөхгүй.',
+          C: 'Долгионы урт 2 дахин багасна, давтамж 2 дахин ихэснэ.',
+          D: 'Долгионы урт 2 дахин багасна, давтамж өөрчлөгдөхгүй.',
+          E: 'Долгионы урт өөрчлөгдөхгүй, давтамж 2 дахин багасна.'
+        },
+        ans: 'D',
+        exp: 'Өөр орчинд ороход давтамж өөрчлөгдөхгүй, λ = v/ν тул хурд 2 дахин багасахад долгионы урт 2 дахин багасна.'
+      },
+      {
+        num: 34, points: 2,
+        text: 'Нэг тал нь битүү хоолойны амсарт чанга яригчийг байрлуулахад хоолой дотор үүссэн зогсонги долгионыг зурагт үзүүлэв. Долгионы давтамж 340 Гц, агаарт дуу тархах хурд 340 м/с бол хоолойны уртыг олно уу.',
+        svg: 'q34-pipe',
+        options: { A: '133 см', B: '25 см', C: '75 см', D: '300 см', E: '200 см' },
+        ans: 'C',
+        exp: 'λ = v/ν = 340/340 = 1 м = 100 см. Хоолойд 3/4 долгион багтсан тул L = (3/4)·100 = 75 см.'
+      },
+      {
+        num: 35, points: 1,
+        text: 'Гармоник хэлбэлзлийг судлахад аль загварыг ашиглах вэ?',
+        options: { A: 'Материаллаг цэг', B: 'Пүршин дүүжин', C: 'Хатуу бие', D: 'Идеал хий', E: 'Цэгэн гэрэл үүсгэгч' },
+        ans: 'B',
+        exp: 'Пүршин дүүжин нь гармоник хэлбэлзлийн сонгодог загвар юм.'
+      },
+      {
+        num: 36, points: 2,
+        text: 'Ханын цагны дүүжингийн үе <i>T</i> = 2 с бол тойрох давтамжийг олно уу.',
+        options: { A: '0.32 рад/с', B: '12.56 рад/с', C: '3.14 рад/с', D: '0.5 рад/с', E: '2 рад/с' },
+        ans: 'C',
+        exp: 'ω = 2π/T = (2 · 3.14) / 2 = 3.14 рад/с.'
+      },
+      {
+        num: 37, points: 2,
+        text: 'Хэлбэлзэх биеийн хурдатгал шилжилтээс хамаарах график өгөгдөв. График ашиглан хэлбэлзлийн тойрох давтамжийг олно уу.',
+        svg: 'q37-ax',
+        options: { A: '√80 рад/с', B: '10 рад/с', C: '−10 рад/с', D: '√10 рад/с', E: '√8 рад/с' },
+        ans: 'D',
+        exp: 'a = −ω²x ⇒ ω² = −(−80)/8 = 10 ⇒ ω = √10 рад/с.'
+      },
+      {
+        num: 38, points: 1,
+        text: 'Сурагч физикийн туршилтаар утсан дүүжингийн хэлбэлзлийг үүсгэв. Дүүжинг тогтмол давтамж, далайцтайгаар хэлбэлзүүлэв. Энэ үед ямар хэлбэлзэл хийсэн бэ?',
+        svg: 'q38-pendulum',
+        options: {
+          A: 'Гармоник ба албадмал хэлбэлзэл',
+          B: 'Унтрах хэлбэлзэл',
+          C: 'Чөлөөт хэлбэлзэл',
+          D: 'Авто ба унтрах хэлбэлзэл',
+          E: 'Гармоник ба автохэлбэлзэл'
+        },
+        ans: 'A',
+        exp: 'Гадны үелсэн хүчээр тогтмол далайц, давтамжтай хэлбэлзүүлж байгаа тул гармоник ба албадмал хэлбэлзэл.'
+      },
+      {
+        num: 39, points: 2,
+        text: 'Гүүрний хувийн хэлбэлзлийн давтамж (ω<sub>0</sub>) гадны албадагч хүчний давтамж (ω)-ийн харьцаа ямар байх үед гүүр нурах боломжтой вэ?',
+        options: { A: 'ω₀ = ω', B: 'ω₀ > ω', C: 'ω₀ < ω', D: 'ω₀ > (1/2)ω', E: '(1/2)ω₀ < ω' },
+        ans: 'A',
+        exp: 'ω₀ = ω үед резонанс үүсэж хэлбэлзлийн далайц огцом өсөж гүүр нурах аюултай.'
+      },
+      {
+        num: 40, points: 2,
+        text: 'Радио станц 50 МГц давтамжтай долгионыг цацна. Радио долгионы хурд 3·10<sup>8</sup> м/с бол станцаас цацагдсан долгионы уртыг олно уу.',
+        options: { A: '88.3 м', B: '150 м', C: '16.6 м', D: '0.17 м', E: '6 м' },
+        ans: 'E',
+        exp: 'λ = c/ν = 3·10⁸ / (50·10⁶) = 6 м.'
+      },
+      {
+        num: 41, points: 2,
+        text: 'Зурагт хавтгай долгион нэг орчноос нөгөө орчинд тарж байгааг үзүүлэв. 1-р орчинд тарж байгаа долгионы хурд 64 см/с, 2-р орчинд тарж байгаа долгионы хурд 48 см/с бол зураг дээрх өгөгдлийг ашиглан 2-р орчинд тарж байгаа долгионы уртыг олно уу.',
+        svg: 'q41-refract',
+        options: { A: '11 см', B: '16 см', C: '256 см', D: '9 см', E: '0.06 см' },
+        ans: 'D',
+        exp: 'λ₂/λ₁ = v₂/v₁ ⇒ λ₂ = 12 · (48/64) = 9 см.'
+      },
+      {
+        num: 42, points: 1,
+        text: 'Шилэн призм дээр цагаан өнгийн гэрэл тусаад нэвтрэхдээ долоон өнгийн гэрэл болон задардаг бөгөөд үүнийг гэрлийн дисперсийн үзэгдэл гэж нэрлэдэг. 3-р цацраг ямар өнгийн гэрэл бэ?',
+        svg: 'q42-prism',
+        options: { A: 'Цэнхэр', B: 'Улаан', C: 'Шар', D: 'Ягаан', E: 'Хөх' },
+        ans: 'C',
+        exp: 'Дээрээс доош: 1-Улаан, 2-Улбар шар, 3-Шар, 4-Ногоон, 5-Цэнхэр, 6-Хөх, 7-Ягаан.'
+      },
+      {
+        num: 43, points: 1,
+        text: 'Тодорхой зузаантай шилэн ялтас дээр туссан гэрлийн цацрагууд ба нэвтрэн гарсан цацрагийг зурагт үзүүлэв. Аль чиглэлээс гэрэл ялтас дээр туссан бэ?',
+        svg: 'q43-slab',
+        options: { A: '4', B: '1', C: '2', D: '3', E: '5' },
+        ans: 'D',
+        exp: 'Хавтгай параллель ялтсаар нэвтрэн гарсан цацраг нь туссан цацрагтайгаа параллель байх тул 3-р цацраг.'
+      },
+      {
+        num: 44, points: 2,
+        text: 'Глицеринээс агаарт гэрэл нэвтрэх үед глицериний дотоод бүрэн ойлтын хязгаарын өнцөг 43° бол глицериний хугарлын илтгэгчийг олно уу. sin43° = 0.68, sin90° = 1.',
+        options: { A: '1.33', B: '0.68', C: '2.06', D: '1.51', E: '1.47' },
+        ans: 'E',
+        exp: 'n = 1 / sin43° = 1 / 0.68 ≈ 1.47.'
+      },
+      {
+        num: 45, points: 1,
+        text: 'Бөмбөлөг толины муруйлтын радиус <i>R</i> = 24 см бол фокусын зай хэд вэ?',
+        options: { A: '8 см', B: '24 см', C: '48 см', D: '12 см', E: '6 см' },
+        ans: 'D',
+        exp: 'F = R / 2 = 24 / 2 = 12 см.'
+      },
+      {
+        num: 46, points: 2,
+        text: 'Цэгэн гэрэл үүсгэгчээс <i>a</i> = 3 м зайд байрлах биеийн сүүдэр дэлгэц дээр үүссэнийг зурагт үзүүлэв. Бие дэлгэцийн хоорондох зай <i>b</i> = 5 м, биеийн өндөр <i>h</i> = 3 м. Сүүдрийн өндөр ба биеийн өндрийн харьцааг олно уу.',
+        svg: 'q46-shadow',
+        options: { A: 'H/h = 5/3', B: 'H/h = 3/8', C: 'H/h = 8/3', D: 'H/h = 1', E: 'H/h = 2/3' },
+        ans: 'C',
+        exp: 'Төсөөтэй гурвалжнуудаас H/h = (a + b) / a = (3 + 5) / 3 = 8/3.'
+      }
+    ];
+
+    const part2Tasks = [
+      {
+        id: '2.1',
+        title: '2.1',
+        prompt: 'Биеийг хэвтээ чиглэлтэй θ = 30° өнцөг үүсгэн, <i>v</i><sub>0</sub> = 20 м/с анхны хурдаар шидэв. Агаарын эсэргүүцэл тооцохгүй. Чөлөөт уналтын хурдатгал <i>g</i> = 10 м/с².',
+        subs: [
+          {
+            id: '2.1.1',
+            label: '1. Нисэлтийн хугацаа:',
+            points: 2,
+            formulaPrefix: '<i>t</i> =',
+            formulaSuffix: 'с',
+            tokens: [{ k: 'a' }],
+            ans: { a: '2' },
+            exp: 't = 2v₀·sin30° / g = (2 · 20 · 0.5) / 10 = 2 с (a=2).'
+          },
+          {
+            id: '2.1.2',
+            label: '2. Хөөрөх хамгийн их өндөр:',
+            points: 2,
+            formulaPrefix: '<i>h</i> =',
+            formulaSuffix: 'м',
+            tokens: [{ k: 'b' }],
+            ans: { b: '5' },
+            exp: 'h = (v₀·sin30°)² / (2g) = 100 / 20 = 5 м (b=5).'
+          },
+          {
+            id: '2.1.3',
+            label: '3. Тусгалын зай:',
+            points: 2,
+            formulaPrefix: '<i>l</i> =',
+            formulaSuffix: 'м',
+            tokens: [{ k: 'c' }, { k: 'd' }, { text: '√' }, { k: 'e' }],
+            ans: { c: '2', d: '0', e: '3' },
+            exp: 'l = v₀·cos30°·t = 20 · (√3/2) · 2 = 20√3 м (c=2, d=0, e=3).'
+          }
+        ]
+      },
+      {
+        id: '2.2',
+        title: '2.2',
+        prompt: '<i>P</i> = 2·10<sup>5</sup> Па тогтмол даралтанд <i>m</i> = 80 г масстай, нэг атомт идеал хийн эзлэхүүн <i>V</i><sub>1</sub> = 0.5 м³-ээс <i>V</i><sub>2</sub> = 0.6 м³ болтол нэмэгдэв. Хийн молийн масс μ = 40 г/моль.',
+        subs: [
+          {
+            id: '2.2.1',
+            label: '1. Энэ хийн молийн тоо:',
+            points: 1,
+            formulaPrefix: '<i>n</i> =',
+            formulaSuffix: 'моль',
+            tokens: [{ k: 'a' }],
+            ans: { a: '2' },
+            exp: 'n = m / μ = 80 / 40 = 2 моль (a=2).'
+          },
+          {
+            id: '2.2.2',
+            label: '2. Идеал хийн хийсэн ажил:',
+            points: 2,
+            formulaPrefix: '<i>A</i> =',
+            formulaSuffix: 'кЖ',
+            tokens: [{ k: 'b' }, { k: 'c' }],
+            ans: { b: '2', c: '0' },
+            exp: 'A = P·ΔV = 2·10⁵ · (0.6 − 0.5) = 20000 Ж = 20 кЖ (b=2, c=0).'
+          },
+          {
+            id: '2.2.3',
+            label: '3. Дотоод энергийн өөрчлөлт:',
+            points: 2,
+            formulaPrefix: 'Δ<i>U</i> =',
+            formulaSuffix: 'кЖ',
+            tokens: [{ k: 'd' }, { k: 'e' }],
+            ans: { d: '3', e: '0' },
+            exp: 'Нэг атомт хий (i=3): ΔU = (3/2)PΔV = 1.5 · 20 = 30 кЖ (d=3, e=0).'
+          },
+          {
+            id: '2.2.4',
+            label: '4. Гаднаас авсан дулаан:',
+            points: 1,
+            formulaPrefix: '<i>Q</i> =',
+            formulaSuffix: 'кЖ',
+            tokens: [{ k: 'f' }, { k: 'g' }],
+            ans: { f: '5', g: '0' },
+            exp: 'Q = ΔU + A = 30 + 20 = 50 кЖ (f=5, g=0).'
+          }
+        ]
+      },
+      {
+        id: '2.3',
+        title: '2.3',
+        prompt: 'Зурагт үзүүлсэн хэлхээн дэх <i>R</i><sub>1</sub> = 10 Ω, <i>R</i><sub>2</sub> = 8 Ω, <i>R</i><sub>3</sub> = 8 Ω, <i>R</i><sub>4</sub> = 6 Ω, идеал вольтметрийн заалт 8 В.',
+        svg: 'p23-circuit',
+        subs: [
+          {
+            id: '2.3.1',
+            label: '1. Хэлхээний ерөнхий эсэргүүцэл:',
+            points: 2,
+            formulaPrefix: '<i>R</i><sub>ер</sub> =',
+            formulaSuffix: 'Ω',
+            tokens: [{ k: 'a' }, { k: 'b' }],
+            ans: { a: '2', b: '0' },
+            exp: 'R₂₃ = (8·8)/(8+8) = 4 Ω; R_ер = 10 + 4 + 6 = 20 Ω (a=2, b=0).'
+          },
+          {
+            id: '2.3.2',
+            label: '2. <i>R</i><sub>2</sub> эсэргүүцлээр гүйх гүйдлийн хүч:',
+            points: 1,
+            formulaPrefix: '<i>I</i><sub>2</sub> =',
+            formulaSuffix: 'А',
+            tokens: [{ k: 'c' }],
+            ans: { c: '1' },
+            exp: 'I₂ = U_V / R₂ = 8 / 8 = 1 А (c=1).'
+          },
+          {
+            id: '2.3.3',
+            label: '3. Амперметрийн заалт:',
+            points: 1,
+            formulaPrefix: '<i>I</i><sub>A</sub> =',
+            formulaSuffix: 'А',
+            tokens: [{ k: 'd' }],
+            ans: { d: '2' },
+            exp: 'I₃ = 8 / 8 = 1 А тул I_A = I₂ + I₃ = 1 + 1 = 2 А (d=2).'
+          },
+          {
+            id: '2.3.4',
+            label: '4. <i>R</i><sub>4</sub> эсэргүүцэл дээр ялгарах чадал:',
+            points: 2,
+            formulaPrefix: '<i>P</i> =',
+            formulaSuffix: 'Вт',
+            tokens: [{ k: 'e' }, { k: 'f' }],
+            ans: { e: '2', f: '4' },
+            exp: 'P = I_A² · R₄ = 2² · 6 = 24 Вт (e=2, f=4).'
+          }
+        ]
+      },
+      {
+        id: '2.4',
+        title: '2.4',
+        prompt: 'Зурагт <i>H</i> = 8 см өндөртэй биеийн дүрсийг цуглуулагч линз ашиглан үүсгэсэн байдлыг харуулав. Биеийг линзээс <i>a</i> = 60 см зайд байрлуулсан бөгөөд линзийн фокусын зай 20 см.',
+        svg: 'p24-lens',
+        subs: [
+          {
+            id: '2.4.1',
+            label: '1. Линзээс дүрс хүртэлх зай:',
+            points: 2,
+            formulaPrefix: '<i>b</i> =',
+            formulaSuffix: 'см',
+            tokens: [{ k: 'a' }, { k: 'b' }],
+            ans: { a: '3', b: '0' },
+            exp: '1/b = 1/F − 1/a = 1/20 − 1/60 = 2/60 = 1/30 ⇒ b = 30 см (a=3, b=0).'
+          },
+          {
+            id: '2.4.2',
+            label: '2. Дүрсийн өндөр:',
+            points: 2,
+            formulaPrefix: '<i>h</i> =',
+            formulaSuffix: 'см',
+            tokens: [{ k: 'c' }],
+            ans: { c: '4' },
+            exp: 'h = H · (b / a) = 8 · (30 / 60) = 4 см (c=4).'
+          },
+          {
+            id: '2.4.3',
+            label: '3. Линзийн оптик хүч:',
+            points: 1,
+            formulaPrefix: '<i>D</i> =',
+            formulaSuffix: 'дптр',
+            tokens: [{ k: 'd' }],
+            ans: { d: '5' },
+            exp: 'D = 1 / F = 1 / 0.2 м = 5 дптр (d=5).'
+          },
+          {
+            id: '2.4.4',
+            label: '4. Линзийн өсгөлт:',
+            points: 1,
+            formulaPrefix: '<i>k</i> = 1 /',
+            formulaSuffix: '',
+            tokens: [{ k: 'e' }],
+            ans: { e: '2' },
+            exp: 'k = b / a = 30 / 60 = 1/2 (e=2).'
+          }
+        ]
+      }
+    ];
+
+    /* =========================================================================
+       3. APPLICATION STATE
+       ========================================================================= */
+    const state = {
+      part1: {},
+      part2: {},
+      graded: false,
+      filter: 'all',
+      activeDigitInput: null,
+      timerSeconds: 100 * 60,
+      timerRunning: false,
+      timerInterval: null
+    };
+
+    function initPart2State() {
+      part2Tasks.forEach(task => {
+        task.subs.forEach(sub => {
+          state.part2[sub.id] = {};
+          Object.keys(sub.ans).forEach(k => { state.part2[sub.id][k] = ''; });
+        });
+      });
+    }
+    initPart2State();
+
+    /* =========================================================================
+       4. RENDERING LOGIC
+       ========================================================================= */
+    function renderAll() {
+      renderPart1();
+      renderPart2();
+      renderNavigator();
+      updateProgress();
+    }
+
+    function renderPart1() {
+      const container = document.getElementById('part1-container');
+      container.innerHTML = '';
+
+      part1Questions.forEach(q => {
+        // Group data banner if applicable
+        if (part1Groups[q.num]) {
+          const grp = part1Groups[q.num];
+          const grpEl = document.createElement('div');
+          grpEl.className = 'rounded-2xl bg-indigo-50/70 border border-indigo-200 p-4 sm:p-5 space-y-3';
+          grpEl.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white text-xs font-bold">${grp.title}</span>
+            </div>
+            <p class="text-sm sm:text-base text-slate-800 font-medium leading-relaxed">${grp.text}</p>
+            ${grp.svg ? `<div class="pt-1">${getSvgDiagram(grp.svg)}</div>` : ''}
+          `;
+          container.appendChild(grpEl);
+        }
+
+        // Question card
+        const card = document.createElement('article');
+        card.id = `q-${q.num}`;
+        card.dataset.qnum = q.num;
+        card.className = 'question-card scroll-mt-28 rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-6 transition';
+
+        // Use a wider column grid for truth-table options (Q25) or long text options
+        const isLongOpt = [28, 32, 33].includes(q.num);
+        const gridCols = isLongOpt
+          ? 'grid-cols-1'
+          : (q.num === 25 ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3');
+
+        const optionsHtml = ['A', 'B', 'C', 'D', 'E'].map(letter => `
+          <button
+            type="button"
+            data-q="${q.num}"
+            data-opt="${letter}"
+            class="opt-btn w-full text-left px-3.5 py-2.5 sm:py-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-indigo-50/60 hover:border-indigo-300 transition flex items-start gap-2.5 group"
+          >
+            <span class="opt-badge w-7 h-7 rounded-lg bg-white border border-slate-300 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:border-indigo-400 group-hover:text-indigo-700 transition">
+              ${letter}
+            </span>
+            <span class="text-sm text-slate-800 pt-0.5 leading-snug overflow-x-auto">${q.options[letter]}</span>
+          </button>
+        `).join('');
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex items-start gap-2.5">
+              <span class="inline-flex items-center justify-center min-w-[2rem] h-8 px-2 rounded-xl bg-slate-100 text-slate-800 font-extrabold text-sm shrink-0">
+                ${q.num}
+              </span>
+              <div class="text-sm sm:text-base font-medium text-slate-900 leading-relaxed pt-0.5">
+                ${q.text}
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold shrink-0">
+              ${q.points} оноо
+            </span>
+          </div>
+          ${q.svg ? `<div class="my-4">${getSvgDiagram(q.svg)}</div>` : ''}
+          <div class="grid ${gridCols} gap-2.5 mt-4">
+            ${optionsHtml}
+          </div>
+          <div id="exp-${q.num}" class="hidden mt-4 p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed border"></div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Click handlers for Part I options
+      container.querySelectorAll('.opt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (state.graded) return;
+          const qNum = Number(btn.dataset.q);
+          state.part1[qNum] = btn.dataset.opt;
+          updatePart1CardUI(qNum);
+          updateProgress();
+          updateNavigatorItem(`q-${qNum}`);
+        });
+      });
+    }
+
+    function updatePart1CardUI(qNum) {
+      const card = document.getElementById(`q-${qNum}`);
+      const selected = state.part1[qNum];
+      card.querySelectorAll('.opt-btn').forEach(btn => {
+        const badge = btn.querySelector('.opt-badge');
+        const isSel = btn.dataset.opt === selected;
+        btn.classList.toggle('bg-indigo-50', isSel);
+        btn.classList.toggle('border-indigo-500', isSel);
+        btn.classList.toggle('ring-1', isSel);
+        btn.classList.toggle('ring-indigo-500', isSel);
+        btn.classList.toggle('bg-slate-50/60', !isSel);
+        btn.classList.toggle('border-slate-200', !isSel);
+
+        badge.classList.toggle('bg-indigo-600', isSel);
+        badge.classList.toggle('text-white', isSel);
+        badge.classList.toggle('border-indigo-600', isSel);
+        badge.classList.toggle('bg-white', !isSel);
+        badge.classList.toggle('text-slate-700', !isSel);
+        badge.classList.toggle('border-slate-300', !isSel);
+      });
+    }
+
+    function renderPart2() {
+      const container = document.getElementById('part2-container');
+      container.innerHTML = '';
+
+      part2Tasks.forEach(task => {
+        const card = document.createElement('article');
+        card.id = `task-${task.id}`;
+        card.className = 'task-card scroll-mt-28 rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4';
+
+        const subsHtml = task.subs.map(sub => {
+          const inputsHtml = sub.tokens.map(tok => {
+            if (tok.text) {
+              return `<span class="text-lg sm:text-xl font-bold text-slate-700 px-0.5 self-center mb-4">${tok.text}</span>`;
+            }
+            return `
+              <div class="inline-flex flex-col items-center">
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="1"
+                  autocomplete="off"
+                  data-task="${task.id}"
+                  data-sub="${sub.id}"
+                  data-key="${tok.k}"
+                  placeholder="${tok.k}"
+                  aria-label="${task.title} ${tok.k}"
+                  class="digit-box w-10 h-11 sm:w-11 sm:h-12 text-center text-lg font-extrabold rounded-xl border-2 border-slate-300 bg-white text-slate-900 placeholder:text-slate-300 placeholder:font-semibold transition"
+                />
+                <span class="text-[10px] font-bold text-slate-400 mt-0.5">${tok.k}</span>
+              </div>
+            `;
+          }).join('');
+
+          const padButtons = [0,1,2,3,4,5,6,7,8,9].map(d => `
+            <button type="button" data-digit="${d}" data-sub="${sub.id}" class="digit-pad-btn w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white border border-slate-200 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 text-sm font-bold text-slate-700 transition">
+              ${d}
+            </button>
+          `).join('');
+
+          return `
+            <div id="sub-${sub.id}" class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 transition">
+              <div class="flex items-start justify-between gap-2">
+                <p class="text-sm sm:text-base font-medium text-slate-800">${sub.label}</p>
+                <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600 text-xs font-semibold shrink-0">${sub.points} оноо</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-sm sm:text-base font-semibold text-slate-700 mb-3">${sub.formulaPrefix}</span>
+                <div class="inline-flex items-start gap-1.5">${inputsHtml}</div>
+                <span class="text-sm sm:text-base font-semibold text-slate-700 mb-3">${sub.formulaSuffix}</span>
+              </div>
+              <!-- Clickable 0-9 number pad -->
+              <div id="pad-${sub.id}" class="digit-pad hidden pt-2 border-t border-slate-200/80 flex flex-wrap items-center gap-1.5">
+                <span class="text-[11px] font-semibold text-slate-500 mr-1">Цифр:</span>
+                ${padButtons}
+                <button type="button" data-digit="clear" data-sub="${sub.id}" class="digit-pad-btn px-2.5 h-8 sm:h-9 rounded-lg bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-xs font-bold text-slate-700 transition">
+                  Арилгах
+                </button>
+              </div>
+              <div id="exp-${sub.id}" class="hidden mt-2 p-3 rounded-xl text-xs sm:text-sm leading-relaxed border"></div>
+            </div>
+          `;
+        }).join('');
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-2.5">
+              <span class="inline-flex items-center justify-center px-2.5 h-8 rounded-xl bg-blue-600 text-white font-extrabold text-sm shrink-0">
+                ${task.title}
+              </span>
+              <p class="text-sm sm:text-base font-medium text-slate-900 leading-relaxed pt-0.5">
+                ${task.prompt}
+              </p>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold shrink-0">6 оноо</span>
+          </div>
+          ${task.svg ? `<div class="my-3">${getSvgDiagram(task.svg)}</div>` : ''}
+          <div class="space-y-3.5 pt-1">${subsHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Attach keyboard & clickable pad handlers
+      const allInputs = Array.from(container.querySelectorAll('.digit-box'));
+      allInputs.forEach((inp, idx) => {
+        inp.addEventListener('focus', () => {
+          if (state.graded) { inp.blur(); return; }
+          state.activeDigitInput = inp;
+          container.querySelectorAll('.digit-pad').forEach(p => p.classList.add('hidden'));
+          const pad = document.getElementById(`pad-${inp.dataset.sub}`);
+          if (pad) pad.classList.remove('hidden');
+        });
+
+        inp.addEventListener('input', () => {
+          if (state.graded) return;
+          const clean = inp.value.replace(/[^0-9]/g, '').slice(-1);
+          inp.value = clean;
+          state.part2[inp.dataset.sub][inp.dataset.key] = clean;
+          styleDigitBoxFilled(inp);
+          updateProgress();
+          updateNavigatorItem(`task-${inp.dataset.task}`);
+          if (clean && idx + 1 < allInputs.length && allInputs[idx + 1].dataset.sub === inp.dataset.sub) {
+            allInputs[idx + 1].focus();
+          }
+        });
+
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !inp.value && idx > 0 && allInputs[idx - 1].dataset.sub === inp.dataset.sub) {
+            allInputs[idx - 1].focus();
+          }
+        });
+      });
+
+      container.querySelectorAll('.digit-pad-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (state.graded) return;
+          const subId = btn.dataset.sub;
+          const subInputs = Array.from(container.querySelectorAll(`.digit-box[data-sub="${subId}"]`));
+          const target = (state.activeDigitInput && state.activeDigitInput.dataset.sub === subId)
+            ? state.activeDigitInput : subInputs[0];
+          if (!target) return;
+
+          if (btn.dataset.digit === 'clear') {
+            target.value = '';
+            state.part2[subId][target.dataset.key] = '';
+            styleDigitBoxFilled(target);
+          } else {
+            target.value = btn.dataset.digit;
+            state.part2[subId][target.dataset.key] = btn.dataset.digit;
+            styleDigitBoxFilled(target);
+            const pos = subInputs.indexOf(target);
+            if (pos >= 0 && pos + 1 < subInputs.length) subInputs[pos + 1].focus();
+          }
+          updateProgress();
+          updateNavigatorItem(`task-${target.dataset.task}`);
+        });
+      });
+    }
+
+    function styleDigitBoxFilled(inp) {
+      const filled = inp.value !== '';
+      inp.classList.toggle('border-indigo-500', filled);
+      inp.classList.toggle('bg-indigo-50/50', filled);
+      inp.classList.toggle('border-slate-300', !filled);
+      inp.classList.toggle('bg-white', !filled);
+    }
+
+    function renderNavigator() {
+      const grid = document.getElementById('navigator-grid');
+      grid.innerHTML = '';
+
+      part1Questions.forEach(q => {
+        const a = document.createElement('a');
+        a.href = `#q-${q.num}`;
+        a.id = `nav-q-${q.num}`;
+        a.className = 'h-8 rounded-lg border border-slate-200 bg-slate-50 hover:border-indigo-400 text-xs font-bold text-slate-600 flex items-center justify-center transition';
+        a.textContent = q.num;
+        grid.appendChild(a);
+      });
+
+      part2Tasks.forEach(task => {
+        const a = document.createElement('a');
+        a.href = `#task-${task.id}`;
+        a.id = `nav-task-${task.id}`;
+        a.className = 'h-8 rounded-lg border border-blue-200 bg-blue-50/60 hover:border-blue-400 text-xs font-extrabold text-blue-700 flex items-center justify-center transition';
+        a.textContent = task.id;
+        grid.appendChild(a);
+      });
+    }
+
+    function isTaskComplete(taskId) {
+      const task = part2Tasks.find(t => t.id === taskId);
+      if (!task) return false;
+      return task.subs.every(sub => Object.values(state.part2[sub.id]).every(v => v !== ''));
+    }
+
+    function updateNavigatorItem(key) {
+      const el = document.getElementById(`nav-${key}`);
+      if (!el || state.graded) return;
+      const answered = key.startsWith('q-')
+        ? Boolean(state.part1[Number(key.replace('q-', ''))])
+        : isTaskComplete(key.replace('task-', ''));
+
+      el.className = answered
+        ? 'h-8 rounded-lg border border-indigo-600 bg-indigo-600 text-xs font-bold text-white flex items-center justify-center transition'
+        : (key.startsWith('task-')
+            ? 'h-8 rounded-lg border border-blue-200 bg-blue-50/60 hover:border-blue-400 text-xs font-extrabold text-blue-700 flex items-center justify-center transition'
+            : 'h-8 rounded-lg border border-slate-200 bg-slate-50 hover:border-indigo-400 text-xs font-bold text-slate-600 flex items-center justify-center transition');
+    }
+
+    function updateProgress() {
+      const p1Count = Object.keys(state.part1).length;
+      const p2Count = part2Tasks.filter(t => isTaskComplete(t.id)).length;
+      document.getElementById('progress-text').textContent = `${p1Count + p2Count} / 50 бөглөсөн`;
+    }
+
+    /* =========================================================================
+       5. GRADING, SCALED SCORE & EXPLANATIONS
+       ========================================================================= */
+    function gradeExam() {
+      state.graded = true;
+      stopTimer();
+
+      let part1Score = 0;
+      let part2Score = 0;
+      let correctCount = 0;
+      let wrongCount = 0;
+
+      // Grade Part I
+      part1Questions.forEach(q => {
+        const card = document.getElementById(`q-${q.num}`);
+        const userAns = state.part1[q.num];
+        const isCorrect = userAns === q.ans;
+        if (isCorrect) { part1Score += q.points; correctCount++; }
+        else { wrongCount++; }
+
+        card.dataset.status = isCorrect ? 'correct' : 'wrong';
+        card.classList.remove('border-slate-200');
+        card.classList.add(isCorrect ? 'border-emerald-300' : 'border-rose-300');
+
+        card.querySelectorAll('.opt-btn').forEach(btn => {
+          const letter = btn.dataset.opt;
+          const badge = btn.querySelector('.opt-badge');
+          btn.disabled = true;
+          btn.className = 'opt-btn w-full text-left px-3.5 py-2.5 sm:py-3 rounded-xl border transition flex items-start gap-2.5';
+
+          if (letter === q.ans) {
+            btn.classList.add('bg-emerald-50', 'border-emerald-500', 'ring-1', 'ring-emerald-500');
+            badge.className = 'opt-badge w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0';
+          } else if (letter === userAns && !isCorrect) {
+            btn.classList.add('bg-rose-50', 'border-rose-400', 'ring-1', 'ring-rose-400');
+            badge.className = 'opt-badge w-7 h-7 rounded-lg bg-rose-600 text-white font-bold text-xs flex items-center justify-center shrink-0';
+          } else {
+            btn.classList.add('bg-slate-50/40', 'border-slate-200', 'opacity-70');
+            badge.className = 'opt-badge w-7 h-7 rounded-lg bg-white border border-slate-300 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0';
+          }
+        });
+
+        const expEl = document.getElementById(`exp-${q.num}`);
+        expEl.classList.remove('hidden');
+        expEl.className = isCorrect
+          ? 'mt-4 p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed border bg-emerald-50/70 border-emerald-200 text-emerald-900'
+          : 'mt-4 p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed border bg-rose-50/70 border-rose-200 text-rose-900';
+        expEl.innerHTML = `
+          <div class="font-bold mb-1">
+            ${isCorrect ? `✓ Зөв (+${q.points} оноо)` : `✗ Буруу — Зөв хариулт: ${q.ans} ${userAns ? `(Таны сонгосон: ${userAns})` : '(Хариулаагүй)'}`}
+          </div>
+          <div class="text-slate-700"><strong>Тайлбар:</strong> ${q.exp}</div>
+        `;
+
+        const navEl = document.getElementById(`nav-q-${q.num}`);
+        if (navEl) {
+          navEl.className = isCorrect
+            ? 'h-8 rounded-lg border border-emerald-500 bg-emerald-500 text-xs font-bold text-white flex items-center justify-center transition'
+            : 'h-8 rounded-lg border border-rose-500 bg-rose-500 text-xs font-bold text-white flex items-center justify-center transition';
+        }
+      });
+
+      // Grade Part II
+      document.querySelectorAll('.digit-pad').forEach(p => p.classList.add('hidden'));
+      part2Tasks.forEach(task => {
+        let taskAllCorrect = true;
+        let taskAnyCorrect = false;
+        const card = document.getElementById(`task-${task.id}`);
+
+        task.subs.forEach(sub => {
+          const subEl = document.getElementById(`sub-${sub.id}`);
+          const userDigits = state.part2[sub.id];
+          const keys = Object.keys(sub.ans);
+          const isSubCorrect = keys.every(k => userDigits[k] === sub.ans[k]);
+
+          if (isSubCorrect) { part2Score += sub.points; correctCount++; taskAnyCorrect = true; }
+          else { wrongCount++; taskAllCorrect = false; }
+
+          subEl.classList.remove('bg-slate-50', 'border-slate-200');
+          subEl.classList.add(isSubCorrect ? 'bg-emerald-50/50' : 'bg-rose-50/50', isSubCorrect ? 'border-emerald-300' : 'border-rose-300');
+
+          keys.forEach(k => {
+            const inp = subEl.querySelector(`.digit-box[data-key="${k}"]`);
+            if (inp) {
+              inp.readOnly = true;
+              const ok = userDigits[k] === sub.ans[k];
+              inp.className = ok
+                ? 'digit-box w-10 h-11 sm:w-11 sm:h-12 text-center text-lg font-extrabold rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800'
+                : 'digit-box w-10 h-11 sm:w-11 sm:h-12 text-center text-lg font-extrabold rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800';
+            }
+          });
+
+          const ansStr = keys.map(k => `${k}=${sub.ans[k]}`).join(', ');
+          const expEl = document.getElementById(`exp-${sub.id}`);
+          expEl.classList.remove('hidden');
+          expEl.className = isSubCorrect
+            ? 'mt-2 p-3 rounded-xl text-xs sm:text-sm leading-relaxed border bg-emerald-50 border-emerald-200 text-emerald-900'
+            : 'mt-2 p-3 rounded-xl text-xs sm:text-sm leading-relaxed border bg-rose-50 border-rose-200 text-rose-900';
+          expEl.innerHTML = `
+            <div class="font-bold mb-0.5">
+              ${isSubCorrect ? `✓ Зөв (+${sub.points} оноо)` : `✗ Буруу — Зөв цифрүүд: ${ansStr}`}
+            </div>
+            <div class="text-slate-700"><strong>Бодолт:</strong> ${sub.exp}</div>
+          `;
+        });
+
+        card.dataset.status = taskAllCorrect ? 'correct' : 'wrong';
+        const navEl = document.getElementById(`nav-task-${task.id}`);
+        if (navEl) {
+          navEl.className = taskAllCorrect
+            ? 'h-8 rounded-lg border border-emerald-500 bg-emerald-500 text-xs font-extrabold text-white flex items-center justify-center transition'
+            : (taskAnyCorrect
+                ? 'h-8 rounded-lg border border-amber-500 bg-amber-500 text-xs font-extrabold text-white flex items-center justify-center transition'
+                : 'h-8 rounded-lg border border-rose-500 bg-rose-500 text-xs font-extrabold text-white flex items-center justify-center transition');
+        }
+      });
+
+      // Compute summary metrics
+      const totalScore = part1Score + part2Score;
+      const pct = Math.round(totalScore);
+      // Approximate Mongolian EYSH scaled score (200 to 800)
+      const scaled = Math.min(800, Math.max(200, Math.round(200 + totalScore * 6)));
+      let letterGrade = 'F';
+      if (totalScore >= 90) letterGrade = 'A';
+      else if (totalScore >= 80) letterGrade = 'B';
+      else if (totalScore >= 70) letterGrade = 'C';
+      else if (totalScore >= 60) letterGrade = 'D';
+
+      document.getElementById('total-score-val').textContent = totalScore;
+      document.getElementById('total-percent-val').textContent = `${pct}% гүйцэтгэл • Үнэлгээ: ${letterGrade}`;
+      document.getElementById('scaled-score-val').textContent = scaled;
+      document.getElementById('part1-score-val').textContent = part1Score;
+      document.getElementById('part2-score-val').textContent = part2Score;
+      document.getElementById('correct-count-val').textContent = correctCount;
+      document.getElementById('wrong-count-val').textContent = wrongCount;
+      document.getElementById('score-progress-bar').style.width = `${pct}%`;
+
+      let msg = 'Сайн хичээл зүтгэл гаргалаа! Алдаатай бодлогуудаа доороос шалгаж бататгаарай.';
+      if (totalScore >= 85) msg = 'Маш сайн! Та өндөр оноо авч чадлаа.';
+      else if (totalScore >= 65) msg = 'Сайн байна! Цөөн хэдэн сэдвээ давтахад бүрэн төгс болно.';
+      else if (totalScore < 40) msg = 'Шантралгүй үргэлжлүүлээрэй! Бодолт болон томьёонуудаа анхааралтай хараарай.';
+      document.getElementById('result-message').textContent = msg;
+
+      document.getElementById('result-summary').classList.remove('hidden');
+      document.getElementById('nav-results-tab').classList.remove('hidden');
+      document.getElementById('submit-btn').classList.add('hidden');
+      document.getElementById('bottom-submit-btn').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetExam() {
+      state.part1 = {};
+      state.graded = false;
+      state.filter = 'all';
+      initPart2State();
+      stopTimer();
+      state.timerSeconds = 100 * 60;
+      updateTimerDisplays();
+      document.getElementById('timer-toggle-btn').textContent = 'Эхлүүлэх';
+      document.getElementById('mobile-timer-icon').textContent = '▶';
+      document.getElementById('result-summary').classList.add('hidden');
+      document.getElementById('nav-results-tab').classList.add('hidden');
+      document.getElementById('submit-btn').classList.remove('hidden');
+      document.getElementById('bottom-submit-btn').classList.remove('hidden');
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* =========================================================================
+       6. FILTER, TIMER & MODAL HELPERS
+       ========================================================================= */
+    function applyFilter(mode) {
+      state.filter = mode;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        const active = b.dataset.filter === mode;
+        b.className = active
+          ? 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition'
+          : 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+      });
+      document.querySelectorAll('.question-card, .task-card').forEach(el => {
+        if (mode === 'all') el.classList.remove('hidden');
+        else el.classList.toggle('hidden', el.dataset.status !== mode);
+      });
+    }
+
+    function updateTimerDisplays() {
+      const m = Math.floor(state.timerSeconds / 60);
+      const s = state.timerSeconds % 60;
+      const str = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      document.getElementById('timer-display').textContent = str;
+      document.getElementById('mobile-timer-display').textContent = str;
+    }
+
+    function toggleTimer() {
+      if (state.timerRunning) {
+        stopTimer();
+        document.getElementById('timer-toggle-btn').textContent = 'Үргэлжлүүлэх';
+        document.getElementById('mobile-timer-icon').textContent = '▶';
+      } else {
+        state.timerRunning = true;
+        document.getElementById('timer-toggle-btn').textContent = 'Түр зогсоох';
+        document.getElementById('mobile-timer-icon').textContent = '⏸';
+        state.timerInterval = setInterval(() => {
+          if (state.timerSeconds > 0) {
+            state.timerSeconds--;
+            updateTimerDisplays();
+          } else {
+            stopTimer();
+            if (!state.graded) gradeExam();
+          }
+        }, 1000);
+      }
+    }
+
+    function stopTimer() {
+      state.timerRunning = false;
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+    }
+
+    let modalCallback = null;
+    function showModal(title, body, onConfirm) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').textContent = body;
+      modalCallback = onConfirm;
+      document.getElementById('modal-backdrop').classList.remove('hidden');
+    }
+    function hideModal() {
+      document.getElementById('modal-backdrop').classList.add('hidden');
+      modalCallback = null;
+    }
+
+    function handleSubmitRequest() {
+      const answered = Object.keys(state.part1).length + part2Tasks.filter(t => isTaskComplete(t.id)).length;
+      if (answered < 50) {
+        showModal(
+          'Шалгалтыг шалгах уу?',
+          `Та одоогоор 50 даалгавраас ${answered}-ийг нь бөглөсөн байна (${50 - answered} дутуу). Үргэлжлүүлэн оноогоо бодуулах уу?`,
+          gradeExam
+        );
+      } else {
+        gradeExam();
+      }
+    }
+
+    /* =========================================================================
+       7. INITIALIZATION
+       ========================================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+
+      document.getElementById('submit-btn').addEventListener('click', handleSubmitRequest);
+      document.getElementById('bottom-submit-btn').addEventListener('click', handleSubmitRequest);
+      document.getElementById('reset-btn').addEventListener('click', () => {
+        showModal('Дахин эхлэх үү?', 'Таны одоогийн бүх хариулт болон оноо арилж, шалгалт шинээр эхэлнэ.', resetExam);
+      });
+
+      document.getElementById('timer-toggle-btn').addEventListener('click', toggleTimer);
+      document.getElementById('mobile-timer-btn').addEventListener('click', toggleTimer);
+
+      document.getElementById('toggle-nav-btn').addEventListener('click', () => {
+        document.getElementById('navigator-panel').classList.toggle('hidden');
+      });
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+      });
+
+      document.getElementById('modal-cancel').addEventListener('click', hideModal);
+      document.getElementById('modal-confirm').addEventListener('click', () => {
+        const cb = modalCallback;
+        hideModal();
+        if (cb) cb();
+      });
+    });
+  </script>
+</body>
+</html>
