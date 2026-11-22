@@ -422,9 +422,37 @@
         display: none !important;
       }
     }
+
+    /* Шинэ жилийн гэрлэн чимэглэл (хөнгөн, гацаахгүй) */
+    @keyframes ny-twinkle {
+      0%, 100% { opacity: 0.45; transform: scale(0.92); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+    .ny-light-dot {
+      animation: ny-twinkle 2.4s ease-in-out infinite;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 text-slate-800 antialiased selection:bg-sky-100 selection:text-sky-900">
+
+  <!-- Шинэ жилийн хөнгөн цас (Canvas - сайтыг гацаахгүй) -->
+  <canvas id="ny-snow-canvas" class="fixed inset-0 pointer-events-none z-40 no-print" aria-hidden="true"></canvas>
+
+  <!-- Шинэ жилийн нарийн гэрлэн чимэглэл (дээд ирмэг) -->
+  <div class="fixed top-0 left-0 right-0 h-1.5 z-50 pointer-events-none flex items-center justify-around px-2 opacity-85 no-print" aria-hidden="true">
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-rose-500 shadow-xs" style="animation-delay: 0s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-amber-400 shadow-xs" style="animation-delay: 0.4s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-emerald-400 shadow-xs" style="animation-delay: 0.8s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-sky-400 shadow-xs" style="animation-delay: 1.2s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-rose-500 shadow-xs" style="animation-delay: 1.6s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-amber-400 shadow-xs" style="animation-delay: 2.0s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-emerald-400 shadow-xs" style="animation-delay: 0.3s;"></span>
+    <span class="ny-light-dot w-2 h-2 rounded-full bg-sky-400 shadow-xs" style="animation-delay: 0.9s;"></span>
+    <span class="ny-light-dot hidden sm:inline-block w-2 h-2 rounded-full bg-rose-500 shadow-xs" style="animation-delay: 1.4s;"></span>
+    <span class="ny-light-dot hidden sm:inline-block w-2 h-2 rounded-full bg-amber-400 shadow-xs" style="animation-delay: 1.9s;"></span>
+    <span class="ny-light-dot hidden md:inline-block w-2 h-2 rounded-full bg-emerald-400 shadow-xs" style="animation-delay: 0.6s;"></span>
+    <span class="ny-light-dot hidden md:inline-block w-2 h-2 rounded-full bg-sky-400 shadow-xs" style="animation-delay: 1.1s;"></span>
+  </div>
 
   <!-- Арын чимэглэлийн зөөлөн уусалт -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -914,7 +942,7 @@
                   </svg>
                   SHA-256 хамгаалалттай
                 </span>
-                <span class="font-semibold text-slate-400">Физик 2026</span>
+                <span class="font-semibold text-sky-600">❄️ Шинэ оны мэнд! 2026</span>
               </div>
             </div>
           </section>
@@ -1796,7 +1824,38 @@ service cloud.firestore {
       const gradeSum = getStudentGradeSummary(state.session.userId);
       const curRank = getStudentRankInfo(gradeSum.completedLevels);
 
-      body.innerHTML = RANK_TIERS.map(rt => {
+      const summaryHeader = `
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-sky-900 text-white space-y-3 mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center text-2xl shrink-0">
+              ${curRank.icon}
+            </div>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-extrabold text-base">${escapeHtml(curRank.title)}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white/20">${curRank.completedLevels} / 40 түвшин</span>
+              </div>
+              <p class="text-xs text-sky-100/90 mt-0.5">
+                ${curRank.nextTier
+                  ? `Дараагийн цол <strong>${curRank.nextTier.icon} ${escapeHtml(curRank.nextTier.title)}</strong> авахад <strong>${curRank.levelsToNext}</strong> түвшин үлдлээ.`
+                  : "Бүх 40 түвшнийг бүрэн давж дээд цолд хүрлээ! 🎉"
+                }
+              </p>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px] font-bold text-sky-200">
+              <span>Дараагийн цолны явц</span>
+              <span class="text-amber-300">${curRank.stepPct}%</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-950/60 overflow-hidden p-0.5">
+              <div class="h-full rounded-full bg-gradient-to-r ${curRank.barCls}" style="width: ${Math.max(6, curRank.stepPct)}%"></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      body.innerHTML = summaryHeader + RANK_TIERS.map(rt => {
         const isCurrent = curRank.title === rt.title;
         const isReached = curRank.completedLevels >= rt.min;
         const rangeText = rt.min === rt.max ? `${rt.min} түвшин` : `${rt.min}–${rt.max} түвшин`;
@@ -2290,7 +2349,68 @@ service cloud.firestore {
         </head>
         <body>
           ${htmlTableContent}
-        </body>
+        
+  <!-- Шинэ жилийн хөнгөн цас будруулах скрипт (CPU хэмнэлттэй, 30fps, таб нуугдахад зогсоно) -->
+  <script>
+    (function initLightweightSnow() {
+      const canvas = document.getElementById("ny-snow-canvas");
+      if (!canvas) return;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        canvas.style.display = "none";
+        return;
+      }
+
+      const ctx = canvas.getContext("2d");
+      let width = 0, height = 0;
+      let flakes = [];
+      let animId = null;
+      let lastFrame = 0;
+
+      function setup() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        const count = width < 640 ? 28 : 48;
+        flakes = Array.from({ length: count }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: 1.4 + Math.random() * 2.6,
+          vy: 0.45 + Math.random() * 0.95,
+          vx: (Math.random() - 0.5) * 0.45,
+          alpha: 0.35 + Math.random() * 0.5
+        }));
+      }
+
+      function draw(ts) {
+        animId = requestAnimationFrame(draw);
+        if (document.hidden) return;
+        if (ts - lastFrame < 32) return; // ~30fps: маш хөнгөн, гацаахгүй
+        lastFrame = ts;
+
+        ctx.clearRect(0, 0, width, height);
+        for (let i = 0; i < flakes.length; i++) {
+          const f = flakes[i];
+          f.y += f.vy;
+          f.x += f.vx + Math.sin(f.y * 0.015) * 0.25;
+          if (f.y > height + 5) {
+            f.y = -5;
+            f.x = Math.random() * width;
+          }
+          if (f.x > width + 5) f.x = -5;
+          if (f.x < -5) f.x = width + 5;
+
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(186, 230, 253, ${f.alpha})`;
+          ctx.fill();
+        }
+      }
+
+      setup();
+      window.addEventListener("resize", setup, { passive: true });
+      animId = requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
         </html>
       `;
       const blob = new Blob(["\uFEFF" + template], { type: "application/vnd.ms-excel;charset=utf-8;" });
@@ -6316,66 +6436,6 @@ service cloud.firestore {
 
       return `
         <div class="space-y-6">
-          <!-- Сурагчийн цол, зэрэглэл ба ахицын сүртэй хөдөлгөөнт самбар -->
-          <div class="student-hero-card student-card-enter relative overflow-hidden rounded-3xl p-5 sm:p-6 text-white shadow-xl shadow-sky-900/20 border border-white/15">
-            <div class="pointer-events-none absolute -top-16 -right-16 w-56 h-56 rounded-full bg-sky-400/20 blur-3xl"></div>
-            <div class="pointer-events-none absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-indigo-400/20 blur-3xl"></div>
-
-            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-              <div class="flex items-center gap-4 cursor-pointer group" onclick="openRankTiersModal()" title="Дарж бүх цолны жагсаалтыг харах">
-                <div class="rank-emblem-float w-16 h-16 rounded-2xl bg-white/15 group-hover:bg-white/25 backdrop-blur-md border border-white/25 flex items-center justify-center text-3xl shadow-lg shrink-0 transition">
-                  ${rankInfo.icon}
-                </div>
-                <div>
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-sky-200">Таны одоогийн цол (5 түвшин тутамд ахина)</span>
-                  </div>
-                  <div class="flex flex-wrap items-center gap-2.5 mt-1">
-                    <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">${escapeHtml(rankInfo.title)}</h2>
-                    <span class="rank-badge-pill px-3 py-0.5 rounded-full text-xs font-extrabold bg-white/20 text-white border border-white/30">
-                      ${rankInfo.completedLevels} / 40 түвшин
-                    </span>
-                  </div>
-                  <p class="text-xs text-sky-100/90 mt-1">
-                    ${rankInfo.nextTier
-                      ? `Дараагийн цол <strong>"${rankInfo.nextTier.icon} ${escapeHtml(rankInfo.nextTier.title)}"</strong> авахад ердөө <strong>${rankInfo.levelsToNext}</strong> түвшин үлдлээ!`
-                      : "Баяр хүргэе! Та бүх 40 түвшнийг бүрэн давж дээд цолд хүрлээ! 🎉"
-                    }
-                  </p>
-                </div>
-              </div>
-
-              <div class="w-full lg:w-72 space-y-2 bg-white/10 backdrop-blur-md rounded-2xl p-3.5 border border-white/15">
-                <div class="flex items-center justify-between text-xs font-bold">
-                  <span class="text-sky-100">Дараагийн цолны явц</span>
-                  <span class="text-amber-300">${rankInfo.stepPct}%</span>
-                </div>
-                <div class="w-full h-3 rounded-full bg-slate-900/50 overflow-hidden p-0.5">
-                  <div class="h-full rounded-full bg-gradient-to-r ${rankInfo.barCls} progress-bar-animated transition-all duration-700" style="width: ${Math.max(6, rankInfo.stepPct)}%"></div>
-                </div>
-                <div class="flex items-center justify-between text-[10px] text-sky-200/90 font-semibold pt-0.5">
-                  <span>${rankInfo.icon} ${rankInfo.min} түвшин</span>
-                  <span>${rankInfo.nextTier ? `${rankInfo.nextTier.icon} ${rankInfo.nextTier.min} түвшин` : "🌠 40/40"}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Цол дээр дарж дээд цолнуудыг харах товч (Scroll байхгүй) -->
-            <div class="relative z-10 mt-4 pt-3.5 border-t border-white/15 flex flex-wrap items-center justify-between gap-2">
-              <span class="text-xs text-sky-200/90 font-medium">
-                5 түвшин ахих бүрт таны цол дээшилнэ.
-              </span>
-              <button
-                type="button"
-                onclick="openRankTiersModal()"
-                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/25 text-xs font-bold transition cursor-pointer"
-              >
-                <span>${rankInfo.icon} Бүх цол ба дээд зэрэглэл харах</span>
-                <span>↑</span>
-              </button>
-            </div>
-          </div>
-
           <div class="student-card-enter bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs" style="animation-delay: 0.06s;">
             <h2 class="text-sm font-bold text-slate-800 mb-3">Физикийн бүлэг сэдэв сонгох</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
