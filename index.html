@@ -1017,6 +1017,9 @@
         </nav>
       </header>
 
+      <!-- Одоо идэвхтэй хэрэглэгчдийн самбар (Багш) -->
+      <div id="teacher-online-users-bar" class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 no-print"></div>
+
       <!-- Багшийн үндсэн агуулга -->
       <main id="teacher-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6"></main>
     </div>
@@ -1112,6 +1115,9 @@
         </div>
       </div>
 
+      <!-- Одоо идэвхтэй хэрэглэгчдийн самбар (Сурагч) -->
+      <div id="student-online-users-bar" class="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 no-print"></div>
+
       <!-- Сурагчийн үндсэн агуулга -->
       <main id="student-content" class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6"></main>
     </div>
@@ -1194,7 +1200,7 @@ service cloud.firestore {
     match /{collection}/{docId} {
       allow read, write: if collection in [
         'tasks', 'lessons', 'attendance', 'exams', 'exam_schedules',
-        'exam_questions', 'exam_submissions', 'progress', 'eec_results'
+        'exam_questions', 'exam_submissions', 'progress', 'eec_results', 'presence'
       ];
     }
   }
@@ -1911,6 +1917,7 @@ service cloud.firestore {
       examQuestions: [],
       examSubmissions: [],
       eecResults: [],
+      presence: [],
       // Багшийн UI төлөв
       teacherTab: "tasks",
       selectedTopic: "mechanic",
@@ -1947,6 +1954,7 @@ service cloud.firestore {
       calendarMonth: nowInit.getMonth(),
       selectedCalendarDate: todayLocalIso,
       eecYearFilter: "ALL",
+      eecStatusFilter: "ALL",
       eecSearch: "",
       // Сурагчийн UI төлөв
       studentTab: "tasks",
@@ -2126,6 +2134,11 @@ service cloud.firestore {
           remoteList.forEach(item => { if (item && item.id) mergedMap.set(item.id, item); });
           state.eecResults = Array.from(mergedMap.values());
           refreshActiveView();
+        });
+
+        fsMod.onSnapshot(fsMod.collection(db, "presence"), (snap) => {
+          state.presence = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderOnlineUsersBar();
         });
       } catch (err) {
         console.error("Firebase холболтын алдаа:", err);
@@ -2474,6 +2487,9 @@ service cloud.firestore {
     }
 
     window.logoutUser = function() {
+      const prevUid = state.session ? state.session.userId : null;
+      stopPresenceHeartbeat();
+      clearMyPresence(prevUid);
       sessionStorage.removeItem(SESSION_KEY);
       state.session = null;
       state.studentActiveLevel = null;
@@ -2611,6 +2627,163 @@ service cloud.firestore {
       return [h, m, s].map(v => String(v).padStart(2, "0")).join(":");
     }
 
+
+    // =========================================================================
+    // 8.5 ОДОО ИДЭВХТЭЙ ХЭРЭГЛЭГЧИД (ONLINE PRESENCE)
+    // =========================================================================
+    const PRESENCE_LOCAL_KEY = "physics_edu_presence_v1";
+    const PRESENCE_TTL_MS = 65 * 1000;
+    let presenceHeartbeatInterval = null;
+
+    function loadLocalPresence() {
+      try {
+        const raw = localStorage.getItem(PRESENCE_LOCAL_KEY);
+        const obj = raw ? JSON.parse(raw) : {};
+        return Object.values(obj || {});
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveLocalPresenceEntry(entry) {
+      try {
+        const raw = localStorage.getItem(PRESENCE_LOCAL_KEY);
+        const obj = raw ? JSON.parse(raw) : {};
+        obj[entry.id] = entry;
+        localStorage.setItem(PRESENCE_LOCAL_KEY, JSON.stringify(obj));
+      } catch (_) {}
+    }
+
+    function removeLocalPresenceEntry(userId) {
+      try {
+        const raw = localStorage.getItem(PRESENCE_LOCAL_KEY);
+        const obj = raw ? JSON.parse(raw) : {};
+        delete obj[userId];
+        localStorage.setItem(PRESENCE_LOCAL_KEY, JSON.stringify(obj));
+      } catch (_) {}
+    }
+
+    function getActiveOnlineUsers() {
+      const now = Date.now();
+      const map = new Map();
+      const sources = db ? (state.presence || []) : loadLocalPresence();
+      sources.forEach(u => {
+        if (u && u.id && (now - Number(u.lastSeen || 0)) <= PRESENCE_TTL_MS) {
+          map.set(u.id, u);
+        }
+      });
+      if (state.session && state.session.userId) {
+        map.set(state.session.userId, {
+          id: state.session.userId,
+          fullName: state.session.fullName,
+          role: state.session.role,
+          classGroup: state.session.classGroup || "",
+          lastSeen: now
+        });
+      }
+      return Array.from(map.values()).sort((a, b) => {
+        if (a.role === "teacher" && b.role !== "teacher") return -1;
+        if (b.role === "teacher" && a.role !== "teacher") return 1;
+        return String(a.fullName || "").localeCompare(String(b.fullName || ""));
+      });
+    }
+
+    function renderOnlineUsersBar() {
+      if (!state.session) return;
+      const barId = state.session.role === "teacher" ? "teacher-online-users-bar" : "student-online-users-bar";
+      const bar = document.getElementById(barId);
+      if (!bar) return;
+
+      const activeUsers = getActiveOnlineUsers();
+      bar.innerHTML = `
+        <div class="bg-white/90 backdrop-blur-sm rounded-2xl border border-emerald-200/80 px-4 py-2.5 shadow-xs flex flex-wrap items-center gap-2">
+          <div class="inline-flex items-center gap-2 pr-2 border-r border-slate-200 shrink-0">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs font-extrabold text-slate-800">Одоо идэвхтэй (${activeUsers.length})</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            ${activeUsers.map(u => {
+              const isMe = state.session && u.id === state.session.userId;
+              const isTeacher = u.role === "teacher";
+              const subLbl = isTeacher ? "Багш" : (u.classGroup || "");
+              return `
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                  isTeacher
+                    ? "bg-indigo-50/80 text-indigo-900 border-indigo-200"
+                    : isMe
+                      ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+                      : "bg-slate-50 text-slate-700 border-slate-200"
+                }">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                  <span>${escapeHtml(u.fullName || "Хэрэглэгч")}${isMe ? " (Та)" : ""}</span>
+                  ${subLbl ? `<span class="text-[10px] font-bold opacity-70">• ${escapeHtml(subLbl)}</span>` : ""}
+                </span>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    async function sendPresencePing() {
+      if (!state.session || !state.session.userId) return;
+      const entry = {
+        id: state.session.userId,
+        fullName: state.session.fullName,
+        role: state.session.role,
+        classGroup: state.session.classGroup || "",
+        lastSeen: Date.now()
+      };
+      saveLocalPresenceEntry(entry);
+      if (db && fsOps) {
+        try {
+          await fsOps.setDoc(fsOps.doc(db, "presence", entry.id), entry, { merge: true });
+        } catch (_) {}
+      }
+      renderOnlineUsersBar();
+    }
+
+    function startPresenceHeartbeat() {
+      stopPresenceHeartbeat();
+      if (!state.session) return;
+      sendPresencePing();
+      presenceHeartbeatInterval = setInterval(() => {
+        sendPresencePing();
+      }, 20000);
+    }
+
+    function stopPresenceHeartbeat() {
+      if (presenceHeartbeatInterval) {
+        clearInterval(presenceHeartbeatInterval);
+        presenceHeartbeatInterval = null;
+      }
+    }
+
+    async function clearMyPresence(userId) {
+      if (!userId) return;
+      removeLocalPresenceEntry(userId);
+      if (db && fsOps) {
+        try {
+          await fsOps.deleteDoc(fsOps.doc(db, "presence", userId));
+        } catch (_) {}
+      }
+    }
+
+    window.addEventListener("beforeunload", () => {
+      if (state.session && state.session.userId) {
+        removeLocalPresenceEntry(state.session.userId);
+      }
+    });
+
+    window.addEventListener("storage", (e) => {
+      if (e.key === PRESENCE_LOCAL_KEY) {
+        renderOnlineUsersBar();
+      }
+    });
+
     // =========================================================================
     // 9. ҮНДСЭН ХАРАГДАЦ УДИРДАГЧ
     // =========================================================================
@@ -2638,6 +2811,7 @@ service cloud.firestore {
         studentView.classList.remove("hidden");
         renderStudentDashboard();
       }
+      startPresenceHeartbeat();
     }
 
     function refreshActiveView() {
@@ -5766,6 +5940,17 @@ service cloud.firestore {
       return `${m} мин ${String(s).padStart(2, "0")} сек`;
     }
 
+    function resolveEecStatus(rec) {
+      if (!rec) return "completed";
+      if (rec.status === "abandoned") return "abandoned";
+      if (rec.status === "in_progress") {
+        const lastTs = Number(rec.lastActiveAt || rec.submittedAt || 0);
+        if (Date.now() - lastTs > 65000) return "abandoned";
+        return "in_progress";
+      }
+      return "completed";
+    }
+
     function renderTeacherEecTab() {
       const eecFiles = [
         { id: "ALL", label: "Бүгд" },
@@ -5775,14 +5960,23 @@ service cloud.firestore {
       ];
 
       const searchQ = (state.eecSearch || "").trim().toLowerCase();
-      const allList = Array.isArray(state.eecResults) ? state.eecResults : [];
-      const filtered = allList
-        .filter(r => state.eecYearFilter === "ALL" || r.examCode === state.eecYearFilter)
+      const allList = (Array.isArray(state.eecResults) ? state.eecResults : []).map(r => ({
+        ...r,
+        _resolvedStatus: resolveEecStatus(r)
+      }));
+
+      const yearFiltered = allList.filter(r => state.eecYearFilter === "ALL" || r.examCode === state.eecYearFilter);
+      const filtered = yearFiltered
+        .filter(r => state.eecStatusFilter === "ALL" || r._resolvedStatus === state.eecStatusFilter)
         .filter(r => !searchQ || String(r.studentName || "").toLowerCase().includes(searchQ) || String(r.studentClass || "").toLowerCase().includes(searchQ))
         .sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
 
-      const avgScore = filtered.length > 0
-        ? Math.round(filtered.reduce((acc, r) => acc + (Number(r.totalScore) || 0), 0) / filtered.length)
+      const completedList = yearFiltered.filter(r => r._resolvedStatus === "completed");
+      const abandonedCount = yearFiltered.filter(r => r._resolvedStatus === "abandoned").length;
+      const inProgressCount = yearFiltered.filter(r => r._resolvedStatus === "in_progress").length;
+
+      const avgScore = completedList.length > 0
+        ? Math.round(completedList.reduce((acc, r) => acc + (Number(r.totalScore) || 0), 0) / completedList.length)
         : 0;
       const totalTabsSwitched = filtered.reduce((acc, r) => acc + (Number(r.tabSwitches) || 0), 0);
 
@@ -5792,7 +5986,7 @@ service cloud.firestore {
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
               <div>
                 <h2 class="text-lg font-extrabold text-slate-900">ЭЕШ-ийн шалгалтын үр дүн (${filtered.length})</h2>
-                <p class="text-xs text-slate-500 mt-0.5">ЭЕШ 2025, 2024, 2023 файлуудаар өгсөн сурагчдын үнэлгээ, ажилласан хугацаа болон таб шилжсэн тоо.</p>
+                <p class="text-xs text-slate-500 mt-0.5">ЭЕШ 2025, 2024, 2023 файлуудаар өгсөн болон дундаас нь гарсан сурагчдын дэлгэрэнгүй мэдээлэл.</p>
               </div>
               <input
                 type="text"
@@ -5803,40 +5997,58 @@ service cloud.firestore {
               />
             </div>
 
-            <!-- 3 файлын шүүлтүүр -->
-            <div class="flex flex-wrap items-center gap-2">
-              ${eecFiles.map(f => {
-                const cnt = f.id === "ALL" ? allList.length : allList.filter(r => r.examCode === f.id).length;
-                const active = state.eecYearFilter === f.id;
-                return `
-                  <button
-                    type="button"
-                    onclick="state.eecYearFilter = '${f.id}'; renderTeacherDashboard();"
-                    class="px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
-                      active
-                        ? "animated-orbit-border-dark text-white"
-                        : "bg-white text-slate-700 border-slate-200 hover:border-indigo-300"
-                    }"
-                  >
-                    ${escapeHtml(f.label)} (${cnt})
-                  </button>
-                `;
-              }).join("")}
+            <!-- 3 файлын шүүлтүүр ба Төлөвийн шүүлтүүр -->
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap items-center gap-2">
+                ${eecFiles.map(f => {
+                  const cnt = f.id === "ALL" ? allList.length : allList.filter(r => r.examCode === f.id).length;
+                  const active = state.eecYearFilter === f.id;
+                  return `
+                    <button
+                      type="button"
+                      onclick="state.eecYearFilter = '${f.id}'; renderTeacherDashboard();"
+                      class="px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                        active
+                          ? "animated-orbit-border-dark text-white"
+                          : "bg-white text-slate-700 border-slate-200 hover:border-indigo-300"
+                      }"
+                    >
+                      ${escapeHtml(f.label)} (${cnt})
+                    </button>
+                  `;
+                }).join("")}
+              </div>
+
+              <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/70">
+                <button type="button" onclick="state.eecStatusFilter = 'ALL'; renderTeacherDashboard();" class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${state.eecStatusFilter === "ALL" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"}">
+                  Бүгд (${yearFiltered.length})
+                </button>
+                <button type="button" onclick="state.eecStatusFilter = 'completed'; renderTeacherDashboard();" class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${state.eecStatusFilter === "completed" ? "bg-white text-emerald-700 shadow-xs" : "text-slate-600 hover:text-emerald-700"}">
+                  Дуусгасан (${completedList.length})
+                </button>
+                <button type="button" onclick="state.eecStatusFilter = 'abandoned'; renderTeacherDashboard();" class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${state.eecStatusFilter === "abandoned" ? "bg-white text-rose-700 shadow-xs" : "text-slate-600 hover:text-rose-700"}">
+                  Дундаас нь гарсан (${abandonedCount})
+                </button>
+              </div>
             </div>
 
             <!-- Хураангуй үзүүлэлтүүд -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div class="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-100">
-                <p class="text-[11px] font-semibold text-sky-700">Нийт өгсөн сурагч</p>
-                <p class="text-xl font-extrabold text-sky-950 mt-0.5">${filtered.length}</p>
+                <p class="text-[11px] font-semibold text-sky-700">Нийт дуусгасан</p>
+                <p class="text-xl font-extrabold text-sky-950 mt-0.5">${completedList.length} ${inProgressCount > 0 ? `<span class="text-xs font-semibold text-amber-600">(+${inProgressCount} хийж буй)</span>` : ""}</p>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-100">
+                <p class="text-[11px] font-semibold text-rose-700">Дундаас нь гарсан</p>
+                <p class="text-xl font-extrabold text-rose-700 mt-0.5">${abandonedCount} сурагч</p>
               </div>
               <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100">
                 <p class="text-[11px] font-semibold text-indigo-700">Дундаж оноо</p>
                 <p class="text-xl font-extrabold text-indigo-950 mt-0.5">${avgScore} / 100</p>
               </div>
-              <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-100">
-                <p class="text-[11px] font-semibold text-rose-700">Нийт таб шилжсэн тохиолдол</p>
-                <p class="text-xl font-extrabold text-rose-950 mt-0.5">${totalTabsSwitched} удаа</p>
+              <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-100">
+                <p class="text-[11px] font-semibold text-amber-800">Нийт таб шилжсэн</p>
+                <p class="text-xl font-extrabold text-amber-950 mt-0.5">${totalTabsSwitched} удаа</p>
               </div>
             </div>
           </div>
@@ -5844,28 +6056,32 @@ service cloud.firestore {
           <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
             ${filtered.length === 0 ? `
               <div class="py-12 text-center text-sm text-slate-400">
-                Одоогоор ЭЕШ шалгалт өгсөн сурагчийн бүртгэл алга байна.
+                Сонгосон шүүлтүүрт тохирох ЭЕШ-ийн бүртгэл алга байна.
               </div>
             ` : `
               <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[820px] text-xs sm:text-sm">
+                <table class="w-full text-left border-collapse min-w-[900px] text-xs sm:text-sm">
                   <thead>
                     <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase text-slate-500">
                       <th class="py-3 px-3">Сурагчийн нэр</th>
                       <th class="py-3 px-3">Анги</th>
                       <th class="py-3 px-3">ЭЕШ хувилбар</th>
-                      <th class="py-3 px-3 text-center">Үнэлгээ (Оноо)</th>
+                      <th class="py-3 px-3 text-center">Төлөв</th>
+                      <th class="py-3 px-3 text-center">Үнэлгээ / Гүйцэтгэл</th>
                       <th class="py-3 px-3 text-center">Ажилласан хугацаа</th>
-                      <th class="py-3 px-3 text-center">Таб шилжсэн тоо</th>
+                      <th class="py-3 px-3 text-center">Таб шилжсэн</th>
                       <th class="py-3 px-3">Огноо</th>
                       <th class="py-3 px-3 text-right">Үйлдэл</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-100">
                     ${filtered.map(rec => {
+                      const st = rec._resolvedStatus;
                       const score = Number(rec.totalScore) || 0;
                       const p1 = Number(rec.part1Score) || 0;
                       const p2 = Number(rec.part2Score) || 0;
+                      const answered = Number(rec.answeredCount) || 0;
+                      const totalQ = Number(rec.totalQuestions) || 50;
                       const gInfo = getLetterGradeInfo(score);
                       const tabs = Number(rec.tabSwitches) || 0;
                       const dtStr = rec.submittedAt
@@ -5877,8 +6093,26 @@ service cloud.firestore {
                           ? "bg-amber-50 text-amber-800 border-amber-200"
                           : "bg-rose-50 text-rose-700 border-rose-200";
 
+                      const statusBadge = st === "completed"
+                        ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">Дуусгасан ✓</span>`
+                        : st === "abandoned"
+                          ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-700 border border-rose-300">Дундаас нь гарсан ✕</span>`
+                          : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200">Хийж байна ●</span>`;
+
+                      const scoreCell = st === "completed"
+                        ? `
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${gInfo.badgeCls}">
+                              ${score} / 100 (${gInfo.letter})
+                            </span>
+                            <span class="block text-[10px] text-slate-400 mt-0.5">I: ${p1}/76 • II: ${p2}/24</span>
+                          `
+                        : `
+                            <span class="text-xs font-bold text-slate-600">Бөглөсөн: ${answered} / ${totalQ}</span>
+                            <span class="block text-[10px] text-rose-500 mt-0.5">${st === "abandoned" ? "Шалгалтаа илгээгээгүй" : "Үргэлжилж байна"}</span>
+                          `;
+
                       return `
-                        <tr class="hover:bg-slate-50/70">
+                        <tr class="${st === "abandoned" ? "bg-rose-50/30 hover:bg-rose-50/60" : "hover:bg-slate-50/70"}">
                           <td class="py-3 px-3 font-bold text-slate-900">${escapeHtml(rec.studentName || "Нэргүй")}</td>
                           <td class="py-3 px-3">
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-100">
@@ -5886,12 +6120,8 @@ service cloud.firestore {
                             </span>
                           </td>
                           <td class="py-3 px-3 font-semibold text-indigo-700">${escapeHtml(rec.examTitle || rec.examCode || "ЭЕШ")}</td>
-                          <td class="py-3 px-3 text-center">
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${gInfo.badgeCls}">
-                              ${score} / 100 (${gInfo.letter})
-                            </span>
-                            <span class="block text-[10px] text-slate-400 mt-0.5">I: ${p1}/76 • II: ${p2}/24</span>
-                          </td>
+                          <td class="py-3 px-3 text-center whitespace-nowrap">${statusBadge}</td>
+                          <td class="py-3 px-3 text-center">${scoreCell}</td>
                           <td class="py-3 px-3 text-center font-mono font-semibold text-slate-700">
                             ⏱️ ${escapeHtml(formatDurationMn(rec.elapsedSeconds))}
                           </td>

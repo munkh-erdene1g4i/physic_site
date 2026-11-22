@@ -1761,7 +1761,9 @@
       studentClass: '',
       examStarted: false,
       startedAt: null,
-      tabSwitches: 0
+      tabSwitches: 0,
+      attemptId: null,
+      eecHeartbeat: null
     };
 
     function initPart2State() {
@@ -2234,12 +2236,20 @@
       if (resTimeEl) resTimeEl.textContent = formatEecDuration(elapsedSec);
       if (resTabsEl) resTabsEl.textContent = `${state.tabSwitches || 0} удаа`;
 
+      if (state.eecHeartbeat) {
+        clearInterval(state.eecHeartbeat);
+        state.eecHeartbeat = null;
+      }
+      const attemptId = state.attemptId || (EEC_EXAM_CODE + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6));
       saveEecResultToDb({
-        id: EEC_EXAM_CODE + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6),
+        id: attemptId,
         examCode: EEC_EXAM_CODE,
         examTitle: EEC_EXAM_TITLE,
         studentName: state.studentName || 'Нэргүй',
         studentClass: state.studentClass || '—',
+        status: 'completed',
+        answeredCount: getEecAnsweredCount(),
+        totalQuestions: 50,
         totalScore,
         part1Score,
         part2Score,
@@ -2247,6 +2257,7 @@
         wrongCount,
         elapsedSeconds: elapsedSec,
         tabSwitches: state.tabSwitches || 0,
+        lastActiveAt: Date.now(),
         submittedAt: Date.now()
       });
 
@@ -2263,9 +2274,11 @@
       document.getElementById('nav-results-tab').classList.add('hidden');
       document.getElementById('submit-btn').classList.remove('hidden');
       document.getElementById('bottom-submit-btn').classList.remove('hidden');
+      if (state.eecHeartbeat) { clearInterval(state.eecHeartbeat); state.eecHeartbeat = null; }
       state.examStarted = false;
       state.startedAt = null;
       state.tabSwitches = 0;
+      state.attemptId = null;
       const startModal = document.getElementById('eec-start-modal');
       if (startModal) startModal.classList.remove('hidden');
       renderAll();
@@ -2416,12 +2429,14 @@
     }
 
     async function saveEecResultToDb(payload) {
-      // 1. LocalStorage-д хадгалах
+      // 1. LocalStorage-д хадгалах (шинэчлэх эсвэл нэмэх)
       try {
         const raw = localStorage.getItem(EEC_LOCAL_KEY);
         const list = raw ? JSON.parse(raw) : [];
         if (Array.isArray(list)) {
-          list.push(payload);
+          const idx = list.findIndex(item => item && item.id === payload.id);
+          if (idx !== -1) list[idx] = { ...list[idx], ...payload };
+          else list.push(payload);
           localStorage.setItem(EEC_LOCAL_KEY, JSON.stringify(list));
         }
       } catch (_) {}
@@ -2445,6 +2460,48 @@
       }
     });
 
+    function getEecAnsweredCount() {
+      const p1 = Object.keys(state.part1 || {}).length;
+      const p2 = part2Tasks.filter(t => isTaskComplete(t.id)).length;
+      return p1 + p2;
+    }
+
+    function syncEecProgress(statusVal) {
+      if (!state.examStarted || state.graded || !state.attemptId) return;
+      const elapsedSec = state.startedAt
+        ? Math.max(0, Math.round((Date.now() - state.startedAt) / 1000))
+        : 0;
+      saveEecResultToDb({
+        id: state.attemptId,
+        examCode: EEC_EXAM_CODE,
+        examTitle: EEC_EXAM_TITLE,
+        studentName: state.studentName || 'Нэргүй',
+        studentClass: state.studentClass || '—',
+        status: statusVal,
+        answeredCount: getEecAnsweredCount(),
+        totalQuestions: 50,
+        totalScore: 0,
+        part1Score: 0,
+        part2Score: 0,
+        elapsedSeconds: elapsedSec,
+        tabSwitches: state.tabSwitches || 0,
+        lastActiveAt: Date.now(),
+        submittedAt: Date.now()
+      });
+    }
+
+    window.addEventListener('pagehide', () => {
+      if (state.examStarted && !state.graded) {
+        syncEecProgress('abandoned');
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      if (state.examStarted && !state.graded) {
+        syncEecProgress('abandoned');
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       const startForm = document.getElementById('eec-start-form');
       if (startForm) {
@@ -2460,11 +2517,20 @@
           state.examStarted = true;
           state.startedAt = Date.now();
           state.tabSwitches = 0;
+          state.attemptId = EEC_EXAM_CODE + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
 
           document.getElementById('eec-start-modal').classList.add('hidden');
           if (!state.timerRunning) {
             toggleTimer();
           }
+
+          syncEecProgress('in_progress');
+          if (state.eecHeartbeat) clearInterval(state.eecHeartbeat);
+          state.eecHeartbeat = setInterval(() => {
+            if (state.examStarted && !state.graded) {
+              syncEecProgress('in_progress');
+            }
+          }, 20000);
         });
       }
     });
