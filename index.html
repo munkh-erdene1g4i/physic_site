@@ -2349,68 +2349,7 @@ service cloud.firestore {
         </head>
         <body>
           ${htmlTableContent}
-        
-  <!-- Шинэ жилийн хөнгөн цас будруулах скрипт (CPU хэмнэлттэй, 30fps, таб нуугдахад зогсоно) -->
-  <script>
-    (function initLightweightSnow() {
-      const canvas = document.getElementById("ny-snow-canvas");
-      if (!canvas) return;
-      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        canvas.style.display = "none";
-        return;
-      }
-
-      const ctx = canvas.getContext("2d");
-      let width = 0, height = 0;
-      let flakes = [];
-      let animId = null;
-      let lastFrame = 0;
-
-      function setup() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        const count = width < 640 ? 28 : 48;
-        flakes = Array.from({ length: count }, () => ({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          r: 1.4 + Math.random() * 2.6,
-          vy: 0.45 + Math.random() * 0.95,
-          vx: (Math.random() - 0.5) * 0.45,
-          alpha: 0.35 + Math.random() * 0.5
-        }));
-      }
-
-      function draw(ts) {
-        animId = requestAnimationFrame(draw);
-        if (document.hidden) return;
-        if (ts - lastFrame < 32) return; // ~30fps: маш хөнгөн, гацаахгүй
-        lastFrame = ts;
-
-        ctx.clearRect(0, 0, width, height);
-        for (let i = 0; i < flakes.length; i++) {
-          const f = flakes[i];
-          f.y += f.vy;
-          f.x += f.vx + Math.sin(f.y * 0.015) * 0.25;
-          if (f.y > height + 5) {
-            f.y = -5;
-            f.x = Math.random() * width;
-          }
-          if (f.x > width + 5) f.x = -5;
-          if (f.x < -5) f.x = width + 5;
-
-          ctx.beginPath();
-          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(186, 230, 253, ${f.alpha})`;
-          ctx.fill();
-        }
-      }
-
-      setup();
-      window.addEventListener("resize", setup, { passive: true });
-      animId = requestAnimationFrame(draw);
-    })();
-  </script>
-</body>
+        </body>
         </html>
       `;
       const blob = new Blob(["\uFEFF" + template], { type: "application/vnd.ms-excel;charset=utf-8;" });
@@ -7213,6 +7152,66 @@ service cloud.firestore {
           renderAppShell();
         }
       });
+    })();
+  </script>
+
+  <!-- Шинэ жилийн хөнгөн цас будруулах скрипт (CPU хэмнэлттэй, 30fps, таб нуугдахад зогсоно) -->
+  <script>
+    (function initLightweightSnow() {
+      const canvas = document.getElementById("ny-snow-canvas");
+      if (!canvas) return;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        canvas.style.display = "none";
+        return;
+      }
+
+      const ctx = canvas.getContext("2d");
+      let width = 0, height = 0;
+      let flakes = [];
+      let lastFrame = 0;
+
+      function setup() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        const count = width < 640 ? 28 : 48;
+        flakes = Array.from({ length: count }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: 1.4 + Math.random() * 2.6,
+          vy: 0.45 + Math.random() * 0.95,
+          vx: (Math.random() - 0.5) * 0.45,
+          alpha: 0.35 + Math.random() * 0.5
+        }));
+      }
+
+      function draw(ts) {
+        requestAnimationFrame(draw);
+        if (document.hidden) return;
+        if (ts - lastFrame < 32) return;
+        lastFrame = ts;
+
+        ctx.clearRect(0, 0, width, height);
+        for (let i = 0; i < flakes.length; i++) {
+          const f = flakes[i];
+          f.y += f.vy;
+          f.x += f.vx + Math.sin(f.y * 0.015) * 0.25;
+          if (f.y > height + 5) {
+            f.y = -5;
+            f.x = Math.random() * width;
+          }
+          if (f.x > width + 5) f.x = -5;
+          if (f.x < -5) f.x = width + 5;
+
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(186, 230, 253, ${f.alpha})`;
+          ctx.fill();
+        }
+      }
+
+      setup();
+      window.addEventListener("resize", setup, { passive: true });
+      requestAnimationFrame(draw);
     })();
   </script>
 </body>
