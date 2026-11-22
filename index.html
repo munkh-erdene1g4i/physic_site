@@ -928,7 +928,7 @@
     <!-- ===================================================================== -->
     <div id="teacher-view" class="hidden flex-1 flex flex-col">
       <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2.5 flex items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-50 to-indigo-50 border border-sky-100 flex items-center justify-center shrink-0 overflow-hidden">
               <img src="logo.png" alt="Лого" class="w-8 h-8 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
@@ -1029,45 +1029,50 @@
     <!-- ===================================================================== -->
     <div id="student-view" class="hidden flex-1 flex flex-col">
       <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-50 to-teal-50 border border-sky-100 flex items-center justify-center shrink-0 overflow-hidden">
-              <img src="logo.png" alt="Лого" class="w-8 h-8 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-              <div style="display:none;" class="w-8 h-8 items-center justify-center text-sky-600">
-                <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3">
-                  <circle cx="32" cy="32" r="5" fill="currentColor" />
-                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)" />
-                  <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)" />
-                </svg>
+        <div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-col gap-2">
+          <!-- Дээд мөр: Лого + Сурагчийн нэр + Гарах товч -->
+          <div class="flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-50 to-teal-50 border border-sky-100 flex items-center justify-center shrink-0 overflow-hidden">
+                <img src="logo.png" alt="Лого" class="w-7 h-7 sm:w-8 sm:h-8 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                <div style="display:none;" class="w-7 h-7 sm:w-8 sm:h-8 items-center justify-center text-sky-600">
+                  <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3">
+                    <circle cx="32" cy="32" r="5" fill="currentColor" />
+                    <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(30 32 32)" />
+                    <ellipse cx="32" cy="32" rx="26" ry="10" transform="rotate(-30 32 32)" />
+                  </svg>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <span id="student-header-name" class="block font-extrabold text-slate-900 text-sm sm:text-base truncate leading-tight">Сурагч</span>
+                <p class="hidden sm:block text-[11px] text-slate-500 mt-0.5">Физикийн Цахим Сургалтын Систем</p>
               </div>
             </div>
-            <div class="truncate">
-              <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <span id="student-header-name" class="font-bold text-slate-900 text-sm sm:text-base truncate">Сурагч</span>
-                <button type="button" id="student-header-rank-badge" onclick="openRankTiersModal()" title="Цолны жагсаалт харах" class="rank-badge-pill px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200 shadow-xs hover:scale-105 transition cursor-pointer">
-                  🌱 Шинэ судлаач
-                </button>
-                <span id="student-header-class" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-100">
-                  10-р анги
-                </span>
-                <span id="student-header-grade-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                  Дүн: —
-                </span>
-              </div>
-              <p class="text-[11px] text-slate-500">Физикийн Цахим Сургалтын Систем</p>
-            </div>
+
+            <button
+              type="button"
+              onclick="logoutUser()"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition shrink-0 cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+              </svg>
+              <span>Гарах</span>
+            </button>
           </div>
 
-          <button
-            type="button"
-            onclick="logoutUser()"
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-100 transition shrink-0 cursor-pointer"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-            </svg>
-            <span>Гарах</span>
-          </button>
+          <!-- Доод мөр: Цол, Анги, Түвшин/Дүн цэгцтэй байрлана -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" id="student-header-rank-badge" onclick="openRankTiersModal()" title="Цолны жагсаалт харах" class="rank-badge-pill px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-700 border border-slate-200 shadow-xs hover:scale-105 transition cursor-pointer">
+              🌱 Шинэ судлаач
+            </button>
+            <span id="student-header-class" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+              10-р анги
+            </span>
+            <span id="student-header-grade-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+              Дүн: —
+            </span>
+          </div>
         </div>
 
         <!-- Сурагчийн үндсэн цэс -->
@@ -2139,6 +2144,8 @@ service cloud.firestore {
         fsMod.onSnapshot(fsMod.collection(db, "presence"), (snap) => {
           state.presence = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           renderOnlineUsersBar();
+        }, (err) => {
+          console.warn("Presence унших эрхгүй байна (Firestore Rules дээр 'presence' нэмнэ үү):", err);
         });
       } catch (err) {
         console.error("Firebase холболтын алдаа:", err);
@@ -2632,7 +2639,7 @@ service cloud.firestore {
     // 8.5 ОДОО ИДЭВХТЭЙ ХЭРЭГЛЭГЧИД (ONLINE PRESENCE)
     // =========================================================================
     const PRESENCE_LOCAL_KEY = "physics_edu_presence_v1";
-    const PRESENCE_TTL_MS = 65 * 1000;
+    const PRESENCE_TTL_MS = 180 * 1000;
     let presenceHeartbeatInterval = null;
 
     function loadLocalPresence() {
@@ -2784,6 +2791,12 @@ service cloud.firestore {
       }
     });
 
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && state.session) {
+        sendPresencePing();
+      }
+    });
+
     // =========================================================================
     // 9. ҮНДСЭН ХАРАГДАЦ УДИРДАГЧ
     // =========================================================================
@@ -2873,6 +2886,7 @@ service cloud.firestore {
           break;
       }
       runKatexAutoRender();
+      renderOnlineUsersBar();
     }
 
     // -------------------------------------------------------------------------
@@ -6244,6 +6258,7 @@ service cloud.firestore {
       }
 
       runKatexAutoRender();
+      renderOnlineUsersBar();
       startStudentLiveTimers();
     }
 
