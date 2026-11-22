@@ -37,6 +37,56 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
 
+  <!-- ЭЕШ эхлүүлэх: Анги, Нэр бүртгэх цонх -->
+  <div id="eec-start-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5">
+      <div class="text-center space-y-1.5">
+        <div class="mx-auto w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-extrabold text-base shadow-md">
+          ЭЕШ
+        </div>
+        <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">ЭЕШ 2025 — Физик (В хувилбар)</h2>
+        <p class="text-xs text-slate-500">Шалгалтаа эхлүүлэхийн өмнө анги болон овог, нэрээ бүртгүүлнэ үү.</p>
+      </div>
+
+      <form id="eec-start-form" class="space-y-4" autocomplete="off">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="eec-student-grade" class="block text-xs font-bold text-slate-700 mb-1">Анги</label>
+            <select id="eec-student-grade" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
+              <option value="12-р анги">12-р анги</option>
+              <option value="11-р анги">11-р анги</option>
+              <option value="10-р анги">10-р анги</option>
+            </select>
+          </div>
+          <div>
+            <label for="eec-student-section" class="block text-xs font-bold text-slate-700 mb-1">Бүлэг (заавал биш)</label>
+            <select id="eec-student-section" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
+              <option value="">Бүлэггүй</option>
+              <option value="А">А бүлэг</option>
+              <option value="Б">Б бүлэг</option>
+              <option value="В">В бүлэг</option>
+              <option value="Г">Г бүлэг</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="eec-student-name" class="block text-xs font-bold text-slate-700 mb-1">Овог, нэр</label>
+          <input id="eec-student-name" type="text" required placeholder="Жишээ: Бат-Эрдэнэ Болд" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none" />
+        </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] sm:text-xs text-amber-900 leading-relaxed">
+          ⏱️ <strong>Санамж:</strong> "Шалгалт эхлүүлэх" товч дээр дарахад <strong>100 минутын</strong> хугацаа шууд гүйж эхэлнэ. Шалгалтын явцад өөр таб руу шилжих тоо багшийн хэсэгт бүртгэгдэнэ.
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold text-sm shadow-md transition cursor-pointer">
+          Шалгалт эхлүүлэх →
+        </button>
+      </form>
+    </div>
+  </div>
+
+
   <!-- Sticky Top Header -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div class="max-w-5xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
@@ -141,6 +191,14 @@
 
       <div class="p-5 sm:p-6 space-y-5">
         <!-- Breakdown Grid -->
+                <!-- Сурагчийн мэдээлэл, ажилласан хугацаа ба таб шилжсэн тоо -->
+        <div id="eec-student-meta-bar" class="flex flex-wrap items-center justify-between gap-2 p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs sm:text-sm text-indigo-950 font-semibold">
+          <span>👤 Сурагч: <strong id="res-student-name">—</strong> (<span id="res-student-class">—</span>)</span>
+          <div class="flex flex-wrap items-center gap-3">
+            <span>⏱️ Ажилласан хугацаа: <strong id="res-elapsed-time">0 сек</strong></span>
+            <span>🔀 Таб шилжсэн: <strong id="res-tab-switches">0 удаа</strong></span>
+          </div>
+        </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
             <div class="text-xs text-slate-500 font-medium">I хэсэг (Сонгох)</div>
@@ -180,22 +238,6 @@
             <span>Дахин өгөх</span>
           </button>
         </div>
-      </div>
-    </section>
-
-    <!-- Question Navigator Grid -->
-    <section id="navigator-panel" class="rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <h2 class="text-sm font-bold text-slate-800">Асуултын шилжилтийн самбар</h2>
-        <div class="flex items-center gap-3 text-[11px] font-medium text-slate-500">
-          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-slate-100 border border-slate-300 inline-block"></span> Бөглөөгүй</span>
-          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-indigo-600 inline-block"></span> Бөглөсөн</span>
-          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span> Зөв</span>
-          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-rose-500 inline-block"></span> Буруу</span>
-        </div>
-      </div>
-      <div id="navigator-grid" class="grid grid-cols-8 sm:grid-cols-13 md:grid-cols-17 gap-1.5">
-        <!-- Populated by JS -->
       </div>
     </section>
 
@@ -244,6 +286,24 @@
         <span>Шалгалтыг дуусгах &amp; Оноо харах</span>
       </button>
     </div>
+  
+
+
+    <!-- Question Navigator Grid -->
+    <section id="navigator-panel" class="rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h2 class="text-sm font-bold text-slate-800">Асуултын шилжилтийн самбар</h2>
+        <div class="flex items-center gap-3 text-[11px] font-medium text-slate-500">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-slate-100 border border-slate-300 inline-block"></span> Бөглөөгүй</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-indigo-600 inline-block"></span> Бөглөсөн</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span> Зөв</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-rose-500 inline-block"></span> Буруу</span>
+        </div>
+      </div>
+      <div id="navigator-grid" class="grid grid-cols-8 sm:grid-cols-13 md:grid-cols-17 gap-1.5">
+        <!-- Populated by JS -->
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -1581,7 +1641,12 @@
       activeDigitInput: null, // DOM input element
       timerSeconds: 100 * 60,
       timerRunning: false,
-      timerInterval: null
+      timerInterval: null,
+      studentName: '',
+      studentClass: '',
+      examStarted: false,
+      startedAt: null,
+      tabSwitches: 0
     };
 
     // Initialize empty state for Part 2
@@ -2059,6 +2124,35 @@
       document.getElementById('result-summary').classList.remove('hidden');
       document.getElementById('submit-btn').classList.add('hidden');
       document.getElementById('bottom-submit-btn').classList.add('hidden');
+
+      const elapsedSec = state.startedAt
+        ? Math.max(1, Math.round((Date.now() - state.startedAt) / 1000))
+        : Math.max(0, 100 * 60 - state.timerSeconds);
+      const resNameEl = document.getElementById('res-student-name');
+      const resClassEl = document.getElementById('res-student-class');
+      const resTimeEl = document.getElementById('res-elapsed-time');
+      const resTabsEl = document.getElementById('res-tab-switches');
+      if (resNameEl) resNameEl.textContent = state.studentName || 'Нэргүй';
+      if (resClassEl) resClassEl.textContent = state.studentClass || '—';
+      if (resTimeEl) resTimeEl.textContent = formatEecDuration(elapsedSec);
+      if (resTabsEl) resTabsEl.textContent = `${state.tabSwitches || 0} удаа`;
+
+      saveEecResultToDb({
+        id: EEC_EXAM_CODE + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6),
+        examCode: EEC_EXAM_CODE,
+        examTitle: EEC_EXAM_TITLE,
+        studentName: state.studentName || 'Нэргүй',
+        studentClass: state.studentClass || '—',
+        totalScore,
+        part1Score,
+        part2Score,
+        correctCount,
+        wrongCount,
+        elapsedSeconds: elapsedSec,
+        tabSwitches: state.tabSwitches || 0,
+        submittedAt: Date.now()
+      });
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2080,6 +2174,11 @@
       document.getElementById('result-summary').classList.add('hidden');
       document.getElementById('submit-btn').classList.remove('hidden');
       document.getElementById('bottom-submit-btn').classList.remove('hidden');
+      state.examStarted = false;
+      state.startedAt = null;
+      state.tabSwitches = 0;
+      const startModal = document.getElementById('eec-start-modal');
+      if (startModal) startModal.classList.remove('hidden');
       renderAll();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -2195,6 +2294,84 @@
         if (cb) cb();
       });
     });
+  
+    /* =========================================================================
+       8. ЭЕШ БҮРТГЭЛ, ТАБ ШИЛЖИЛТ ХЯНАХ БА БАГШИЙН САН РУУ ХАДГАЛАХ
+       ========================================================================= */
+    const EEC_EXAM_CODE = 'eec2025';
+    const EEC_EXAM_TITLE = 'ЭЕШ 2025 — Физик (В хувилбар)';
+    const EEC_LOCAL_KEY = 'physics_edu_eec_results_v1';
+    const EEC_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBWj422MjeqrwZoblVTRlmQNjonl5sEino",
+      authDomain: "physic-db0ee.firebaseapp.com",
+      projectId: "physic-db0ee",
+      storageBucket: "physic-db0ee.firebasestorage.app",
+      messagingSenderId: "1089020206896",
+      appId: "1:1089020206896:web:ca6b764a3449eec21f72f5"
+    };
+
+    function formatEecDuration(sec) {
+      const total = Math.max(0, Math.floor(Number(sec) || 0));
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      if (m === 0) return s + ' сек';
+      return m + ' мин ' + String(s).padStart(2, '0') + ' сек';
+    }
+
+    async function saveEecResultToDb(payload) {
+      // 1. LocalStorage-д хадгалах
+      try {
+        const raw = localStorage.getItem(EEC_LOCAL_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(list)) {
+          list.push(payload);
+          localStorage.setItem(EEC_LOCAL_KEY, JSON.stringify(list));
+        }
+      } catch (_) {}
+
+      // 2. Google Firebase Firestore (eec_results) руу хадгалах
+      try {
+        const appMod = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const fsMod = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        const apps = appMod.getApps ? appMod.getApps() : [];
+        const app = apps.length > 0 ? apps[0] : appMod.initializeApp(EEC_FIREBASE_CONFIG);
+        const db = fsMod.getFirestore(app);
+        await fsMod.setDoc(fsMod.doc(db, 'eec_results', payload.id), payload);
+      } catch (err) {
+        console.warn('Firestore хадгалалт алгаслаа (LocalStorage-д хадгалагдсан):', err);
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && state.examStarted && !state.graded) {
+        state.tabSwitches++;
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const startForm = document.getElementById('eec-start-form');
+      if (startForm) {
+        startForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const grade = document.getElementById('eec-student-grade').value;
+          const sec = document.getElementById('eec-student-section').value;
+          const name = document.getElementById('eec-student-name').value.trim();
+          if (!name) return;
+
+          state.studentName = name;
+          state.studentClass = sec ? `${grade} (${sec})` : grade;
+          state.examStarted = true;
+          state.startedAt = Date.now();
+          state.tabSwitches = 0;
+
+          document.getElementById('eec-start-modal').classList.add('hidden');
+          if (!state.timerRunning) {
+            toggleTimer();
+          }
+        });
+      }
+    });
+
   </script>
 </body>
 </html>
