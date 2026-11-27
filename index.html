@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="mn">
+<html lang="mn" class="dk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -431,6 +431,399 @@
     .ny-light-dot {
       animation: ny-twinkle 2.4s ease-in-out infinite;
     }
+
+    /* =====================================================================
+       БАРААН ОРЧИН ҮЕИЙН ЗАГВАР (DARK MODERN THEME)
+       Зөвхөн transform / opacity хөдөлгөөн ашигласан тул сайтыг гацаахгүй.
+       Хэвлэх үед (print) хуучин цайвар загвар хэвээр үлдэнэ.
+       ===================================================================== */
+    @media screen {
+      html.dk {
+        color-scheme: dark;
+        --dk-bg: #060a14;
+        --dk-surface: #0f1729;
+        --dk-surface-2: #131d33;
+        --dk-line: rgb(148 163 184 / 0.14);
+        --dk-text: #e2e8f0;
+        --dk-accent-1: #38bdf8;
+        --dk-accent-2: #818cf8;
+        --dk-accent-3: #2dd4bf;
+        background-color: var(--dk-bg);
+      }
+      html.dk body {
+        background: var(--dk-bg) !important;
+        color: var(--dk-text);
+      }
+      html.dk ::selection { background: rgb(56 189 248 / 0.35); color: #f0f9ff; }
+
+      /* Гүйлгэх мөр */
+      html.dk ::-webkit-scrollbar-track { background: #0b1222; }
+      html.dk ::-webkit-scrollbar-thumb { background: #26324a; }
+      html.dk ::-webkit-scrollbar-thumb:hover { background: #34446a; }
+
+      /* Арын aurora гэрэлтүүлэг: blur шүүлтүүргүй radial-gradient + зөвхөн transform хөдөлгөөн */
+      .dk-aurora { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+      .dk-aurora::before {
+        content: ""; position: absolute; inset: 0;
+        background-image: radial-gradient(rgb(148 163 184 / 0.07) 1px, transparent 1px);
+        background-size: 28px 28px;
+        -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+                mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+      }
+      .dk-aurora span {
+        position: absolute; width: 60vmax; height: 60vmax; border-radius: 9999px;
+        will-change: transform; transform: translate3d(0,0,0);
+      }
+      .dk-aurora .a1 { top: -25vmax; left: -15vmax; background: radial-gradient(circle, rgb(14 165 233 / 0.20) 0%, transparent 62%); animation: dk-drift-a 26s ease-in-out infinite alternate; }
+      .dk-aurora .a2 { top: 10vmax; right: -25vmax; background: radial-gradient(circle, rgb(99 102 241 / 0.20) 0%, transparent 62%); animation: dk-drift-b 32s ease-in-out infinite alternate; }
+      .dk-aurora .a3 { bottom: -30vmax; left: 20vmax; background: radial-gradient(circle, rgb(20 184 166 / 0.14) 0%, transparent 62%); animation: dk-drift-c 38s ease-in-out infinite alternate; }
+      @keyframes dk-drift-a { to { transform: translate3d(12vmax, 8vmax, 0) scale(1.08); } }
+      @keyframes dk-drift-b { to { transform: translate3d(-14vmax, 10vmax, 0) scale(0.92); } }
+      @keyframes dk-drift-c { to { transform: translate3d(-10vmax, -12vmax, 0) scale(1.1); } }
+
+      /* Нэвтрэх хуудасны blob-ууд: хүнд blur-ийг радиал градиентаар солив */
+      html.dk .login-blob { filter: none !important; background: radial-gradient(circle, rgb(56 189 248 / 0.22) 0%, transparent 65%) !important; will-change: transform; }
+      html.dk .login-blob:nth-child(2) { background: radial-gradient(circle, rgb(129 140 248 / 0.22) 0%, transparent 65%) !important; }
+      html.dk .login-blob:nth-child(3) { background: radial-gradient(circle, rgb(45 212 191 / 0.18) 0%, transparent 65%) !important; }
+      html.dk .login-grid-pattern { background-image: radial-gradient(rgb(148 163 184 / 0.07) 1px, transparent 1px); }
+      html.dk .login-glass-card {
+        background: linear-gradient(160deg, rgb(19 29 51 / 0.78), rgb(10 16 30 / 0.78));
+        border-color: rgb(148 163 184 / 0.16) !important;
+        box-shadow: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 30px 60px -20px rgb(0 0 0 / 0.7);
+      }
+
+      /* Оролтын талбарууд */
+      html.dk :where(input, select, textarea) { background-color: rgb(2 6 23 / 0.45); color: var(--dk-text); }
+      html.dk input[type="radio"], html.dk input[type="checkbox"] { accent-color: #38bdf8; background: transparent; }
+      html.dk ::placeholder { color: #5b6b84; opacity: 1; }
+      html.dk option, html.dk optgroup { background: #0f1729; color: var(--dk-text); }
+      html.dk :where(input, select, textarea):focus { border-color: #38bdf8 !important; }
+
+      /* Зураг (схем) харлагдахгүйн тулд цагаан дэвсгэртэй үлдээнэ */
+      html.dk img[class*="bg-"] { background-color: #f8fafc !important; }
+
+      /* Сүүдэр ба карт */
+      html.dk .shadow-xs, html.dk .shadow-sm { box-shadow: 0 1px 0 rgb(255 255 255 / 0.035) inset, 0 10px 28px -16px rgb(0 0 0 / 0.75) !important; }
+      html.dk .shadow-2xl { box-shadow: 0 30px 70px -20px rgb(0 0 0 / 0.85) !important; }
+      html.dk .fixed.inset-0 > .bg-white,
+      html.dk .fixed.inset-0 > div > .bg-white { background-color: #0f1729 !important; }
+      html.dk #teacher-content .rounded-2xl.border,
+      html.dk #student-content .rounded-2xl.border { transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease; }
+
+      /* Толгой хэсэг (sticky header) */
+      html.dk #teacher-view > header,
+      html.dk #student-view > header {
+        background: rgb(8 13 26 / 0.82) !important;
+        border-bottom-color: rgb(148 163 184 / 0.12) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+                backdrop-filter: blur(14px) saturate(140%);
+      }
+      html.dk #teacher-view > header::after,
+      html.dk #student-view > header::after {
+        content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+        background: linear-gradient(90deg, transparent, rgb(56 189 248 / 0.55), rgb(129 140 248 / 0.55), transparent);
+        opacity: .6;
+      }
+
+      /* Идэвхтэй цэсний товч */
+      html.dk .t-tab-btn.bg-sky-600, html.dk .s-tab-btn.bg-sky-600 {
+        background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
+        box-shadow: 0 8px 22px -8px rgb(99 102 241 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.08) inset !important;
+      }
+      html.dk .t-tab-btn, html.dk .s-tab-btn { transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+      html.dk .t-tab-btn:active, html.dk .s-tab-btn:active { transform: scale(.97); }
+
+      /* Үндсэн өнгөт товчнуудын гэрэлтэлт (зөвхөн hover үед) */
+      html.dk button.bg-sky-600, html.dk button.bg-indigo-600, html.dk button.bg-emerald-600,
+      html.dk button[class*="from-sky-600"] { transition: transform .18s ease, box-shadow .25s ease, filter .2s ease; }
+      html.dk button.bg-sky-600:hover, html.dk button.bg-indigo-600:hover, html.dk button.bg-emerald-600:hover,
+      html.dk button[class*="from-sky-600"]:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -10px rgb(56 189 248 / 0.7); }
+
+      /* Өмнөх хөдөлгөөнт хүрээнүүдийг бараан болгох */
+      html.dk .animated-orbit-border {
+        background-image:
+          linear-gradient(135deg, #0f1b33 0%, #151a3d 100%),
+          conic-gradient(from var(--border-angle), #38bdf8 0deg, #818cf8 90deg, #2dd4bf 180deg, #0ea5e9 270deg, #38bdf8 360deg) !important;
+        box-shadow: 0 10px 28px -10px rgb(56 189 248 / 0.45) !important;
+      }
+      html.dk .logo-shiny-wrapper {
+        background-image:
+          linear-gradient(145deg, #111a30 0%, #0c1426 100%),
+          conic-gradient(from var(--border-angle), #38bdf8 0deg, #818cf8 90deg, #facc15 180deg, #2dd4bf 270deg, #38bdf8 360deg);
+      }
+      html.dk .logo-shiny-wrapper::after { background: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.22) 50%, transparent 100%); }
+      html.dk .eec-animated-btn {
+        background-image:
+          linear-gradient(135deg, #101a32 0%, #0f1f33 50%, #0c1f24 100%),
+          conic-gradient(from var(--border-angle), #818cf8 0deg, #38bdf8 90deg, #f59e0b 180deg, #2dd4bf 270deg, #818cf8 360deg);
+        box-shadow: 0 8px 22px -10px rgb(99 102 241 / 0.55);
+      }
+      html.dk .eec-animated-btn::before { background: linear-gradient(120deg, transparent 0%, rgb(255 255 255 / 0.16) 50%, transparent 100%); }
+      html.dk .rank-badge-pill::after { background: linear-gradient(110deg, transparent 0%, rgb(255 255 255 / 0.22) 50%, transparent 100%); }
+
+      /* Таб солигдох үеийн зөөлөн орж ирэх хөдөлгөөн */
+      @keyframes dk-enter { from { opacity: 0; transform: translate3d(0, 10px, 0); } to { opacity: 1; transform: none; } }
+      .dk-enter > * { animation: dk-enter .42s cubic-bezier(.16, 1, .3, 1) both; }
+      .dk-enter > *:nth-child(2) { animation-delay: .05s; }
+      .dk-enter > *:nth-child(3) { animation-delay: .1s; }
+
+      /* Гэрэлтсэн текст (gradient) */
+      html.dk h1 .bg-clip-text { background-image: linear-gradient(90deg, #38bdf8, #a5b4fc, #5eead4) !important; }
+
+      /* ----- ОДОО ИДЭВХТЭЙ ХЭРЭГЛЭГЧИД ----- */
+      .dk-online {
+        position: relative; border-radius: 1.25rem; padding: .75rem .9rem;
+        background: linear-gradient(135deg, rgb(16 185 129 / 0.08), rgb(56 189 248 / 0.06) 45%, rgb(99 102 241 / 0.08));
+        border: 1px solid rgb(52 211 153 / 0.22);
+        box-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 14px 32px -20px rgb(16 185 129 / 0.55);
+      }
+      .dk-live-dot { position: relative; width: .7rem; height: .7rem; border-radius: 9999px; background: #34d399; box-shadow: 0 0 10px #34d399; flex-shrink: 0; }
+      .dk-live-dot::after {
+        content: ""; position: absolute; inset: -4px; border-radius: inherit; border: 2px solid #34d399;
+        animation: dk-ripple 1.8s cubic-bezier(0, 0, .2, 1) infinite; will-change: transform, opacity;
+      }
+      @keyframes dk-ripple { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
+      .dk-avatar {
+        position: relative; display: inline-flex; align-items: center; justify-content: center;
+        width: 2.1rem; height: 2.1rem; border-radius: 9999px; flex-shrink: 0;
+        font-size: .72rem; font-weight: 800; color: #fff; letter-spacing: .02em;
+        box-shadow: 0 0 0 2px #0b1222;
+      }
+      .dk-avatar .st { position: absolute; right: -1px; bottom: -1px; width: .65rem; height: .65rem; border-radius: 9999px; background: #34d399; box-shadow: 0 0 0 2px #0b1222; }
+      .dk-avatar .st.exam { background: #fbbf24; }
+      .dk-avatar.lg { width: 2.6rem; height: 2.6rem; font-size: .8rem; }
+      .dk-stack { display: flex; align-items: center; }
+      .dk-stack > * { margin-left: -.4rem; transition: transform .2s ease; }
+      .dk-stack > *:first-child { margin-left: 0; }
+      .dk-stack > *:hover { transform: translateY(-3px); z-index: 2; }
+      .dk-ucard {
+        display: flex; align-items: center; gap: .65rem; padding: .6rem .7rem; border-radius: .9rem;
+        background: rgb(15 23 41 / 0.7); border: 1px solid rgb(148 163 184 / 0.12);
+        transition: transform .2s ease, border-color .2s ease;
+      }
+      .dk-ucard:hover { transform: translateY(-2px); border-color: rgb(56 189 248 / 0.35); }
+      .dk-ucard.me { border-color: rgb(52 211 153 / 0.4); }
+      .dk-ucard.teacher { border-color: rgb(129 140 248 / 0.35); }
+      .dk-panel-enter { animation: dk-enter .32s cubic-bezier(.16, 1, .3, 1) both; }
+      .dk-chip {
+        display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .55rem; border-radius: 9999px;
+        font-size: .68rem; font-weight: 700; border: 1px solid rgb(148 163 184 / 0.18); background: rgb(148 163 184 / 0.08); color: #cbd5e1;
+      }
+
+      /* ----- ШАЛГАЛТЫН ШУУД ХЯНАЛТ ----- */
+      .dk-stat {
+        border-radius: 1rem; padding: .85rem 1rem; border: 1px solid rgb(148 163 184 / 0.14);
+        background: linear-gradient(160deg, rgb(19 29 51 / 0.85), rgb(12 18 34 / 0.85));
+      }
+      .dk-bar { height: .45rem; border-radius: 9999px; background: rgb(148 163 184 / 0.14); overflow: hidden; }
+      .dk-bar > i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #38bdf8, #818cf8); transition: width .5s cubic-bezier(.16, 1, .3, 1); }
+      .dk-bar.ok > i { background: linear-gradient(90deg, #34d399, #2dd4bf); }
+      .dk-bar.warn > i { background: linear-gradient(90deg, #fbbf24, #f97316); }
+      .dk-switch { position: relative; width: 2.6rem; height: 1.5rem; border-radius: 9999px; background: rgb(148 163 184 / 0.25); transition: background-color .2s ease; flex-shrink: 0; }
+      .dk-switch::after { content: ""; position: absolute; top: .2rem; left: .2rem; width: 1.1rem; height: 1.1rem; border-radius: 9999px; background: #fff; transition: transform .22s cubic-bezier(.16, 1, .3, 1); }
+      .dk-switch.on { background: #10b981; }
+      .dk-switch.on::after { transform: translateX(1.1rem); }
+      .dk-exam-card { transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+      .dk-exam-card:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -18px rgb(56 189 248 / 0.45); }
+      .dk-q-pill { min-width: 1.9rem; height: 1.9rem; display: inline-flex; align-items: center; justify-content: center; border-radius: .6rem; font-size: .7rem; font-weight: 800; border: 1px solid rgb(148 163 184 / 0.2); color: #94a3b8; transition: background-color .2s ease, color .2s ease; }
+      .dk-q-pill.done { background: rgb(56 189 248 / 0.2); border-color: rgb(56 189 248 / 0.5); color: #e0f2fe; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+
+    /* Tailwind цайвар өнгөний ангиудыг бараан өнгө рүү хөрвүүлэх (автоматаар үүсгэсэн) */
+    @media screen {
+      html.dk .bg-amber-100{background-color:rgb(245 158 11 / 0.160)}
+      html.dk .bg-amber-50{background-color:rgb(245 158 11 / 0.100)}
+      html.dk .bg-amber-50\/50{background-color:rgb(245 158 11 / 0.050)}
+      html.dk .bg-amber-50\/70{background-color:rgb(245 158 11 / 0.070)}
+      html.dk .bg-emerald-100{background-color:rgb(16 185 129 / 0.160)}
+      html.dk .bg-emerald-100\/70{background-color:rgb(16 185 129 / 0.112)}
+      html.dk .bg-emerald-50{background-color:rgb(16 185 129 / 0.100)}
+      html.dk .bg-emerald-50\/40{background-color:rgb(16 185 129 / 0.040)}
+      html.dk .bg-emerald-50\/70{background-color:rgb(16 185 129 / 0.070)}
+      html.dk .bg-fuchsia-50{background-color:rgb(217 70 239 / 0.100)}
+      html.dk .bg-indigo-100{background-color:rgb(99 102 241 / 0.160)}
+      html.dk .bg-indigo-100\/40{background-color:rgb(99 102 241 / 0.064)}
+      html.dk .bg-indigo-300\/25{background-color:rgb(99 102 241 / 0.085)}
+      html.dk .bg-indigo-50{background-color:rgb(99 102 241 / 0.100)}
+      html.dk .bg-indigo-50\/40{background-color:rgb(99 102 241 / 0.040)}
+      html.dk .bg-indigo-50\/50{background-color:rgb(99 102 241 / 0.050)}
+      html.dk .bg-indigo-50\/60{background-color:rgb(99 102 241 / 0.060)}
+      html.dk .bg-indigo-50\/70{background-color:rgb(99 102 241 / 0.070)}
+      html.dk .bg-indigo-50\/80{background-color:rgb(99 102 241 / 0.080)}
+      html.dk .bg-rose-100{background-color:rgb(244 63 94 / 0.160)}
+      html.dk .bg-rose-50{background-color:rgb(244 63 94 / 0.100)}
+      html.dk .bg-rose-50\/30{background-color:rgb(244 63 94 / 0.030)}
+      html.dk .bg-rose-50\/50{background-color:rgb(244 63 94 / 0.050)}
+      html.dk .bg-rose-50\/70{background-color:rgb(244 63 94 / 0.070)}
+      html.dk .bg-sky-100{background-color:rgb(14 165 233 / 0.160)}
+      html.dk .bg-sky-100\/50{background-color:rgb(14 165 233 / 0.080)}
+      html.dk .bg-sky-300\/25{background-color:rgb(14 165 233 / 0.085)}
+      html.dk .bg-sky-50{background-color:rgb(14 165 233 / 0.100)}
+      html.dk .bg-sky-50\/50{background-color:rgb(14 165 233 / 0.050)}
+      html.dk .bg-sky-50\/70{background-color:rgb(14 165 233 / 0.070)}
+      html.dk .bg-sky-50\/80{background-color:rgb(14 165 233 / 0.080)}
+      html.dk .bg-slate-100{background-color:rgb(148 163 184 / 0.090)}
+      html.dk .bg-slate-100\/90{background-color:rgb(148 163 184 / 0.081)}
+      html.dk .bg-slate-200{background-color:rgb(148 163 184 / 0.140)}
+      html.dk .bg-slate-200\/70{background-color:rgb(148 163 184 / 0.098)}
+      html.dk .bg-slate-50{background-color:rgb(148 163 184 / 0.050)}
+      html.dk .bg-slate-50\/30{background-color:rgb(148 163 184 / 0.015)}
+      html.dk .bg-slate-50\/40{background-color:rgb(148 163 184 / 0.020)}
+      html.dk .bg-slate-50\/50{background-color:rgb(148 163 184 / 0.025)}
+      html.dk .bg-slate-50\/60{background-color:rgb(148 163 184 / 0.030)}
+      html.dk .bg-slate-50\/70{background-color:rgb(148 163 184 / 0.035)}
+      html.dk .bg-slate-50\/80{background-color:rgb(148 163 184 / 0.040)}
+      html.dk .bg-teal-100\/40{background-color:rgb(20 184 166 / 0.064)}
+      html.dk .bg-teal-300\/25{background-color:rgb(20 184 166 / 0.085)}
+      html.dk .bg-teal-50{background-color:rgb(20 184 166 / 0.100)}
+      html.dk .bg-teal-50\/60{background-color:rgb(20 184 166 / 0.060)}
+      html.dk .bg-teal-50\/70{background-color:rgb(20 184 166 / 0.070)}
+      html.dk .bg-violet-50{background-color:rgb(139 92 246 / 0.100)}
+      html.dk .bg-white{background-color:rgb(17 25 43 / 0.860)}
+      html.dk .bg-white\/15{background-color:rgb(17 25 43 / 0.123)}
+      html.dk .bg-white\/20{background-color:rgb(17 25 43 / 0.164)}
+      html.dk .bg-white\/80{background-color:rgb(17 25 43 / 0.656)}
+      html.dk .bg-white\/90{background-color:rgb(17 25 43 / 0.738)}
+      html.dk .bg-white\/95{background-color:rgb(17 25 43 / 0.779)}
+      html.dk .bg-yellow-50{background-color:rgb(234 179 8 / 0.100)}
+      html.dk .border-amber-100{border-color:rgb(251 191 36 / 0.200)}
+      html.dk .border-amber-200{border-color:rgb(251 191 36 / 0.300)}
+      html.dk .border-amber-200\/80{border-color:rgb(251 191 36 / 0.240)}
+      html.dk .border-amber-300{border-color:rgb(251 191 36 / 0.420)}
+      html.dk .border-amber-400{border-color:rgb(251 191 36 / 0.550)}
+      html.dk .border-emerald-100{border-color:rgb(52 211 153 / 0.200)}
+      html.dk .border-emerald-200{border-color:rgb(52 211 153 / 0.300)}
+      html.dk .border-emerald-200\/80{border-color:rgb(52 211 153 / 0.240)}
+      html.dk .border-emerald-300{border-color:rgb(52 211 153 / 0.420)}
+      html.dk .border-emerald-400{border-color:rgb(52 211 153 / 0.550)}
+      html.dk .border-fuchsia-300{border-color:rgb(232 121 249 / 0.420)}
+      html.dk .border-indigo-100{border-color:rgb(129 140 248 / 0.200)}
+      html.dk .border-indigo-200{border-color:rgb(129 140 248 / 0.300)}
+      html.dk .border-indigo-200\/80{border-color:rgb(129 140 248 / 0.240)}
+      html.dk .border-indigo-300{border-color:rgb(129 140 248 / 0.420)}
+      html.dk .border-rose-100{border-color:rgb(251 113 133 / 0.200)}
+      html.dk .border-rose-200{border-color:rgb(251 113 133 / 0.300)}
+      html.dk .border-rose-300{border-color:rgb(251 113 133 / 0.420)}
+      html.dk .border-sky-100{border-color:rgb(56 189 248 / 0.200)}
+      html.dk .border-sky-200{border-color:rgb(56 189 248 / 0.300)}
+      html.dk .border-sky-200\/80{border-color:rgb(56 189 248 / 0.240)}
+      html.dk .border-sky-300{border-color:rgb(56 189 248 / 0.420)}
+      html.dk .border-sky-400{border-color:rgb(56 189 248 / 0.550)}
+      html.dk .border-slate-100{border-color:rgb(148 163 184 / 0.100)}
+      html.dk .border-slate-100\/80{border-color:rgb(148 163 184 / 0.080)}
+      html.dk .border-slate-200{border-color:rgb(148 163 184 / 0.160)}
+      html.dk .border-slate-200\/60{border-color:rgb(148 163 184 / 0.096)}
+      html.dk .border-slate-200\/70{border-color:rgb(148 163 184 / 0.112)}
+      html.dk .border-slate-200\/80{border-color:rgb(148 163 184 / 0.128)}
+      html.dk .border-slate-200\/90{border-color:rgb(148 163 184 / 0.144)}
+      html.dk .border-slate-300{border-color:rgb(148 163 184 / 0.260)}
+      html.dk .border-teal-100{border-color:rgb(45 212 191 / 0.200)}
+      html.dk .border-teal-200{border-color:rgb(45 212 191 / 0.300)}
+      html.dk .border-teal-200\/80{border-color:rgb(45 212 191 / 0.240)}
+      html.dk .border-teal-300{border-color:rgb(45 212 191 / 0.420)}
+      html.dk .border-violet-300{border-color:rgb(167 139 250 / 0.420)}
+      html.dk .border-white\/25{border-color:rgb(255 255 255 / 0.020)}
+      html.dk .border-yellow-400{border-color:rgb(250 204 21 / 0.550)}
+      html.dk .divide-slate-100>:not([hidden])~:not([hidden]){border-color:rgb(148 163 184 / 0.100)}
+      html.dk .text-amber-600{color:rgb(251 191 36)}
+      html.dk .text-amber-700{color:rgb(252 211 77)}
+      html.dk .text-amber-800{color:rgb(253 230 138)}
+      html.dk .text-amber-900{color:rgb(254 243 199)}
+      html.dk .text-amber-950{color:rgb(254 243 199)}
+      html.dk .text-emerald-600{color:rgb(52 211 153)}
+      html.dk .text-emerald-700{color:rgb(110 231 183)}
+      html.dk .text-emerald-800{color:rgb(167 243 208)}
+      html.dk .text-emerald-900{color:rgb(209 250 229)}
+      html.dk .text-emerald-950{color:rgb(209 250 229)}
+      html.dk .text-fuchsia-800{color:rgb(245 208 254)}
+      html.dk .text-indigo-600{color:rgb(129 140 248)}
+      html.dk .text-indigo-700{color:rgb(165 180 252)}
+      html.dk .text-indigo-800{color:rgb(199 210 254)}
+      html.dk .text-indigo-900{color:rgb(224 231 255)}
+      html.dk .text-indigo-950{color:rgb(224 231 255)}
+      html.dk .text-rose-600{color:rgb(251 113 133)}
+      html.dk .text-rose-700{color:rgb(253 164 175)}
+      html.dk .text-rose-800{color:rgb(254 205 211)}
+      html.dk .text-rose-900{color:rgb(255 228 230)}
+      html.dk .text-sky-600{color:rgb(56 189 248)}
+      html.dk .text-sky-700{color:rgb(125 211 252)}
+      html.dk .text-sky-800{color:rgb(186 230 253)}
+      html.dk .text-sky-900{color:rgb(224 242 254)}
+      html.dk .text-sky-950{color:rgb(224 242 254)}
+      html.dk .text-slate-300{color:#56657c}
+      html.dk .text-slate-400{color:#6f7f97}
+      html.dk .text-slate-500{color:#8d9bb1}
+      html.dk .text-slate-600{color:#a7b4c8}
+      html.dk .text-slate-700{color:#cbd5e1}
+      html.dk .text-slate-800{color:#e2e8f0}
+      html.dk .text-slate-900{color:#f1f5f9}
+      html.dk .text-teal-600{color:rgb(45 212 191)}
+      html.dk .text-teal-700{color:rgb(94 234 212)}
+      html.dk .text-teal-800{color:rgb(153 246 228)}
+      html.dk .text-teal-900{color:rgb(204 251 241)}
+      html.dk .text-teal-950{color:rgb(204 251 241)}
+      html.dk .text-violet-800{color:rgb(221 214 254)}
+      html.dk .text-yellow-900{color:rgb(254 249 195)}
+      html.dk .from-amber-100{--tw-gradient-from:rgb(245 158 11 / 0.180) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+      html.dk .from-emerald-50\/90{--tw-gradient-from:rgb(16 185 129 / 0.108) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+      html.dk .from-sky-50{--tw-gradient-from:rgb(14 165 233 / 0.120) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+      html.dk .from-sky-50\/80{--tw-gradient-from:rgb(14 165 233 / 0.096) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+      html.dk .from-slate-50{--tw-gradient-from:rgb(148 163 184 / 0.050) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+      html.dk .hover\:from-sky-100\/70:hover{--tw-gradient-from:rgb(14 165 233 / 0.126) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+      html.dk .via-indigo-50\/50{--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgb(99 102 241 / 0.060) var(--tw-gradient-via-position),var(--tw-gradient-to)}
+      html.dk .via-sky-100{--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgb(14 165 233 / 0.180) var(--tw-gradient-via-position),var(--tw-gradient-to)}
+      html.dk .via-sky-50\/70{--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgb(14 165 233 / 0.084) var(--tw-gradient-via-position),var(--tw-gradient-to)}
+      html.dk .via-white{--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgb(17 25 43 / 0.500) var(--tw-gradient-via-position),var(--tw-gradient-to)}
+      html.dk .via-white\/40{--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgb(17 25 43 / 0.200) var(--tw-gradient-via-position),var(--tw-gradient-to)}
+      html.dk .to-indigo-100{--tw-gradient-to:rgb(99 102 241 / 0.180) var(--tw-gradient-to-position)}
+      html.dk .to-indigo-50{--tw-gradient-to:rgb(99 102 241 / 0.120) var(--tw-gradient-to-position)}
+      html.dk .to-indigo-50\/80{--tw-gradient-to:rgb(99 102 241 / 0.096) var(--tw-gradient-to-position)}
+      html.dk .to-sky-50{--tw-gradient-to:rgb(14 165 233 / 0.120) var(--tw-gradient-to-position)}
+      html.dk .to-teal-50{--tw-gradient-to:rgb(20 184 166 / 0.120) var(--tw-gradient-to-position)}
+      html.dk .to-white{--tw-gradient-to:rgb(17 25 43 / 0.500) var(--tw-gradient-to-position)}
+      html.dk .focus\:bg-white:focus{background-color:rgb(17 25 43 / 0.860)}
+      html.dk .group:focus-within .group-focus-within\:text-sky-600{color:rgb(56 189 248)}
+      html.dk .hover\:bg-emerald-100:hover{background-color:rgb(16 185 129 / 0.160)}
+      html.dk .hover\:bg-emerald-50:hover{background-color:rgb(16 185 129 / 0.100)}
+      html.dk .hover\:bg-indigo-100:hover{background-color:rgb(99 102 241 / 0.160)}
+      html.dk .hover\:bg-indigo-100\/80:hover{background-color:rgb(99 102 241 / 0.128)}
+      html.dk .hover\:bg-indigo-50:hover{background-color:rgb(99 102 241 / 0.100)}
+      html.dk .hover\:bg-rose-100:hover{background-color:rgb(244 63 94 / 0.160)}
+      html.dk .hover\:bg-rose-50\/60:hover{background-color:rgb(244 63 94 / 0.060)}
+      html.dk .hover\:bg-sky-100:hover{background-color:rgb(14 165 233 / 0.160)}
+      html.dk .hover\:bg-sky-100\/80:hover{background-color:rgb(14 165 233 / 0.128)}
+      html.dk .hover\:bg-sky-50:hover{background-color:rgb(14 165 233 / 0.100)}
+      html.dk .hover\:bg-sky-50\/30:hover{background-color:rgb(14 165 233 / 0.030)}
+      html.dk .hover\:bg-sky-50\/40:hover{background-color:rgb(14 165 233 / 0.040)}
+      html.dk .hover\:bg-sky-50\/50:hover{background-color:rgb(14 165 233 / 0.050)}
+      html.dk .hover\:bg-slate-100:hover{background-color:rgb(148 163 184 / 0.090)}
+      html.dk .hover\:bg-slate-200:hover{background-color:rgb(148 163 184 / 0.140)}
+      html.dk .hover\:bg-slate-300:hover{background-color:rgb(148 163 184 / 0.220)}
+      html.dk .hover\:bg-slate-50\/70:hover{background-color:rgb(148 163 184 / 0.035)}
+      html.dk .hover\:bg-teal-100\/80:hover{background-color:rgb(20 184 166 / 0.128)}
+      html.dk .hover\:bg-teal-50:hover{background-color:rgb(20 184 166 / 0.100)}
+      html.dk .hover\:bg-white:hover{background-color:rgb(17 25 43 / 0.860)}
+      html.dk .hover\:bg-white\/10:hover{background-color:rgb(17 25 43 / 0.082)}
+      html.dk .hover\:border-emerald-300:hover{border-color:rgb(52 211 153 / 0.420)}
+      html.dk .hover\:border-indigo-300:hover{border-color:rgb(129 140 248 / 0.420)}
+      html.dk .hover\:border-indigo-400:hover{border-color:rgb(129 140 248 / 0.550)}
+      html.dk .hover\:border-sky-300:hover{border-color:rgb(56 189 248 / 0.420)}
+      html.dk .hover\:border-sky-400:hover{border-color:rgb(56 189 248 / 0.550)}
+      html.dk .hover\:border-slate-300:hover{border-color:rgb(148 163 184 / 0.260)}
+      html.dk .hover\:border-teal-300:hover{border-color:rgb(45 212 191 / 0.420)}
+      html.dk .hover\:border-teal-400:hover{border-color:rgb(45 212 191 / 0.550)}
+      html.dk .hover\:text-emerald-700:hover{color:rgb(110 231 183)}
+      html.dk .hover\:text-rose-700:hover{color:rgb(253 164 175)}
+      html.dk .hover\:text-sky-600:hover{color:rgb(56 189 248)}
+      html.dk .hover\:text-sky-800:hover{color:rgb(186 230 253)}
+      html.dk .hover\:text-slate-600:hover{color:#a7b4c8}
+      html.dk .hover\:text-slate-800:hover{color:#e2e8f0}
+      html.dk .hover\:text-slate-900:hover{color:#f1f5f9}
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 text-slate-800 antialiased selection:bg-sky-100 selection:text-sky-900">
@@ -455,11 +848,7 @@
   </div>
 
   <!-- Арын чимэглэлийн зөөлөн уусалт -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-sky-100/50 blur-3xl"></div>
-    <div class="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-indigo-100/40 blur-3xl"></div>
-    <div class="absolute -bottom-24 left-1/3 w-96 h-96 rounded-full bg-teal-100/40 blur-3xl"></div>
-  </div>
+  <div class="dk-aurora no-print" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
 
   <!-- Мэдэгдлийн хайрцаг (Toast Notification) -->
   <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0 no-print"></div>
@@ -653,7 +1042,7 @@
             </div>
           </div>
 
-          <!-- Баруун тал: Ижил хэв маягтай 3 товч -->
+          <!-- Баруун тал: Ижил хэв маягтай 2 товч -->
           <nav class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t border-slate-100 sm:border-0">
             <a
               href="eec.html"
@@ -680,19 +1069,6 @@
               <span class="hidden sm:inline relative z-10 text-indigo-600 group-hover:translate-x-0.5 transition">→</span>
             </button>
 
-            <a
-              href="https://physics-ai-web.onrender.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              id="ai-task-btn"
-              class="eec-animated-btn inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-indigo-950 font-bold text-xs sm:text-sm transition cursor-pointer group"
-            >
-              <svg class="w-4 h-4 text-sky-600 relative z-10 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
-              </svg>
-              <span class="relative z-10 whitespace-nowrap">AI даалгавар</span>
-              <span class="hidden sm:inline relative z-10 text-indigo-600 group-hover:translate-x-0.5 transition">↗</span>
-            </a>
           </nav>
         </div>
       </header>
@@ -2009,6 +2385,11 @@ service cloud.firestore {
       examEditorMode: "list",
       showCreateExamForm: false,
       editingExamQId: null,
+      editingExamSettingsId: null,
+      examListFilter: "ALL",
+      examMonitorId: null,
+      examMonitorFilter: "ALL",
+      examMonitorSearch: "",
       analysisExamFilter: "ALL",
       analysisGradeFilter: "ALL",
       analysisViewMode: "summary",
@@ -2028,6 +2409,7 @@ service cloud.firestore {
       studentLessonFilter: "ALL",
       activeStudentExamId: null,
       examTimerStartedAt: null,
+      examDraft: null,
     };
     const state = window.state;
 
@@ -2162,11 +2544,9 @@ service cloud.firestore {
         });
 
         fsMod.onSnapshot(fsMod.collection(db, "exams"), (snap) => {
-          if (!snap.empty) {
-            state.exams = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            if (!state.exams.some(x => x.id === state.selectedExamId)) {
-              state.selectedExamId = state.exams[0].id;
-            }
+          state.exams = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (state.exams.length && !state.exams.some(x => x.id === state.selectedExamId)) {
+            state.selectedExamId = state.exams[0].id;
           }
           refreshActiveView();
         });
@@ -2203,6 +2583,7 @@ service cloud.firestore {
         fsMod.onSnapshot(fsMod.collection(db, "presence"), (snap) => {
           state.presence = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           renderOnlineUsersBar();
+          renderExamMonitorLive();
         }, (err) => {
           console.warn("Presence унших эрхгүй байна (Firestore Rules дээр 'presence' нэмнэ үү):", err);
         });
@@ -2558,6 +2939,10 @@ service cloud.firestore {
       clearMyPresence(prevUid);
       sessionStorage.removeItem(SESSION_KEY);
       state.session = null;
+      state.activeStudentExamId = null;
+      state.examTimerStartedAt = null;
+      state.examDraft = null;
+      state._examDraftChecked = false;
       state.studentActiveLevel = null;
       state.activeStudentExamId = null;
       renderAppShell();
@@ -2744,7 +3129,8 @@ service cloud.firestore {
           fullName: state.session.fullName,
           role: state.session.role,
           classGroup: state.session.classGroup || "",
-          lastSeen: now
+          lastSeen: now,
+          ...getMyPresenceExtras()
         });
       }
       return Array.from(map.values()).sort((a, b) => {
@@ -2754,44 +3140,196 @@ service cloud.firestore {
       });
     }
 
-    function renderOnlineUsersBar() {
+    let onlinePanelOpen = false;
+    let onlineRoleFilter = "ALL";
+
+    const TEACHER_TAB_LABELS = {
+      tasks: "Даалгавар оруулж байна", progress: "Сурагчдын явц харж байна", users: "Хэрэглэгч удирдаж байна",
+      lessons: "Хичээл оруулж байна", attendance: "Ирц бүртгэж байна", exams: "Шалгалт удирдаж байна", eec: "ЭЕШ-ийн дүн харж байна"
+    };
+    const STUDENT_TAB_LABELS = {
+      tasks: "Даалгавар бодож байна", lessons: "Хичээл үзэж байна", attendance: "Дүн, ирцээ харж байна", exam: "Шалгалтын хуудсанд байна"
+    };
+
+    function getUserInitials(name) {
+      const parts = String(name || "?").replace(/[^\p{L}\s-]/gu, " ").trim().split(/[\s-]+/).filter(Boolean);
+      if (parts.length === 0) return "?";
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    function getAvatarGradient(seed) {
+      const palettes = [
+        ["#0ea5e9", "#6366f1"], ["#14b8a6", "#0ea5e9"], ["#8b5cf6", "#ec4899"], ["#f59e0b", "#ef4444"],
+        ["#10b981", "#14b8a6"], ["#6366f1", "#a855f7"], ["#06b6d4", "#3b82f6"], ["#f97316", "#eab308"]
+      ];
+      let h = 0;
+      const str = String(seed || "");
+      for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+      const p = palettes[h % palettes.length];
+      return `linear-gradient(135deg, ${p[0]}, ${p[1]})`;
+    }
+
+    function formatAgoMn(ts) {
+      const sec = Math.max(0, Math.round((Date.now() - Number(ts || 0)) / 1000));
+      if (sec < 45) return "яг одоо";
+      const m = Math.round(sec / 60);
+      return `${m} мин өмнө`;
+    }
+
+    function describeUserActivity(u) {
+      if (u.role === "teacher") return TEACHER_TAB_LABELS[u.activity] || "Самбарт байна";
+      if (u.examId) {
+        const tot = Number(u.examTotal) || 0;
+        return `📝 Шалгалт өгч байна${tot ? ` • ${Number(u.examAnswered) || 0}/${tot}` : ""}`;
+      }
+      return STUDENT_TAB_LABELS[u.activity] || "Сайтад байна";
+    }
+
+    function renderUserAvatar(u, size) {
+      const inExam = u.role !== "teacher" && !!u.examId;
+      return `
+        <span class="dk-avatar ${size === "lg" ? "lg" : ""}" style="background:${getAvatarGradient(u.id || u.fullName)}" title="${escapeHtml(u.fullName || "Хэрэглэгч")}">
+          ${escapeHtml(getUserInitials(u.fullName))}
+          <span class="st ${inExam ? "exam" : ""}"></span>
+        </span>`;
+    }
+
+    window.toggleOnlinePanel = function() {
+      onlinePanelOpen = !onlinePanelOpen;
+      renderOnlineUsersBar(true);
+    };
+
+    window.setOnlineRoleFilter = function(val) {
+      onlineRoleFilter = val;
+      renderOnlineUsersBar();
+    };
+
+    function renderOnlineUsersBar(animatePanel) {
       if (!state.session) return;
       const barId = state.session.role === "teacher" ? "teacher-online-users-bar" : "student-online-users-bar";
       const bar = document.getElementById(barId);
       if (!bar) return;
 
       const activeUsers = getActiveOnlineUsers();
+      const teachers = activeUsers.filter(u => u.role === "teacher");
+      const students = activeUsers.filter(u => u.role !== "teacher");
+      const inExam = students.filter(u => !!u.examId);
+      const stackUsers = activeUsers.slice(0, 7);
+      const extra = activeUsers.length - stackUsers.length;
+
+      const listUsers = activeUsers.filter(u =>
+        onlineRoleFilter === "ALL" ? true :
+        onlineRoleFilter === "teacher" ? u.role === "teacher" :
+        onlineRoleFilter === "exam" ? (u.role !== "teacher" && !!u.examId) :
+        u.role !== "teacher"
+      );
+
+      const filterBtn = (val, label, cnt) => `
+        <button type="button" onclick="setOnlineRoleFilter('${val}')" class="dk-chip cursor-pointer ${onlineRoleFilter === val ? "!bg-sky-500/20 !border-sky-400/50 !text-sky-100" : ""}">
+          ${label} <span class="opacity-70">${cnt}</span>
+        </button>`;
+
       bar.innerHTML = `
-        <div class="bg-white/90 backdrop-blur-sm rounded-2xl border border-emerald-200/80 px-4 py-2.5 shadow-xs flex flex-wrap items-center gap-2">
-          <div class="inline-flex items-center gap-2 pr-2 border-r border-slate-200 shrink-0">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            <span class="text-xs font-extrabold text-slate-800">Одоо идэвхтэй (${activeUsers.length})</span>
+        <div class="dk-online">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="dk-live-dot"></span>
+              <div class="min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-300/90 leading-none">Шууд • Одоо идэвхтэй</p>
+                <p class="text-sm font-extrabold text-slate-100 mt-1 leading-none">
+                  <span class="text-lg tabular-nums">${activeUsers.length}</span> хэрэглэгч онлайн
+                </p>
+              </div>
+              <div class="hidden sm:flex items-center gap-1.5 pl-3 ml-1 border-l border-white/10">
+                <span class="dk-chip">👩‍🏫 Багш ${teachers.length}</span>
+                <span class="dk-chip">🎓 Сурагч ${students.length}</span>
+                ${inExam.length ? `<span class="dk-chip !border-amber-400/40 !bg-amber-500/10 !text-amber-200">📝 Шалгалтанд ${inExam.length}</span>` : ""}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="dk-stack">
+                ${stackUsers.map(u => renderUserAvatar(u)).join("")}
+                ${extra > 0 ? `<span class="dk-avatar" style="background:#1e293b;color:#cbd5e1">+${extra}</span>` : ""}
+              </div>
+              <button type="button" onclick="toggleOnlinePanel()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 transition cursor-pointer">
+                ${onlinePanelOpen ? "Хураах" : "Бүгдийг харах"}
+                <span class="inline-block transition-transform duration-300 ${onlinePanelOpen ? "rotate-180" : ""}">▾</span>
+              </button>
+            </div>
           </div>
-          <div class="flex flex-wrap items-center gap-1.5">
-            ${activeUsers.map(u => {
-              const isMe = state.session && u.id === state.session.userId;
-              const isTeacher = u.role === "teacher";
-              const subLbl = isTeacher ? "Багш" : (u.classGroup || "");
-              return `
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
-                  isTeacher
-                    ? "bg-indigo-50/80 text-indigo-900 border-indigo-200"
-                    : isMe
-                      ? "bg-emerald-50 text-emerald-900 border-emerald-200"
-                      : "bg-slate-50 text-slate-700 border-slate-200"
-                }">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                  <span>${escapeHtml(u.fullName || "Хэрэглэгч")}${isMe ? " (Та)" : ""}</span>
-                  ${subLbl ? `<span class="text-[10px] font-bold opacity-70">• ${escapeHtml(subLbl)}</span>` : ""}
-                </span>
-              `;
-            }).join("")}
-          </div>
+
+          ${onlinePanelOpen ? `
+            <div class="${animatePanel ? "dk-panel-enter" : ""} mt-3 pt-3 border-t border-white/10 space-y-3">
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${filterBtn("ALL", "Бүгд", activeUsers.length)}
+                ${filterBtn("teacher", "Багш", teachers.length)}
+                ${filterBtn("student", "Сурагч", students.length)}
+                ${filterBtn("exam", "Шалгалт өгч буй", inExam.length)}
+              </div>
+              ${listUsers.length === 0 ? `
+                <p class="text-xs text-slate-400 py-3 text-center">Энэ ангилалд одоогоор хэн ч алга.</p>
+              ` : `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-72 overflow-y-auto pr-1">
+                  ${listUsers.map(u => {
+                    const isMe = state.session && u.id === state.session.userId;
+                    const isTeacher = u.role === "teacher";
+                    const sub = isTeacher ? "Багш" : (u.classGroup || "Сурагч");
+                    return `
+                      <div class="dk-ucard ${isMe ? "me" : ""} ${isTeacher ? "teacher" : ""}">
+                        ${renderUserAvatar(u, "lg")}
+                        <div class="min-w-0 flex-1">
+                          <div class="flex items-center gap-1.5 min-w-0">
+                            <span class="text-[13px] font-bold text-slate-100 truncate">${escapeHtml(u.fullName || "Хэрэглэгч")}</span>
+                            ${isMe ? `<span class="px-1.5 py-px rounded-md text-[9px] font-extrabold bg-emerald-500/20 text-emerald-200">ТА</span>` : ""}
+                          </div>
+                          <p class="text-[11px] font-semibold ${isTeacher ? "text-indigo-300" : "text-sky-300"} truncate">${escapeHtml(sub)}</p>
+                          <p class="text-[11px] text-slate-400 truncate">${escapeHtml(describeUserActivity(u))}</p>
+                        </div>
+                        <span class="text-[10px] font-semibold text-slate-500 shrink-0 self-start">${formatAgoMn(u.lastSeen)}</span>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              `}
+            </div>
+          ` : ""}
         </div>
       `;
+    }
+
+    function getMyPresenceExtras() {
+      const sess = state.session;
+      const extras = {
+        activity: sess.role === "teacher" ? state.teacherTab : state.studentTab,
+        examId: "", examTitle: "", examAnswered: 0, examTotal: 0, examStartedAt: 0, examLeaves: 0
+      };
+      const liveExamId = sess.role !== "teacher"
+        ? (state.activeStudentExamId || (state.examDraft && state.examDraft.examId) || null)
+        : null;
+      if (liveExamId) {
+        const ex = state.exams.find(e => e.id === liveExamId);
+        const draft = state.examDraft && state.examDraft.examId === liveExamId ? state.examDraft : null;
+        if (ex && ex.isOpen) {
+          extras.examId = ex.id;
+          extras.examTitle = ex.title || "";
+          extras.examTotal = getQuestionsForExam(ex.id).length;
+          extras.examAnswered = draft ? Object.keys(draft.answers || {}).length : 0;
+          extras.examStartedAt = (draft && draft.startedAt) || state.examTimerStartedAt || 0;
+          extras.examLeaves = draft ? Number(draft.leaves) || 0 : 0;
+        }
+      }
+      return extras;
+    }
+
+    let presenceThrottleTimer = null;
+    function schedulePresencePing() {
+      if (presenceThrottleTimer) return;
+      presenceThrottleTimer = setTimeout(() => {
+        presenceThrottleTimer = null;
+        sendPresencePing();
+      }, 2500);
     }
 
     async function sendPresencePing() {
@@ -2801,7 +3339,8 @@ service cloud.firestore {
         fullName: state.session.fullName,
         role: state.session.role,
         classGroup: state.session.classGroup || "",
-        lastSeen: Date.now()
+        lastSeen: Date.now(),
+        ...getMyPresenceExtras()
       };
       saveLocalPresenceEntry(entry);
       if (db && fsOps) {
@@ -2847,6 +3386,7 @@ service cloud.firestore {
     window.addEventListener("storage", (e) => {
       if (e.key === PRESENCE_LOCAL_KEY) {
         renderOnlineUsersBar();
+        renderExamMonitorLive();
       }
     });
 
@@ -2906,7 +3446,19 @@ service cloud.firestore {
         state.examEditorMode = "list";
       }
       renderTeacherDashboard();
+      playTabEnter("teacher-content");
+      schedulePresencePing();
     };
+
+    function playTabEnter(containerId) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.classList.remove("dk-enter");
+      void el.offsetWidth;
+      el.classList.add("dk-enter");
+      clearTimeout(el._dkEnterT);
+      el._dkEnterT = setTimeout(() => el.classList.remove("dk-enter"), 700);
+    }
 
     function renderTeacherDashboard() {
       document.querySelectorAll(".t-tab-btn").forEach(btn => {
@@ -2939,6 +3491,7 @@ service cloud.firestore {
         case "exams":
           container.innerHTML = renderTeacherExamsTab();
           bindTeacherExamEvents();
+          renderExamMonitorLive();
           break;
         case "eec":
           container.innerHTML = renderTeacherEecTab();
@@ -4854,55 +5407,102 @@ service cloud.firestore {
         .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
     }
 
+    function getExamStats(examId) {
+      const subs = state.examSubmissions.filter(s => (s.examId || "default_exam") === examId);
+      const pcts = subs.map(s => (s.total > 0 ? Math.round((s.score / s.total) * 100) : 0));
+      const avg = pcts.length ? Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length) : 0;
+      return { subCount: subs.length, avg };
+    }
+
+    function getExamTargetLabel(ex) {
+      const g = !ex.targetGrade || ex.targetGrade === "ALL" ? "Бүх анги" : ex.targetGrade;
+      const sec = (!ex.targetSection || ex.targetSection === "ALL") ? "" : ` • ${ex.targetSection} бүлэг`;
+      return g + sec;
+    }
+
     function renderTeacherExamsTab() {
+      const subBtn = (key, label) => `
+        <button
+          type="button"
+          onclick="state.examSubTab = '${key}'; state.examEditorMode = 'list'; renderTeacherDashboard(); playTabEnter('exam-subtab-body');"
+          class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition cursor-pointer ${
+            state.examSubTab === key
+              ? "animated-orbit-border-dark text-white"
+              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+          }"
+        >${label}</button>`;
+      const liveCnt = getActiveOnlineUsers().filter(u => u.role !== "teacher" && u.examId).length;
+
       return `
         <div class="space-y-6">
           <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-wrap items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onclick="state.examSubTab = 'exams'; state.examEditorMode = 'list'; renderTeacherDashboard();"
-                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition cursor-pointer ${
-                  state.examSubTab === "exams"
-                    ? "animated-orbit-border-dark text-white"
-                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                }"
-              >
-                📝 Шалгалт удирдах (${state.exams.length})
-              </button>
-              <button
-                type="button"
-                onclick="state.examSubTab = 'schedule'; renderTeacherDashboard();"
-                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition cursor-pointer ${
-                  state.examSubTab === "schedule"
-                    ? "animated-orbit-border-dark text-white"
-                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                }"
-              >
-                📅 Шалгалтын хуваарь (Календарь)
-              </button>
-              <button
-                type="button"
-                onclick="state.examSubTab = 'analysis'; renderTeacherDashboard();"
-                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition cursor-pointer ${
-                  state.examSubTab === "analysis"
-                    ? "animated-orbit-border-dark text-white"
-                    : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                }"
-              >
-                📊 Шалгалтын анализ ба дүн
-              </button>
+              ${subBtn("exams", `📝 Шалгалт удирдах (${state.exams.length})`)}
+              ${subBtn("monitor", `🛰️ Шууд хяналт${liveCnt ? ` <span class="ml-1 px-1.5 py-px rounded-md text-[10px] bg-amber-400 text-slate-900">${liveCnt}</span>` : ""}`)}
+              ${subBtn("schedule", "📅 Шалгалтын хуваарь")}
+              ${subBtn("analysis", "📊 Анализ ба дүн")}
             </div>
           </div>
 
-          ${state.examSubTab === "exams"
-            ? renderTeacherExamManagerView()
-            : state.examSubTab === "schedule"
-              ? renderTeacherExamScheduleCalendarView()
-              : renderTeacherExamAnalysisView()
-          }
+          <div id="exam-subtab-body">
+            ${state.examSubTab === "exams"
+              ? renderTeacherExamManagerView()
+              : state.examSubTab === "monitor"
+                ? renderTeacherExamMonitorView()
+                : state.examSubTab === "schedule"
+                  ? renderTeacherExamScheduleCalendarView()
+                  : renderTeacherExamAnalysisView()
+            }
+          </div>
         </div>
       `;
+    }
+
+    function renderExamSettingsFields(prefix, ex) {
+      const v = ex || {};
+      const gradeOpt = (val, lbl) => `<option value="${val}" ${(v.targetGrade || "ALL") === val ? "selected" : ""}>${lbl}</option>`;
+      const secOpt = (val, lbl) => `<option value="${val}" ${(v.targetSection || "ALL") === val ? "selected" : ""}>${lbl}</option>`;
+      return `
+        <div class="sm:col-span-2 lg:col-span-3">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Шалгалтын нэр</label>
+          <input id="${prefix}-title" type="text" required value="${escapeHtml(v.title || "")}" placeholder="Жишээ: 11-р ангийн 2-р улирлын шалгалт" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Хамрах анги</label>
+          <select id="${prefix}-grade" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white font-semibold">
+            ${gradeOpt("ALL", "Бүх анги (10–12)")}${gradeOpt("10-р анги", "10-р анги")}${gradeOpt("11-р анги", "11-р анги")}${gradeOpt("12-р анги", "12-р анги")}
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Хамрах бүлэг</label>
+          <select id="${prefix}-section" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white">
+            ${secOpt("ALL", "Бүх бүлэг")}${secOpt("А", "А бүлэг")}${secOpt("Б", "Б бүлэг")}${secOpt("В", "В бүлэг")}${secOpt("Г", "Г бүлэг")}
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Хугацаа (минут)</label>
+          <input id="${prefix}-duration" type="number" min="1" max="240" value="${Number(v.durationMinutes) || 40}" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white font-semibold" />
+        </div>
+        <div class="sm:col-span-2 lg:col-span-3">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Сурагчдад харагдах заавар (заавал биш)</label>
+          <textarea id="${prefix}-instructions" rows="2" placeholder="Жишээ: Тооны машин ашиглаж болно. Бүх асуултад хариулна уу." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white">${escapeHtml(v.instructions || "")}</textarea>
+        </div>
+        <div class="sm:col-span-2 lg:col-span-3 flex items-center gap-2">
+          <input id="${prefix}-showscore" type="checkbox" ${v.showScore === false ? "" : "checked"} class="w-4 h-4" />
+          <label for="${prefix}-showscore" class="text-xs font-semibold text-slate-700 cursor-pointer">Илгээсний дараа сурагчид оноогоо шууд харна</label>
+        </div>
+      `;
+    }
+
+    function readExamSettingsFields(prefix) {
+      return {
+        title: document.getElementById(`${prefix}-title`).value.trim(),
+        targetGrade: document.getElementById(`${prefix}-grade`).value,
+        targetSection: document.getElementById(`${prefix}-section`).value,
+        durationMinutes: Math.max(1, Math.min(240, Number(document.getElementById(`${prefix}-duration`).value) || 40)),
+        instructions: document.getElementById(`${prefix}-instructions`).value.trim(),
+        showScore: document.getElementById(`${prefix}-showscore`).checked
+      };
     }
 
     function renderTeacherExamManagerView() {
@@ -4911,74 +5511,75 @@ service cloud.firestore {
       const editingQ = state.editingExamQId
         ? examQuestions.find(q => q.id === state.editingExamQId)
         : null;
+      const selStats = getExamStats(selectedExam.id);
+      const isEditingSettings = state.editingExamSettingsId === selectedExam.id;
+
+      const openCnt = state.exams.filter(e => e.isOpen).length;
+      const filteredExams = state.exams
+        .filter(e => state.examListFilter === "open" ? e.isOpen : state.examListFilter === "closed" ? !e.isOpen : true)
+        .sort((a, b) => (Number(b.isOpen) - Number(a.isOpen)) || ((b.createdAt || 0) - (a.createdAt || 0)));
+      const filterChip = (val, label, cnt) => `
+        <button type="button" onclick="state.examListFilter = '${val}'; renderTeacherDashboard();" class="px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${state.examListFilter === val ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100"}">
+          ${label} <span class="opacity-70">${cnt}</span>
+        </button>`;
 
       return `
         <div class="space-y-6">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="dk-stat"><p class="text-[11px] font-semibold text-slate-400">Нийт шалгалт</p><p class="text-2xl font-extrabold text-slate-100 mt-0.5">${state.exams.length}</p></div>
+            <div class="dk-stat"><p class="text-[11px] font-semibold text-emerald-300">Одоо нээлттэй</p><p class="text-2xl font-extrabold text-emerald-200 mt-0.5">${openCnt}</p></div>
+            <div class="dk-stat"><p class="text-[11px] font-semibold text-sky-300">Нийт асуулт</p><p class="text-2xl font-extrabold text-sky-200 mt-0.5">${state.examQuestions.length}</p></div>
+            <div class="dk-stat"><p class="text-[11px] font-semibold text-indigo-300">Нийт илгээсэн дүн</p><p class="text-2xl font-extrabold text-indigo-200 mt-0.5">${state.examSubmissions.length}</p></div>
+          </div>
+
           <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
               <div>
                 <h2 class="text-base font-bold text-slate-900">Шалгалтын жагсаалт</h2>
-                <p class="text-xs text-slate-500 mt-0.5">Шалгалтын карт дээр дарж тухайн шалгалтын асуулт болон тохиргоог нээж удирдана уу.</p>
+                <p class="text-xs text-slate-500 mt-0.5">Карт дээр дарж сонгоно. Засах, хуулах, хянах, устгах үйлдлийг картын доод мөрөөс хийнэ.</p>
               </div>
-              <button
-                type="button"
-                onclick="state.showCreateExamForm = !state.showCreateExamForm; renderTeacherDashboard();"
-                class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold shadow-xs transition cursor-pointer"
-              >
-                ${state.showCreateExamForm ? "Хаах ✕" : "+ Шинэ шалгалт үүсгэх"}
-              </button>
+              <div class="flex flex-wrap items-center gap-2">
+                <input type="text" oninput="filterExamCards(this.value)" placeholder="🔍 Шалгалт хайх..." class="px-3 py-2 rounded-xl border border-slate-200 text-xs w-full sm:w-48" />
+                <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/70">
+                  ${filterChip("ALL", "Бүгд", state.exams.length)}
+                  ${filterChip("open", "Нээлттэй", openCnt)}
+                  ${filterChip("closed", "Хаалттай", state.exams.length - openCnt)}
+                </div>
+                <button
+                  type="button"
+                  onclick="state.showCreateExamForm = !state.showCreateExamForm; renderTeacherDashboard();"
+                  class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold shadow-xs transition cursor-pointer"
+                >
+                  ${state.showCreateExamForm ? "Хаах ✕" : "+ Шинэ шалгалт"}
+                </button>
+              </div>
             </div>
 
             ${state.showCreateExamForm ? `
-              <form id="create-new-exam-form" class="p-4 rounded-2xl bg-sky-50/70 border border-sky-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-                <div class="lg:col-span-2">
-                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Шалгалтын нэр</label>
-                  <input id="new-exam-title" type="text" required placeholder="Жишээ: 11-р ангийн 2-р улирлын шалгалт" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white" />
-                </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Хамрах анги</label>
-                  <select id="new-exam-grade" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white font-semibold">
-                    <option value="ALL">Бүх анги (10–12)</option>
-                    <option value="10-р анги">10-р анги</option>
-                    <option value="11-р анги">11-р анги</option>
-                    <option value="12-р анги">12-р анги</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Хамрах бүлэг</label>
-                  <select id="new-exam-section" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white">
-                    <option value="ALL">Бүх бүлэг</option>
-                    <option value="А">А бүлэг</option>
-                    <option value="Б">Б бүлэг</option>
-                    <option value="В">В бүлэг</option>
-                    <option value="Г">Г бүлэг</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Хугацаа (минут)</label>
-                  <input id="new-exam-duration" type="number" min="1" max="240" value="40" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white font-semibold" />
-                </div>
-                <div class="flex items-end">
-                  <button type="submit" class="w-full py-2 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold cursor-pointer">
-                    Үүсгэх
+              <form id="create-new-exam-form" class="dk-panel-enter p-4 rounded-2xl bg-sky-50/70 border border-sky-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                ${renderExamSettingsFields("new-exam", null)}
+                <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
+                  <button type="submit" class="py-2 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold cursor-pointer">
+                    Шалгалт үүсгэх
                   </button>
                 </div>
               </form>
             ` : ""}
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              ${state.exams.map(ex => {
+            ${filteredExams.length === 0 ? `
+              <p class="py-8 text-center text-sm text-slate-400">Энэ шүүлтүүрт тохирох шалгалт алга.</p>
+            ` : `
+            <div id="exam-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              ${filteredExams.map(ex => {
                 const isSel = ex.id === selectedExam.id;
                 const qCnt = getQuestionsForExam(ex.id).length;
-                const gradeLbl = ex.targetGrade === "ALL" ? "Бүх анги" : ex.targetGrade;
-                const secLbl = (!ex.targetSection || ex.targetSection === "ALL") ? "" : ` (${ex.targetSection})`;
+                const st = getExamStats(ex.id);
                 return `
                   <div
+                    data-exam-title="${escapeHtml(String(ex.title || "").toLowerCase())}"
                     onclick="selectTeacherExam('${ex.id}')"
-                    class="p-4 rounded-2xl border transition cursor-pointer flex flex-col justify-between gap-2.5 ${
-                      isSel
-                        ? "animated-orbit-border text-slate-900"
-                        : "border-slate-200 bg-slate-50/40 hover:border-slate-300"
+                    class="dk-exam-card p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-3 ${
+                      isSel ? "animated-orbit-border text-slate-900" : "border-slate-200 bg-slate-50/40 hover:border-slate-300"
                     }"
                   >
                     <div>
@@ -4986,58 +5587,73 @@ service cloud.firestore {
                         <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${ex.isOpen ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"}">
                           ${ex.isOpen ? "● Нээлттэй" : "● Хаалттай"}
                         </span>
-                        <span class="text-[11px] font-bold text-indigo-700">${escapeHtml(gradeLbl + secLbl)}</span>
+                        <button type="button" onclick="event.stopPropagation(); toggleExamStatus('${ex.id}')" title="${ex.isOpen ? "Хаах" : "Нээх"}" class="dk-switch ${ex.isOpen ? "on" : ""} cursor-pointer"></button>
                       </div>
-                      <h3 class="font-bold text-sm text-slate-900 mt-1.5">${escapeHtml(ex.title)}</h3>
+                      <h3 class="font-bold text-sm text-slate-900 mt-2 leading-snug">${escapeHtml(ex.title)}</h3>
+                      <p class="text-[11px] font-bold text-indigo-700 mt-0.5">${escapeHtml(getExamTargetLabel(ex))}</p>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-200/60">
-                      <span>Асуулт: <strong>${qCnt}</strong> • ⏱️ <strong>${Number(ex.durationMinutes) || 40} мин</strong></span>
-                      ${state.exams.length > 1 ? `
-                        <button type="button" onclick="event.stopPropagation(); deleteExamItem('${ex.id}', '${escapeHtml(ex.title)}')" class="text-rose-600 hover:underline font-semibold cursor-pointer">
-                          Устгах
-                        </button>
-                      ` : ""}
+                    <div class="grid grid-cols-3 gap-1.5 text-center">
+                      <div class="py-1.5 rounded-lg bg-slate-100"><p class="text-sm font-extrabold text-slate-900">${qCnt}</p><p class="text-[10px] text-slate-500">асуулт</p></div>
+                      <div class="py-1.5 rounded-lg bg-slate-100"><p class="text-sm font-extrabold text-slate-900">${Number(ex.durationMinutes) || 40}</p><p class="text-[10px] text-slate-500">минут</p></div>
+                      <div class="py-1.5 rounded-lg bg-slate-100"><p class="text-sm font-extrabold text-slate-900">${st.subCount}${st.subCount ? `<span class="text-[10px] font-bold text-sky-700"> · ${st.avg}%</span>` : ""}</p><p class="text-[10px] text-slate-500">илгээсэн</p></div>
+                    </div>
+                    <div class="flex items-center justify-between gap-1 pt-2 border-t border-slate-200/60 text-[11px] font-bold">
+                      <button type="button" onclick="event.stopPropagation(); openExamSettingsEditor('${ex.id}')" class="px-2 py-1 rounded-lg text-sky-700 hover:bg-sky-50 cursor-pointer">✏️ Засах</button>
+                      <button type="button" onclick="event.stopPropagation(); duplicateExamItem('${ex.id}')" class="px-2 py-1 rounded-lg text-indigo-700 hover:bg-indigo-50 cursor-pointer">📄 Хуулах</button>
+                      <button type="button" onclick="event.stopPropagation(); openExamMonitor('${ex.id}')" class="px-2 py-1 rounded-lg text-amber-700 hover:bg-amber-50 cursor-pointer">🛰️ Хянах</button>
+                      <button type="button" onclick="event.stopPropagation(); deleteExamItem('${ex.id}')" class="px-2 py-1 rounded-lg text-rose-600 hover:bg-rose-50 cursor-pointer">🗑️</button>
                     </div>
                   </div>
                 `;
               }).join("")}
             </div>
+            `}
           </div>
 
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div class="space-y-1">
-              <div class="flex items-center gap-2.5">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${selectedExam.isOpen ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-600 border border-slate-200"}">
-                  ${selectedExam.isOpen ? "● Шалгалт НЭЭЛТТЭЙ байна" : "● Шалгалт ХААЛТТАЙ байна"}
-                </span>
-                <span class="text-xs text-slate-500">Асуулт: <strong>${examQuestions.length}</strong> • Хугацаа: <strong>${Number(selectedExam.durationMinutes) || 40} мин</strong></span>
-              </div>
-              <h3 class="text-base sm:text-lg font-bold text-slate-900">${escapeHtml(selectedExam.title)}</h3>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2.5">
-              <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
-                <span class="text-xs font-semibold text-slate-600">⏱️ Хугацаа (мин):</span>
-                <input
-                  type="number"
-                  min="1"
-                  max="240"
-                  value="${Number(selectedExam.durationMinutes) || 40}"
-                  onchange="updateExamDuration('${selectedExam.id}', this.value)"
-                  class="w-16 px-2 py-1 rounded-lg border border-slate-200 text-xs font-bold bg-white text-center"
-                />
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div class="space-y-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${selectedExam.isOpen ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-600 border border-slate-200"}">
+                    ${selectedExam.isOpen ? "● НЭЭЛТТЭЙ" : "● ХААЛТТАЙ"}
+                  </span>
+                  <span class="text-xs text-slate-500">${escapeHtml(getExamTargetLabel(selectedExam))} • ${examQuestions.length} асуулт • ${Number(selectedExam.durationMinutes) || 40} мин • ${selStats.subCount} илгээсэн</span>
+                </div>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 truncate">${escapeHtml(selectedExam.title)}</h3>
+                ${selectedExam.instructions ? `<p class="text-xs text-slate-500">📌 ${escapeHtml(selectedExam.instructions)}</p>` : ""}
               </div>
 
-              <button
-                type="button"
-                onclick="toggleExamStatus('${selectedExam.id}')"
-                class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-sm transition cursor-pointer ${
-                  selectedExam.isOpen ? "bg-rose-600 hover:bg-rose-700" : "bg-emerald-600 hover:bg-emerald-700"
-                }"
-              >
-                ${selectedExam.isOpen ? "Шалгалтыг ХААХ" : "Шалгалтыг НЭЭХ"}
-              </button>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="openExamSettingsEditor('${selectedExam.id}')" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold cursor-pointer">
+                  ⚙️ Тохиргоо
+                </button>
+                <button type="button" onclick="openExamMonitor('${selectedExam.id}')" class="px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs sm:text-sm font-bold cursor-pointer">
+                  🛰️ Шууд хяналт
+                </button>
+                <button type="button" onclick="state.analysisExamFilter = '${selectedExam.id}'; state.examSubTab = 'analysis'; renderTeacherDashboard();" class="px-3.5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs sm:text-sm font-bold cursor-pointer">
+                  📊 Анализ
+                </button>
+                <button
+                  type="button"
+                  onclick="toggleExamStatus('${selectedExam.id}')"
+                  class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-sm transition cursor-pointer ${
+                    selectedExam.isOpen ? "bg-rose-600 hover:bg-rose-700" : "bg-emerald-600 hover:bg-emerald-700"
+                  }"
+                >
+                  ${selectedExam.isOpen ? "Шалгалтыг ХААХ" : "Шалгалтыг НЭЭХ"}
+                </button>
+              </div>
             </div>
+
+            ${isEditingSettings ? `
+              <form id="edit-exam-settings-form" class="dk-panel-enter p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                ${renderExamSettingsFields("edit-exam", selectedExam)}
+                <div class="sm:col-span-2 lg:col-span-3 flex justify-end gap-2">
+                  <button type="button" onclick="state.editingExamSettingsId = null; renderTeacherDashboard();" class="py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold cursor-pointer">Болих</button>
+                  <button type="submit" class="py-2 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold cursor-pointer">Өөрчлөлт хадгалах</button>
+                </div>
+              </form>
+            ` : ""}
           </div>
 
           ${state.examEditorMode === "list" ? `
@@ -5045,7 +5661,7 @@ service cloud.firestore {
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                 <div>
                   <h3 class="text-base font-bold text-slate-900">Шалгалтын асуултууд (${examQuestions.length})</h3>
-                  <p class="text-xs text-slate-500 mt-0.5">Шинэ асуулт нэмэх бол "+ Асуулт нэмэх" товчийг дарж асуулт оруулах цонхыг нээнэ үү.</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Асуулт бүрийг засах, хуулах, устгах боломжтой.</p>
                 </div>
                 <button
                   type="button"
@@ -5056,29 +5672,28 @@ service cloud.firestore {
                 </button>
               </div>
 
+              ${selStats.subCount > 0 ? `
+                <div class="px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-800">
+                  ⚠️ Энэ шалгалтыг ${selStats.subCount} сурагч аль хэдийн өгсөн. Асуулт нэмэх, устгах нь өмнөх дүн болон асуулт тус бүрийн анализад нөлөөлнө.
+                </div>
+              ` : ""}
+
               <div class="space-y-3 max-h-[680px] overflow-y-auto pr-1">
                 ${examQuestions.length === 0 ? `
                   <div class="py-12 text-center border-2 border-dashed border-slate-200 rounded-2xl space-y-3">
                     <p class="text-sm font-bold text-slate-700">Энэ шалгалтад асуулт ороогүй байна.</p>
-                    <button
-                      type="button"
-                      onclick="openExamQuestionEditor(null)"
-                      class="px-4 py-2 rounded-xl bg-sky-600 text-white text-xs font-bold cursor-pointer"
-                    >
+                    <button type="button" onclick="openExamQuestionEditor(null)" class="px-4 py-2 rounded-xl bg-sky-600 text-white text-xs font-bold cursor-pointer">
                       + Эхний асуултаа нэмэх
                     </button>
                   </div>
                 ` : examQuestions.map((q, i) => `
                   <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2.5">
                     <div class="flex items-center justify-between gap-2">
-                      <span class="px-2.5 py-0.5 rounded-lg bg-indigo-100 text-indigo-800 text-xs font-bold">Асуулт #${i + 1}</span>
-                      <div class="flex items-center gap-2">
-                        <button type="button" onclick="openExamQuestionEditor('${q.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-sky-300 text-sky-700 text-xs font-semibold cursor-pointer">
-                          Засах
-                        </button>
-                        <button type="button" onclick="deleteExamQuestion('${q.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer">
-                          Устгах
-                        </button>
+                      <span class="px-2.5 py-0.5 rounded-lg bg-indigo-100 text-indigo-800 text-xs font-bold">Асуулт #${i + 1}${q.imageUrl ? " • 🖼️" : ""}</span>
+                      <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="openExamQuestionEditor('${q.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-sky-300 text-sky-700 text-xs font-semibold cursor-pointer">Засах</button>
+                        <button type="button" onclick="duplicateExamQuestion('${q.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 text-indigo-700 text-xs font-semibold cursor-pointer">Хуулах</button>
+                        <button type="button" onclick="deleteExamQuestion('${q.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold cursor-pointer">Устгах</button>
                       </div>
                     </div>
                     <div class="text-sm text-slate-800 leading-relaxed">${renderSafeMath(q.question)}</div>
@@ -5200,6 +5815,317 @@ service cloud.firestore {
       state.pendingExamImage = "";
       renderTeacherDashboard();
     };
+
+
+    // --- ШАЛГАЛТЫН ТОХИРГОО ЗАСАХ / ХУУЛАХ / ХЯНАХ ---
+    window.filterExamCards = function(q) {
+      const needle = String(q || "").trim().toLowerCase();
+      document.querySelectorAll("#exam-cards-grid [data-exam-title]").forEach(card => {
+        card.style.display = !needle || card.dataset.examTitle.includes(needle) ? "" : "none";
+      });
+    };
+
+    window.openExamSettingsEditor = function(examId) {
+      state.selectedExamId = examId;
+      state.editingExamSettingsId = state.editingExamSettingsId === examId ? null : examId;
+      state.examEditorMode = "list";
+      renderTeacherDashboard();
+      const f = document.getElementById("edit-exam-settings-form");
+      if (f) f.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    window.openExamMonitor = function(examId) {
+      state.examMonitorId = examId;
+      state.examSubTab = "monitor";
+      renderTeacherDashboard();
+      playTabEnter("exam-subtab-body");
+    };
+
+    window.duplicateExamItem = async function(examId) {
+      const ex = state.exams.find(e => e.id === examId);
+      if (!ex) return;
+      const ok = await showConfirmModal("Шалгалт хуулах", `"${ex.title}" шалгалтыг бүх асуулттай нь хуулж, шинэ (хаалттай) шалгалт үүсгэх үү?`);
+      if (!ok) return;
+      const newId = await dbAddDocument("exams", state.exams, {
+        title: `${ex.title} (хуулбар)`,
+        targetGrade: ex.targetGrade || "ALL",
+        targetSection: ex.targetSection || "ALL",
+        durationMinutes: Number(ex.durationMinutes) || 40,
+        instructions: ex.instructions || "",
+        showScore: ex.showScore !== false,
+        isOpen: false,
+        createdAt: Date.now()
+      });
+      const qs = getQuestionsForExam(examId);
+      let t = Date.now();
+      for (const q of qs) {
+        await dbAddDocument("exam_questions", state.examQuestions, {
+          examId: newId,
+          question: q.question || "",
+          imageUrl: q.imageUrl || "",
+          options: [...(q.options || [])],
+          correctIndex: Number(q.correctIndex) || 0,
+          createdAt: t++
+        });
+      }
+      state.selectedExamId = newId;
+      showToast(`Шалгалт ${qs.length} асуулттай хуулагдлаа.`, "success");
+      renderTeacherDashboard();
+    };
+
+    window.duplicateExamQuestion = async function(qId) {
+      const q = state.examQuestions.find(x => x.id === qId);
+      if (!q) return;
+      await dbAddDocument("exam_questions", state.examQuestions, {
+        examId: q.examId || "default_exam",
+        question: q.question || "",
+        imageUrl: q.imageUrl || "",
+        options: [...(q.options || [])],
+        correctIndex: Number(q.correctIndex) || 0,
+        createdAt: Date.now()
+      });
+      showToast("Асуулт хуулагдаж жагсаалтын төгсгөлд нэмэгдлээ.", "success");
+      renderTeacherDashboard();
+    };
+
+    window.extendExamTime = async function(examId, addMin) {
+      const ex = state.exams.find(e => e.id === examId);
+      if (!ex) return;
+      const next = Math.max(1, Math.min(240, (Number(ex.durationMinutes) || 40) + addMin));
+      ex.durationMinutes = next;
+      await dbSetDocument("exams", ex.id, { durationMinutes: next, updatedAt: Date.now() });
+      showToast(`"${ex.title}" шалгалтын хугацаа ${next} минут боллоо.`, "success");
+      renderTeacherDashboard();
+    };
+
+    window.allowExamRetake = async function(subId) {
+      const sub = state.examSubmissions.find(s => s.id === subId);
+      if (!sub) return;
+      const ok = await showConfirmModal("Дахин өгүүлэх", `"${sub.studentName}" сурагчийн илгээсэн дүнг устгаж, шалгалтыг дахин өгөх боломж олгох уу?`);
+      if (!ok) return;
+      await dbDeleteDocument("exam_submissions", state.examSubmissions, subId);
+      showToast("Сурагч шалгалтаа дахин өгөх боломжтой боллоо.", "info");
+      renderTeacherDashboard();
+    };
+
+    window.setExamMonitorFilter = function(val) {
+      state.examMonitorFilter = val;
+      renderExamMonitorLive();
+    };
+
+    window.setExamMonitorSearch = function(val) {
+      state.examMonitorSearch = val;
+      renderExamMonitorLive();
+    };
+
+    function getExamMonitorRows(ex) {
+      const now = Date.now();
+      const presenceById = new Map(getActiveOnlineUsers().map(u => [u.id, u]));
+      const totalQ = getQuestionsForExam(ex.id).length;
+      const durMs = (Number(ex.durationMinutes) || 40) * 60000;
+
+      return state.students
+        .map(st => {
+          const g = getStudentGradeInfo(st);
+          return { st, g, eligible: isExamEligibleForStudent(ex, { grade: g.grade, section: g.section || "" }) };
+        })
+        .filter(r => r.eligible)
+        .map(({ st, g }) => {
+          const sub = state.examSubmissions.find(s => s.studentId === st.id && (s.examId || "default_exam") === ex.id);
+          const pres = presenceById.get(st.id);
+          let status = "offline";
+          let answered = 0, remMs = 0, leaves = 0, pct = 0;
+          if (sub) {
+            status = "submitted";
+            pct = sub.total > 0 ? Math.round((sub.score / sub.total) * 100) : 0;
+            leaves = Number(sub.leaves) || 0;
+          } else if (pres && pres.examId === ex.id) {
+            status = "live";
+            answered = Number(pres.examAnswered) || 0;
+            leaves = Number(pres.examLeaves) || 0;
+            remMs = pres.examStartedAt ? Math.max(0, durMs - (now - Number(pres.examStartedAt))) : durMs;
+          } else if (pres) {
+            status = "online";
+          }
+          return { st, g, sub, pres, status, answered, totalQ, remMs, leaves, pct };
+        });
+    }
+
+    function renderTeacherExamMonitorView() {
+      if (!state.examMonitorId || !state.exams.some(e => e.id === state.examMonitorId)) {
+        state.examMonitorId = getSelectedExamObj().id;
+      }
+      const ex = state.exams.find(e => e.id === state.examMonitorId) || getSelectedExamObj();
+
+      return `
+        <div class="space-y-5">
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="dk-live-dot"></span>
+                <div class="min-w-0">
+                  <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-300">Шууд хяналт • автоматаар шинэчлэгдэнэ</p>
+                  <select onchange="state.examMonitorId = this.value; renderTeacherDashboard();" class="mt-1 px-3 py-2 rounded-xl border border-slate-200 text-sm font-bold bg-white max-w-full">
+                    ${state.exams.map(e => `<option value="${e.id}" ${e.id === ex.id ? "selected" : ""}>${e.isOpen ? "🟢" : "⚪"} ${escapeHtml(e.title)}</option>`).join("")}
+                  </select>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold text-slate-500">${escapeHtml(getExamTargetLabel(ex))} • ⏱️ ${Number(ex.durationMinutes) || 40} мин</span>
+                <button type="button" onclick="extendExamTime('${ex.id}', 5)" class="px-3 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-bold cursor-pointer">+5 мин сунгах</button>
+                <button type="button" onclick="extendExamTime('${ex.id}', -5)" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">−5 мин</button>
+                <button type="button" onclick="toggleExamStatus('${ex.id}')" class="px-4 py-2 rounded-xl text-white text-xs font-bold shadow-sm cursor-pointer ${ex.isOpen ? "bg-rose-600 hover:bg-rose-700" : "bg-emerald-600 hover:bg-emerald-700"}">
+                  ${ex.isOpen ? "■ Шалгалтыг хаах" : "▶ Шалгалтыг нээх"}
+                </button>
+              </div>
+            </div>
+            ${ex.isOpen ? "" : `<p class="px-3.5 py-2.5 rounded-xl bg-slate-100 text-xs font-semibold text-slate-600">Энэ шалгалт одоогоор хаалттай. Нээсний дараа сурагчид эхлүүлэхэд энд шууд харагдана.</p>`}
+          </div>
+          <div id="exam-monitor-live"></div>
+        </div>
+      `;
+    }
+
+    function renderExamMonitorLive() {
+      const box = document.getElementById("exam-monitor-live");
+      if (!box || !state.session || state.session.role !== "teacher") return;
+      const ex = state.exams.find(e => e.id === state.examMonitorId);
+      if (!ex) { box.innerHTML = ""; return; }
+
+      const rows = getExamMonitorRows(ex);
+      const cnt = { live: 0, submitted: 0, online: 0, offline: 0 };
+      rows.forEach(r => cnt[r.status]++);
+      const subPcts = rows.filter(r => r.status === "submitted").map(r => r.pct);
+      const avg = subPcts.length ? Math.round(subPcts.reduce((a, b) => a + b, 0) / subPcts.length) : 0;
+      const donePct = rows.length ? Math.round((cnt.submitted / rows.length) * 100) : 0;
+      const warnCnt = rows.filter(r => r.leaves >= 3).length;
+
+      const order = { live: 0, online: 1, offline: 2, submitted: 3 };
+      const needle = String(state.examMonitorSearch || "").trim().toLowerCase();
+      const shown = rows
+        .filter(r => state.examMonitorFilter === "ALL" || r.status === state.examMonitorFilter || (state.examMonitorFilter === "warn" && r.leaves >= 3))
+        .filter(r => !needle || String(r.st.fullName || "").toLowerCase().includes(needle))
+        .sort((a, b) => (order[a.status] - order[b.status]) || String(a.st.fullName || "").localeCompare(String(b.st.fullName || "")));
+
+      const chip = (val, label, n, cls) => `
+        <button type="button" onclick="setExamMonitorFilter('${val}')" class="dk-chip cursor-pointer ${state.examMonitorFilter === val ? "!bg-sky-500/20 !border-sky-400/50 !text-sky-100" : ""} ${cls || ""}">${label} <span class="opacity-70">${n}</span></button>`;
+
+      const statusBadge = r => ({
+        live: `<span class="dk-chip !bg-amber-500/15 !border-amber-400/40 !text-amber-200"><span class="dk-live-dot !w-1.5 !h-1.5 !bg-amber-400" style="box-shadow:none"></span> Өгч байна</span>`,
+        submitted: `<span class="dk-chip !bg-emerald-500/15 !border-emerald-400/40 !text-emerald-200">✓ Илгээсэн</span>`,
+        online: `<span class="dk-chip !bg-sky-500/10 !border-sky-400/30 !text-sky-200">● Онлайн, эхлээгүй</span>`,
+        offline: `<span class="dk-chip">○ Эхлээгүй</span>`
+      })[r.status];
+
+      const prevFocus = document.activeElement && document.activeElement.id === "exam-monitor-search"
+        ? document.activeElement.selectionStart : null;
+      box.innerHTML = `
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div class="dk-stat"><p class="text-[11px] font-semibold text-slate-400">Хамрагдах сурагч</p><p class="text-2xl font-extrabold text-slate-100">${rows.length}</p></div>
+            <div class="dk-stat !border-amber-400/30"><p class="text-[11px] font-semibold text-amber-300">Одоо өгч байна</p><p class="text-2xl font-extrabold text-amber-200">${cnt.live}</p></div>
+            <div class="dk-stat !border-emerald-400/30"><p class="text-[11px] font-semibold text-emerald-300">Илгээсэн</p><p class="text-2xl font-extrabold text-emerald-200">${cnt.submitted}</p></div>
+            <div class="dk-stat"><p class="text-[11px] font-semibold text-slate-400">Эхлээгүй</p><p class="text-2xl font-extrabold text-slate-200">${cnt.online + cnt.offline}</p></div>
+            <div class="dk-stat !border-indigo-400/30 col-span-2 lg:col-span-1"><p class="text-[11px] font-semibold text-indigo-300">Дундаж оноо</p><p class="text-2xl font-extrabold text-indigo-200">${subPcts.length ? avg + "%" : "—"}</p></div>
+          </div>
+
+          <div class="dk-stat space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold">
+              <span class="text-slate-300">Нийт гүйцэтгэл: ${cnt.submitted}/${rows.length} илгээсэн</span>
+              <span class="text-emerald-300">${donePct}%</span>
+            </div>
+            <div class="dk-bar ok"><i style="width:${donePct}%"></i></div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${chip("ALL", "Бүгд", rows.length)}
+                ${chip("live", "Өгч байна", cnt.live)}
+                ${chip("submitted", "Илгээсэн", cnt.submitted)}
+                ${chip("online", "Онлайн", cnt.online)}
+                ${chip("offline", "Эхлээгүй", cnt.offline)}
+                ${warnCnt ? chip("warn", "⚠️ Олон удаа гарсан", warnCnt, "!text-rose-200 !border-rose-400/40") : ""}
+              </div>
+              <input type="text" value="${escapeHtml(state.examMonitorSearch || "")}" oninput="setExamMonitorSearch(this.value)" id="exam-monitor-search" placeholder="🔍 Сурагч хайх..." class="px-3 py-2 rounded-xl border border-slate-200 text-xs w-full sm:w-52" />
+            </div>
+
+            ${rows.length === 0 ? `
+              <p class="py-10 text-center text-sm text-slate-400">Энэ шалгалтад хамрагдах сурагч бүртгэлгүй байна.</p>
+            ` : shown.length === 0 ? `
+              <p class="py-8 text-center text-sm text-slate-400">Шүүлтүүрт тохирох сурагч алга.</p>
+            ` : `
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm min-w-[720px]">
+                  <thead>
+                    <tr class="text-[11px] font-bold uppercase text-slate-500 border-b border-slate-200">
+                      <th class="py-2.5 px-2">Сурагч</th>
+                      <th class="py-2.5 px-2">Төлөв</th>
+                      <th class="py-2.5 px-2 w-48">Явц</th>
+                      <th class="py-2.5 px-2 text-center">Үлдсэн / Оноо</th>
+                      <th class="py-2.5 px-2 text-center">Табаас гарсан</th>
+                      <th class="py-2.5 px-2 text-right">Үйлдэл</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    ${shown.map(r => {
+                      const prog = r.status === "submitted" ? 100 : (r.totalQ ? Math.round((r.answered / r.totalQ) * 100) : 0);
+                      const lowTime = r.status === "live" && r.remMs < 3 * 60000;
+                      return `
+                        <tr>
+                          <td class="py-2.5 px-2">
+                            <div class="flex items-center gap-2.5">
+                              ${renderUserAvatar({ id: r.st.id, fullName: r.st.fullName, role: "student", examId: r.status === "live" ? ex.id : "" })}
+                              <div class="min-w-0">
+                                <p class="font-bold text-slate-900 truncate">${escapeHtml(r.st.fullName)}</p>
+                                <p class="text-[11px] text-sky-700 font-semibold">${escapeHtml(r.g.label)}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="py-2.5 px-2">${statusBadge(r)}</td>
+                          <td class="py-2.5 px-2">
+                            ${r.status === "live" || r.status === "submitted" ? `
+                              <div class="space-y-1">
+                                <div class="dk-bar ${r.status === "submitted" ? "ok" : ""}"><i style="width:${prog}%"></i></div>
+                                <p class="text-[11px] text-slate-500">${r.status === "submitted" ? "Дууссан" : `${r.answered}/${r.totalQ} хариулсан`}</p>
+                              </div>
+                            ` : `<span class="text-[11px] text-slate-400">—</span>`}
+                          </td>
+                          <td class="py-2.5 px-2 text-center font-mono font-bold ${lowTime ? "text-rose-600" : "text-slate-800"}">
+                            ${r.status === "live" ? formatCountdown(r.remMs) : r.status === "submitted" ? `<span class="font-sans">${r.sub.score}/${r.sub.total} <span class="text-[11px] text-emerald-700">(${r.pct}%)</span></span>` : "—"}
+                          </td>
+                          <td class="py-2.5 px-2 text-center">
+                            ${r.leaves > 0 ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold ${r.leaves >= 3 ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-800"}">${r.leaves} удаа</span>` : `<span class="text-[11px] text-slate-400">0</span>`}
+                          </td>
+                          <td class="py-2.5 px-2 text-right">
+                            ${r.status === "submitted" ? `<button type="button" onclick="allowExamRetake('${r.sub.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-sky-300 text-sky-700 text-xs font-semibold cursor-pointer">Дахин өгүүлэх</button>` : ""}
+                          </td>
+                        </tr>
+                      `;
+                    }).join("")}
+                  </tbody>
+                </table>
+              </div>
+            `}
+            <p class="text-[11px] text-slate-500">ℹ️ "Табаас гарсан" нь сурагч шалгалтын үеэр өөр таб/апп руу шилжсэн тоо. Явц нь сурагчийн төхөөрөмжөөс ~3 секунд тутамд шинэчлэгдэнэ.</p>
+          </div>
+        </div>
+      `;
+
+      // Хайлтын талбарын фокусыг хадгалах (бичиж байхад тасрахгүй)
+      if (prevFocus !== null) {
+        const inp = document.getElementById("exam-monitor-search");
+        if (inp) { inp.focus(); inp.setSelectionRange(prevFocus, prevFocus); }
+      }
+    }
+
+    setInterval(() => {
+      if (state.session && state.session.role === "teacher" && state.teacherTab === "exams" && state.examSubTab === "monitor" && !document.hidden) {
+        const active = document.activeElement;
+        if (active && active.id === "exam-monitor-search") return;
+        renderExamMonitorLive();
+      }
+    }, 5000);
 
     // --- ШАЛГАЛТЫН ХУВААРЬ (КАЛЕНДАРЬ) ---
     window.changeCalendarMonth = function(delta) {
@@ -5705,7 +6631,14 @@ service cloud.firestore {
                         const gInfo = getLetterGradeInfo(pct);
                         return `
                           <tr class="hover:bg-slate-50/70">
-                            <td class="py-3 px-3 font-bold text-slate-900">${escapeHtml(sub.studentName)}</td>
+                            <td class="py-3 px-3">
+                              <p class="font-bold text-slate-900">${escapeHtml(sub.studentName)}</p>
+                              <p class="text-[11px] text-slate-500">
+                                ${sub.durationSec ? `⏱️ ${formatDurationMn(sub.durationSec)}` : ""}
+                                ${Number(sub.leaves) > 0 ? ` <span class="font-bold ${Number(sub.leaves) >= 3 ? "text-rose-600" : "text-amber-700"}">• ⚠️ ${sub.leaves} удаа гарсан</span>` : ""}
+                                ${sub.autoSubmitted ? ` <span class="text-slate-400">• авто илгээлт</span>` : ""}
+                              </p>
+                            </td>
                             <td class="py-3 px-3 text-sky-700 font-semibold">${escapeHtml(sub.classGroup || "")}</td>
                             <td class="py-3 px-3 text-slate-700">${escapeHtml(sub.examTitle || "Шалгалт")}</td>
                             <td class="py-3 px-3 text-center font-extrabold text-slate-900">${sub.score} / ${sub.total}</td>
@@ -5784,22 +6717,37 @@ service cloud.firestore {
       if (createExamForm) {
         createExamForm.addEventListener("submit", async (e) => {
           e.preventDefault();
-          const title = document.getElementById("new-exam-title").value.trim();
-          const targetGrade = document.getElementById("new-exam-grade").value;
-          const targetSection = document.getElementById("new-exam-section").value;
-          const durationMinutes = Math.max(1, Number(document.getElementById("new-exam-duration").value) || 40);
-
+          const data = readExamSettingsFields("new-exam");
+          if (!data.title) return;
           const newId = await dbAddDocument("exams", state.exams, {
-            title,
-            targetGrade,
-            targetSection,
-            durationMinutes,
+            ...data,
             isOpen: false,
             createdAt: Date.now()
           });
           state.selectedExamId = newId;
           state.showCreateExamForm = false;
-          showToast(`"${title}" шалгалт үүслээ.`, "success");
+          showToast(`"${data.title}" шалгалт үүслээ. Одоо асуултаа нэмнэ үү.`, "success");
+          renderTeacherDashboard();
+        });
+      }
+
+      const editSettingsForm = document.getElementById("edit-exam-settings-form");
+      if (editSettingsForm) {
+        editSettingsForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const ex = state.exams.find(x => x.id === state.editingExamSettingsId);
+          if (!ex) return;
+          const data = readExamSettingsFields("edit-exam");
+          if (!data.title) return;
+          Object.assign(ex, data, { updatedAt: Date.now() });
+          await dbSetDocument("exams", ex.id, {
+            ...data,
+            isOpen: !!ex.isOpen,
+            createdAt: ex.createdAt || Date.now(),
+            updatedAt: Date.now()
+          });
+          state.editingExamSettingsId = null;
+          showToast("Шалгалтын тохиргоо хадгалагдлаа.", "success");
           renderTeacherDashboard();
         });
       }
@@ -5952,6 +6900,13 @@ service cloud.firestore {
         showToast("Шалгалтыг нээхийн өмнө дор хаяж 1 асуулт оруулна уу.", "warning");
         return;
       }
+      if (!nextState) {
+        const liveCnt = getActiveOnlineUsers().filter(u => u.role !== "teacher" && u.examId === ex.id).length;
+        if (liveCnt > 0) {
+          const ok = await showConfirmModal("Шалгалт хаах", `Одоо ${liveCnt} сурагч энэ шалгалтыг өгч байна. Хаавал тэдний одоогийн хариулт автоматаар илгээгдэнэ. Хаах уу?`);
+          if (!ok) return;
+        }
+      }
       ex.isOpen = nextState;
       await dbSetDocument("exams", ex.id, {
         title: ex.title,
@@ -5959,6 +6914,7 @@ service cloud.firestore {
         targetSection: ex.targetSection || "ALL",
         durationMinutes: Number(ex.durationMinutes) || 40,
         isOpen: nextState,
+        createdAt: ex.createdAt || Date.now(),
         updatedAt: Date.now()
       });
       showToast(nextState ? `"${ex.title}" шалгалт НЭЭГДЛЭЭ.` : `"${ex.title}" шалгалт ХААГДЛАА.`, "info");
@@ -5974,14 +6930,31 @@ service cloud.firestore {
       showToast(`Шалгалтын хугацаа ${mins} минут боллоо.`, "success");
     };
 
-    window.deleteExamItem = async function(examId, title) {
-      if (state.exams.length <= 1) return;
-      const ok = await showConfirmModal("Шалгалт устгах", `"${title}" шалгалтыг устгах уу?`);
+    window.deleteExamItem = async function(examId) {
+      const ex = state.exams.find(x => x.id === examId);
+      if (!ex) return;
+      const qs = getQuestionsForExam(examId);
+      const subCnt = getExamStats(examId).subCount;
+      const ok = await showConfirmModal(
+        "Шалгалт устгах",
+        `"${ex.title}" шалгалт болон түүний ${qs.length} асуултыг бүрмөсөн устгах уу?${subCnt ? ` (${subCnt} сурагчийн илгээсэн дүн анализын хэсэгт хадгалагдаж үлдэнэ.)` : ""}`
+      );
       if (!ok) return;
-      await dbDeleteDocument("exams", state.exams, examId);
-      if (state.selectedExamId === examId) {
-        state.selectedExamId = state.exams[0].id;
+      for (const q of qs) {
+        await dbDeleteDocument("exam_questions", state.examQuestions, q.id);
       }
+      await dbDeleteDocument("exams", state.exams, examId);
+      if (db) {
+        const i = state.exams.findIndex(x => x.id === examId);
+        if (i !== -1) state.exams.splice(i, 1);
+        state.examQuestions = state.examQuestions.filter(q => (q.examId || "default_exam") !== examId);
+      }
+      if (state.selectedExamId === examId) {
+        state.selectedExamId = state.exams[0] ? state.exams[0].id : "default_exam";
+      }
+      if (state.examMonitorId === examId) state.examMonitorId = null;
+      if (state.editingExamSettingsId === examId) state.editingExamSettingsId = null;
+      if (state.analysisExamFilter === examId) state.analysisExamFilter = "ALL";
       showToast("Шалгалт устгагдлаа.", "info");
       renderTeacherDashboard();
     };
@@ -6246,11 +7219,14 @@ service cloud.firestore {
       state.studentTab = tabName;
       state.studentActiveLevel = null;
       renderStudentDashboard();
+      playTabEnter("student-content");
+      schedulePresencePing();
     };
 
     function renderStudentDashboard() {
       const sess = state.session;
       if (!sess) return;
+      restoreStudentExamDraftOnce();
 
       document.getElementById("student-header-name").textContent = sess.fullName;
       document.getElementById("student-header-class").textContent = sess.classGroup || "10-р анги";
@@ -6357,6 +7333,29 @@ service cloud.firestore {
             studentTimerInterval = null;
             showToast("Шалгалтын хугацаа дууслаа! Хариулт автоматаар илгээгдлээ.", "warning");
             submitStudentExam(true);
+          }
+        } else if (!state.activeStudentExamId && state.examDraft && state.examDraft.startedAt) {
+          // Сурагч шалгалтаас түр гарсан ч хугацаа дуусахад автоматаар илгээнэ
+          const dEx = state.exams.find(x => x.id === state.examDraft.examId);
+          if (dEx && hasSubmittedExam(dEx.id)) {
+            clearExamDraft();
+          } else if (dEx && !dEx.isOpen) {
+            clearInterval(studentTimerInterval);
+            studentTimerInterval = null;
+            state.activeStudentExamId = dEx.id;
+            state.examTimerStartedAt = state.examDraft.startedAt;
+            showToast("Багш шалгалтыг хаалаа. Таны хариулт автоматаар илгээгдлээ.", "warning");
+            submitStudentExam(true);
+          } else if (dEx && dEx.isOpen) {
+            const totalMs = (Number(dEx.durationMinutes) || 40) * 60 * 1000;
+            if (Date.now() - state.examDraft.startedAt >= totalMs) {
+              clearInterval(studentTimerInterval);
+              studentTimerInterval = null;
+              state.activeStudentExamId = dEx.id;
+              state.examTimerStartedAt = state.examDraft.startedAt;
+              showToast("Шалгалтын хугацаа дууслаа! Хариулт автоматаар илгээгдлээ.", "warning");
+              submitStudentExam(true);
+            }
           }
         }
       }, 1000);
@@ -6947,11 +7946,107 @@ service cloud.firestore {
     }
 
     // --- СУРАГЧИЙН ШАЛГАЛТ БА ХУВААРЬ ТАБ ---
+    const EXAM_DRAFT_PREFIX = "physics_edu_exam_draft_v1_";
+
+    function loadExamDraft() {
+      if (!state.session) return null;
+      try {
+        const raw = localStorage.getItem(EXAM_DRAFT_PREFIX + state.session.userId);
+        return raw ? JSON.parse(raw) : null;
+      } catch (_) { return null; }
+    }
+
+    function saveExamDraft() {
+      if (!state.session || !state.examDraft) return;
+      try { localStorage.setItem(EXAM_DRAFT_PREFIX + state.session.userId, JSON.stringify(state.examDraft)); } catch (_) {}
+    }
+
+    function clearExamDraft() {
+      state.examDraft = null;
+      if (!state.session) return;
+      try { localStorage.removeItem(EXAM_DRAFT_PREFIX + state.session.userId); } catch (_) {}
+    }
+
+    function hasSubmittedExam(examId) {
+      return !!(state.session && state.examSubmissions.find(s => s.studentId === state.session.userId && (s.examId || "default_exam") === examId));
+    }
+
+    // Хуудсыг дахин ачаалсан ч шалгалтын цаг, хариулт алдагдахгүй
+    function restoreStudentExamDraftOnce() {
+      if (state._examDraftChecked || !state.session || state.session.role !== "student") return;
+      const d = loadExamDraft();
+      if (!d || !d.examId) { state._examDraftChecked = true; return; }
+      const ex = state.exams.find(e => e.id === d.examId);
+      if (!ex) return; // Өгөгдөл ачаалагдаж дуусаагүй байж болно — дараагийн render-д дахин шалгана
+      state._examDraftChecked = true;
+      if (hasSubmittedExam(d.examId)) { clearExamDraft(); return; }
+      state.examDraft = d;
+      if (ex.isOpen) {
+        state.activeStudentExamId = d.examId;
+        state.examTimerStartedAt = d.startedAt;
+        state.studentTab = "exam";
+      }
+    }
+
     window.startStudentExam = function(examId) {
+      if (hasSubmittedExam(examId)) {
+        showToast("Та энэ шалгалтыг аль хэдийн өгсөн байна.", "info");
+        return;
+      }
+      let d = state.examDraft && state.examDraft.examId === examId ? state.examDraft : loadExamDraft();
+      if (!d || d.examId !== examId) {
+        d = { examId, startedAt: Date.now(), answers: {}, leaves: 0 };
+      }
+      state.examDraft = d;
+      saveExamDraft();
       state.activeStudentExamId = examId;
-      state.examTimerStartedAt = Date.now();
+      state.examTimerStartedAt = d.startedAt;
       renderStudentDashboard();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      sendPresencePing();
     };
+
+    window.leaveStudentExamView = function() {
+      state.activeStudentExamId = null;
+      renderStudentDashboard();
+      sendPresencePing();
+      showToast("Шалгалтын цаг үргэлжилсээр байна. 'Үргэлжлүүлэх' дарж буцаж орно уу.", "warning");
+    };
+
+    function updateStudentExamProgressUI() {
+      const d = state.examDraft;
+      if (!d) return;
+      const total = getQuestionsForExam(d.examId).length;
+      const done = Object.keys(d.answers || {}).length;
+      const lbl = document.getElementById("student-exam-progress-label");
+      const bar = document.getElementById("student-exam-progress-bar");
+      if (lbl) lbl.textContent = `${done}/${total} хариулсан`;
+      if (bar) bar.style.width = `${total ? Math.round((done / total) * 100) : 0}%`;
+      document.querySelectorAll("[data-q-pill]").forEach(p => {
+        p.classList.toggle("done", d.answers && d.answers[p.dataset.qPill] !== undefined);
+      });
+    }
+
+    document.addEventListener("change", (e) => {
+      const t = e.target;
+      if (!t || t.type !== "radio" || !String(t.name || "").startsWith("exam_q_")) return;
+      if (!state.examDraft || state.examDraft.examId !== state.activeStudentExamId) return;
+      const idx = String(t.name).slice(7);
+      state.examDraft.answers[idx] = Number(t.value);
+      saveExamDraft();
+      updateStudentExamProgressUI();
+      schedulePresencePing();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && state.activeStudentExamId && state.examDraft && state.examDraft.examId === state.activeStudentExamId) {
+        state.examDraft.leaves = (Number(state.examDraft.leaves) || 0) + 1;
+        saveExamDraft();
+        sendPresencePing();
+      }
+    });
+
+    let examAutoSubmitLock = false;
 
     function renderStudentExamTab() {
       const sess = state.session;
@@ -6959,42 +8054,79 @@ service cloud.firestore {
 
       if (state.activeStudentExamId) {
         const activeExam = state.exams.find(e => e.id === state.activeStudentExamId);
-        if (activeExam && activeExam.isOpen) {
+        if (!activeExam) {
+          state.activeStudentExamId = null;
+          state.examTimerStartedAt = null;
+          clearExamDraft();
+        } else if (!activeExam.isOpen) {
+          // Багш шалгалтыг хаасан: одоогийн хариултыг автоматаар илгээнэ
+          if (!examAutoSubmitLock && !hasSubmittedExam(activeExam.id)) {
+            examAutoSubmitLock = true;
+            setTimeout(async () => {
+              try {
+                showToast("Багш шалгалтыг хаалаа. Таны хариулт автоматаар илгээгдлээ.", "warning");
+                await submitStudentExam(true);
+              } finally { examAutoSubmitLock = false; }
+            }, 0);
+          }
+          return `<div class="py-16 text-center text-sm text-slate-400">Шалгалт хаагдлаа. Хариултыг илгээж байна...</div>`;
+        } else {
           const questions = getQuestionsForExam(activeExam.id);
           const totalMs = (Number(activeExam.durationMinutes) || 40) * 60 * 1000;
           const remMs = state.examTimerStartedAt
             ? Math.max(0, totalMs - (Date.now() - state.examTimerStartedAt))
             : totalMs;
           const letters = ["A", "B", "C", "D"];
+          const draft = state.examDraft && state.examDraft.examId === activeExam.id ? state.examDraft : { answers: {}, leaves: 0 };
+          const done = Object.keys(draft.answers || {}).length;
+          const pct = questions.length ? Math.round((done / questions.length) * 100) : 0;
 
           return `
             <div class="space-y-5">
-              <div class="sticky top-16 z-20 bg-white/95 backdrop-blur-md rounded-2xl border border-indigo-200 p-4 sm:p-5 shadow-md flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Шалгалт явагдаж байна</span>
-                  <h2 class="text-base sm:text-lg font-extrabold text-slate-900">${escapeHtml(activeExam.title)} (${questions.length} асуулт)</h2>
+              <div class="sticky top-[8.75rem] sm:top-[9.5rem] z-20 bg-white/95 backdrop-blur-md rounded-2xl border border-indigo-200 p-4 sm:p-5 shadow-md space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Шалгалт явагдаж байна</span>
+                    <h2 class="text-base sm:text-lg font-extrabold text-slate-900 truncate">${escapeHtml(activeExam.title)}</h2>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <div class="px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-center">
+                      <span class="block text-[10px] font-bold uppercase text-amber-600">Үлдсэн хугацаа</span>
+                      <span id="student-live-exam-timer" class="font-mono text-base font-extrabold text-amber-900">${formatCountdown(remMs)}</span>
+                    </div>
+                    <button type="button" onclick="leaveStudentExamView()" class="px-3 py-2 rounded-xl bg-slate-100 text-xs font-semibold text-slate-600 cursor-pointer">
+                      Түр гарах
+                    </button>
+                  </div>
                 </div>
                 <div class="flex items-center gap-3">
-                  <div class="px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-center">
-                    <span class="block text-[10px] font-bold uppercase text-amber-600">Үлдсэн хугацаа</span>
-                    <span id="student-live-exam-timer" class="font-mono text-base font-extrabold text-amber-900">${formatCountdown(remMs)}</span>
-                  </div>
-                  <button type="button" onclick="state.activeStudentExamId = null; state.examTimerStartedAt = null; renderStudentDashboard();" class="px-3 py-2 rounded-xl bg-slate-100 text-xs font-semibold text-slate-600 cursor-pointer">
-                    Буцах
-                  </button>
+                  <div class="dk-bar flex-1"><i id="student-exam-progress-bar" style="width:${pct}%"></i></div>
+                  <span id="student-exam-progress-label" class="text-xs font-bold text-slate-700 shrink-0">${done}/${questions.length} хариулсан</span>
+                </div>
+                <div class="hidden sm:flex flex-wrap gap-1.5">
+                  ${questions.map((_, idx) => `
+                    <a href="#exam-q-card-${idx}" data-q-pill="${idx}" class="dk-q-pill ${draft.answers[idx] !== undefined ? "done" : ""}">${idx + 1}</a>
+                  `).join("")}
                 </div>
               </div>
 
-              <form id="student-exam-submit-form" class="space-y-4">
+              ${activeExam.instructions ? `
+                <div class="px-4 py-3 rounded-2xl bg-sky-50 border border-sky-200 text-xs sm:text-sm font-semibold text-sky-800">📌 ${escapeHtml(activeExam.instructions)}</div>
+              ` : ""}
+              ${Number(draft.leaves) > 0 ? `
+                <div class="px-4 py-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">⚠️ Та шалгалтын үеэр ${draft.leaves} удаа өөр таб руу шилжсэн байна. Энэ нь багшид харагдана.</div>
+              ` : ""}
+
+              <form id="student-exam-submit-form" class="space-y-4" onsubmit="return false;">
                 ${questions.map((q, idx) => `
-                  <div class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-3.5">
+                  <div id="exam-q-card-${idx}" class="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-3.5" style="scroll-margin-top: 16rem;">
                     <span class="inline-block px-2.5 py-0.5 rounded-lg bg-sky-50 text-sky-700 text-xs font-bold">Асуулт #${idx + 1}</span>
                     <div class="text-sm sm:text-base text-slate-800 leading-relaxed">${renderSafeMath(q.question)}</div>
                     ${q.imageUrl ? `<img src="${escapeHtml(q.imageUrl)}" alt="Шалгалтын зураг" onclick="openImageModal(this.src)" class="max-h-56 rounded-xl border bg-slate-50 p-1.5 cursor-zoom-in" />` : ""}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                       ${(q.options || []).map((opt, optIdx) => `
-                        <label class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/40 cursor-pointer transition">
-                          <input type="radio" name="exam_q_${idx}" value="${optIdx}" class="w-4 h-4 text-sky-600" />
+                        <label class="flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/40 has-[:checked]:border-sky-400 has-[:checked]:bg-sky-500/10 cursor-pointer transition">
+                          <input type="radio" name="exam_q_${idx}" value="${optIdx}" ${draft.answers[idx] === optIdx ? "checked" : ""} class="w-4 h-4 text-sky-600" />
                           <span class="text-xs sm:text-sm text-slate-800"><strong>${letters[optIdx]})</strong> ${renderSafeMath(opt)}</span>
                         </label>
                       `).join("")}
@@ -7039,10 +8171,13 @@ service cloud.firestore {
                       <div class="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 space-y-2">
                         <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white">Өгсөн ✓</span>
                         <h3 class="font-bold text-base text-slate-900">${escapeHtml(ex.title)}</h3>
-                        <p class="text-sm font-extrabold text-emerald-800">Оноо: ${alreadySub.score} / ${alreadySub.total} (${pct}% — ${lInfo.letter})</p>
+                        ${ex.showScore === false
+                          ? `<p class="text-sm font-bold text-emerald-800">Хариулт илгээгдсэн. Дүнг багш дараа нь мэдэгдэнэ.</p>`
+                          : `<p class="text-sm font-extrabold text-emerald-800">Оноо: ${alreadySub.score} / ${alreadySub.total} (${pct}% — ${lInfo.letter})</p>`}
                       </div>
                     `;
                   }
+                  const hasDraft = state.examDraft && state.examDraft.examId === ex.id;
                   return `
                     <div class="animated-orbit-border p-5 rounded-2xl flex flex-col justify-between gap-4">
                       <div>
@@ -7051,9 +8186,10 @@ service cloud.firestore {
                           <span class="text-xs font-bold text-indigo-700">⏱️ ${Number(ex.durationMinutes) || 40} минут • ${qCnt} асуулт</span>
                         </div>
                         <h3 class="font-bold text-base text-slate-900 mt-2">${escapeHtml(ex.title)}</h3>
+                        ${ex.instructions ? `<p class="text-xs text-slate-500 mt-1">📌 ${escapeHtml(ex.instructions)}</p>` : ""}
                       </div>
-                      <button type="button" onclick="startStudentExam('${ex.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold shadow-xs cursor-pointer">
-                        Шалгалт эхлүүлэх →
+                      <button type="button" onclick="startStudentExam('${ex.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r ${hasDraft ? "from-amber-500 to-orange-600" : "from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700"} text-white text-xs sm:text-sm font-bold shadow-xs cursor-pointer">
+                        ${hasDraft ? "Шалгалтаа үргэлжлүүлэх → (цаг явж байна)" : "Шалгалт эхлүүлэх →"}
                       </button>
                     </div>
                   `;
@@ -7089,48 +8225,77 @@ service cloud.firestore {
       `;
     }
 
+    let examSubmitting = false;
     window.submitStudentExam = async function(isAutoTimeout) {
       const examId = state.activeStudentExamId;
       const ex = state.exams.find(x => x.id === examId);
-      if (!ex) return;
+      if (!ex || examSubmitting) return;
+      if (hasSubmittedExam(examId)) {
+        state.activeStudentExamId = null;
+        state.examTimerStartedAt = null;
+        clearExamDraft();
+        renderStudentDashboard();
+        return;
+      }
       const questions = getQuestionsForExam(examId);
+      const draftAns = state.examDraft && state.examDraft.examId === examId ? (state.examDraft.answers || {}) : {};
       const answers = [];
       let score = 0;
+      let unanswered = 0;
 
       for (let i = 0; i < questions.length; i++) {
         const checked = document.querySelector(`input[name="exam_q_${i}"]:checked`);
-        if (!checked && !isAutoTimeout) {
-          showToast(`${i + 1}-р асуултын хариултыг сонгоно уу.`, "warning");
-          return;
-        }
-        const chosen = checked ? Number(checked.value) : -1;
+        const chosen = checked ? Number(checked.value) : (draftAns[i] !== undefined ? Number(draftAns[i]) : -1);
+        if (chosen === -1) unanswered++;
         answers.push(chosen);
         if (chosen === Number(questions[i].correctIndex)) score++;
       }
 
-      const sess = state.session;
-      const subDocId = `${examId}_${sess.userId}`;
-      const subData = {
-        examId,
-        examTitle: ex.title,
-        studentId: sess.userId,
-        studentName: sess.fullName,
-        classGroup: sess.classGroup,
-        score,
-        total: questions.length,
-        answers,
-        submittedAt: Date.now()
-      };
+      if (!isAutoTimeout && unanswered > 0) {
+        const ok = await showConfirmModal("Шалгалт илгээх", `${unanswered} асуулт хариулаагүй байна. Хариулаагүй асуулт 0 оноо авна. Илгээх үү?`);
+        if (!ok) return;
+      }
 
-      const existingIdx = state.examSubmissions.findIndex(s => s.id === subDocId);
-      if (existingIdx !== -1) state.examSubmissions[existingIdx] = { id: subDocId, ...subData };
-      else state.examSubmissions.push({ id: subDocId, ...subData });
+      examSubmitting = true;
+      try {
+        const sess = state.session;
+        const subDocId = `${examId}_${sess.userId}`;
+        const startedAt = state.examTimerStartedAt || Date.now();
+        const subData = {
+          examId,
+          examTitle: ex.title,
+          studentId: sess.userId,
+          studentName: sess.fullName,
+          classGroup: sess.classGroup,
+          score,
+          total: questions.length,
+          answers,
+          startedAt,
+          durationSec: Math.round((Date.now() - startedAt) / 1000),
+          leaves: state.examDraft ? Number(state.examDraft.leaves) || 0 : 0,
+          autoSubmitted: !!isAutoTimeout,
+          submittedAt: Date.now()
+        };
 
-      await dbSetDocument("exam_submissions", subDocId, subData);
-      state.activeStudentExamId = null;
-      state.examTimerStartedAt = null;
-      showToast(`Шалгалт амжилттай илгээгдлээ! Таны оноо: ${score}/${questions.length}`, "success");
-      renderStudentDashboard();
+        const existingIdx = state.examSubmissions.findIndex(s => s.id === subDocId);
+        if (existingIdx !== -1) state.examSubmissions[existingIdx] = { id: subDocId, ...subData };
+        else state.examSubmissions.push({ id: subDocId, ...subData });
+
+        await dbSetDocument("exam_submissions", subDocId, subData);
+        state.activeStudentExamId = null;
+        state.examTimerStartedAt = null;
+        clearExamDraft();
+        showToast(
+          ex.showScore === false
+            ? "Шалгалт амжилттай илгээгдлээ! Дүнг багш дараа мэдэгдэнэ."
+            : `Шалгалт амжилттай илгээгдлээ! Таны оноо: ${score}/${questions.length}`,
+          "success"
+        );
+        renderStudentDashboard();
+        sendPresencePing();
+      } finally {
+        examSubmitting = false;
+      }
     };
 
     // =========================================================================
